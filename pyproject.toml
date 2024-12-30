@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "RavensPedia"
+version = "0.0.1"
+description = ""
+authors = ["Vladislav Teplyakov somi.saaw@mail.ru"]
+license = "CyberRavens"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.108.0"
+uvicorn = { extras = ["standard"], version = "^0.25.0" }
+pydantic = { extras = ["email"], version = "^2.5.3" }
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.25" }
+aiosqlite = "^0.19.0"
+pydantic-settings = "^2.1.0"
+alembic = "^1.13.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+black = "^23.12.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
