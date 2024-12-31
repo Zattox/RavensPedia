@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from schemes.player.schema import Player
+from schemes.player.scheme import Player
 
 router = APIRouter(tags=['Player'])
 

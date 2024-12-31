@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from schemes.team.schema import Team
+from schemes.team.scheme import Team
 
 router = APIRouter(tags=['Team'])
 

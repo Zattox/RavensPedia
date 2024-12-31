@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from schemes.match.schema import Match
+from schemes.match.scheme import Match
 
 router = APIRouter(tags=['Match'])
 
