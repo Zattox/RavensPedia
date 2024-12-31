@@ -1,13 +1,11 @@
 from datetime import datetime
 from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
-
-from schemes.team.schema import Team
+import importlib
 
 class MatchBase(BaseModel):
-    team_first: Team
-    team_second: Team
+    first_team: dict
+    second_team: dict
     tournament: str
     date: datetime
 
@@ -18,8 +16,8 @@ class MatchUpdate(MatchBase):
     pass
 
 class MatchUpdatePartial(MatchCreate):
-    team_first: Optional[Team] = None
-    team_second: Optional[Team] = None
+    team_first: Optional[dict] = None
+    team_second: Optional[dict] = None
     tournament: str = ...
     date: Optional[datetime] = None
 
