@@ -3,10 +3,10 @@ from pydantic import BaseModel, ConfigDict
 import importlib
 
 class TeamBase(BaseModel):
-    name: str
-    description: str
-    matches: List[dict]
-    players: List[dict]
+    name: str = ...
+    description: Optional[str] = None
+    matches: Optional[List[dict]] = None
+    players: Optional[List[dict]] = None
 
 class TeamCreate(TeamBase):
     pass
@@ -15,14 +15,11 @@ class TeamUpdate(TeamBase):
     pass
 
 class TeamUpdatePartial(TeamCreate):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    matches: Optional[List[dict]] = None
-    players: Optional[List[dict]] = None
+    pass
 
 class Team(TeamBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    id: int = ...
 
     def add_player(self, player_data):
         Player = importlib.import_module('schemes.player.schema').Player
