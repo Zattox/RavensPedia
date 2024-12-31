@@ -1,13 +1,11 @@
+import uvicorn
 from fastapi import FastAPI
+from schemes import router as router_v1
+app = FastAPI(
+    title="Ravens Pedia API",
+)
+app.include_router(router=router_v1)
 
-app = FastAPI()
+if __name__ == "__main__":
+    uvicorn.run("main:app", reload=True, port=8001)
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
