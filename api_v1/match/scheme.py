@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -15,12 +16,12 @@ class MatchCreate(MatchBase):
     pass
 
 
-class MatchUpdate(MatchBase):
-    pass
-
-
 class MatchUpdatePartial(MatchCreate):
-    pass
+    first_team_id: Union[int | None] = None
+    second_team_id: Union[int | None] = None
+    description: Union[str | None] = None
+    tournament_id: Union[int | None] = None
+    date: Union[datetime | None] = None
 
 
 class Match(MatchBase):
