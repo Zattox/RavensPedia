@@ -13,7 +13,10 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Ravens Pedia API", lifespan=lifespan)
+app = FastAPI(
+    title="Ravens Pedia API",
+    lifespan=lifespan,
+)
 app.include_router(router=router_v1)
 
 if __name__ == "__main__":
