@@ -1,18 +1,14 @@
 from datetime import datetime
 
-from typing import Optional
 from pydantic import BaseModel, ConfigDict
-
-from api_v1.team.scheme import Team
-from api_v1.tournament.scheme import Tournament
 
 
 class MatchBase(BaseModel):
-    first_team: Optional[Team] = None
-    second_team: Optional[Team] = None
-    description: Optional[str] = None
-    tournament: Tournament = ...
-    date: datetime = ...
+    first_team_id: int
+    second_team_id: int
+    description: str
+    tournament_id: int
+    date: datetime
 
 
 class MatchCreate(MatchBase):
@@ -29,4 +25,4 @@ class MatchUpdatePartial(MatchCreate):
 
 class Match(MatchBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int = ...
+    id: int
