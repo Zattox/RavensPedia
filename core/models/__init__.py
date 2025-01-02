@@ -1,3 +1,4 @@
+# Data for export
 __all__ = (
     "Base",
     "DatabaseHelper",

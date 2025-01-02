@@ -7,11 +7,13 @@ from api_v1.match import crud
 from core.models import db_helper
 
 
+# A function for get a match from the database by id
 async def get_match_by_id(
     match_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     match = await crud.get_match(session=session, match_id=match_id)
+    # If such an id does not exist, then throw an exception.
     if match is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

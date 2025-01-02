@@ -8,6 +8,7 @@ from core.models import db_helper
 router = APIRouter(tags=["Matches"])
 
 
+# A view to get all the matches from the database
 @router.get("/", response_model=list[Match])
 async def get_matches(
     session: AsyncSession = Depends(db_helper.session_dependency),
@@ -15,6 +16,15 @@ async def get_matches(
     return await crud.get_matches(session=session)
 
 
+# A view for getting a match by its id from the database
+@router.get("/{match_id}/", response_model=Match)
+async def get_match(
+    match: Match = Depends(dependencies.get_match_by_id),
+):
+    return match
+
+
+# A view for create a match in the database
 @router.post("/", response_model=Match, status_code=status.HTTP_201_CREATED)
 async def create_match(
     match_in: MatchCreate,
@@ -23,13 +33,7 @@ async def create_match(
     return await crud.create_match(session=session, match_in=match_in)
 
 
-@router.get("/{match_id}/", response_model=Match)
-async def get_match(
-    match: Match = Depends(dependencies.get_match_by_id),
-):
-    return match
-
-
+# A view for partial or full update a match in the database
 @router.patch("/{match_id}/")
 async def update_match(
     match_update: MatchUpdatePartial,
@@ -43,6 +47,7 @@ async def update_match(
     )
 
 
+# A view for delete a match from the database
 @router.delete("/{match_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
     match: Match = Depends(dependencies.get_match_by_id),
