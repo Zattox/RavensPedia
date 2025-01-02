@@ -6,7 +6,7 @@ from core.models import Match
 from api_v1.match.scheme import MatchCreate, MatchUpdatePartial
 
 
-# A function to get all the matches from the database
+# A function to get all the Matches from the database
 async def get_matches(session: AsyncSession) -> list[Match]:
     statement = select(Match).order_by(Match.id)
     result: Result = await session.execute(statement)
@@ -14,7 +14,7 @@ async def get_matches(session: AsyncSession) -> list[Match]:
     return list(matches)
 
 
-# A function for getting a match by its id from the database
+# A function for getting a Match by its id from the database
 async def get_match(
     session: AsyncSession,
     match_id: int,
@@ -22,7 +22,7 @@ async def get_match(
     return await session.get(Match, match_id)
 
 
-# A function for create a match in the database
+# A function for create a Match in the database
 async def create_match(
     session: AsyncSession,
     match_in: MatchCreate,
@@ -36,7 +36,7 @@ async def create_match(
     return match
 
 
-# A function for partial update a match in the database
+# A function for partial update a Match in the database
 async def update_match_partial(
     session: AsyncSession,
     match: Match,
@@ -48,7 +48,7 @@ async def update_match_partial(
     return match
 
 
-# A function for delete a match from the database
+# A function for delete a Match from the database
 async def delete_match(
     session: AsyncSession,
     match: Match,

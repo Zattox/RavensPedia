@@ -5,10 +5,10 @@ from pydantic import BaseModel, ConfigDict
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):
-    first_team_id: int  # ID of the first participant of the match
-    second_team_id: int  # ID of the second participant of the match
-    description: str  # Additional information about the match
-    tournament_id: int  # ID of the tournament in which the match is being played
+    first_team_id: int  # ID of the first participant of the Match
+    second_team_id: int  # ID of the second participant of the Match
+    description: str  # Additional information about the Match
+    tournament_id: int  # ID of the tournament in which the Match is being played
     date: datetime  # Match start date
 
 
