@@ -1,7 +1,7 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Path
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends, HTTPException, status, Path
 
 from api_v1.match import crud
 from core.models import db_helper

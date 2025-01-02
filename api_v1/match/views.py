@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from .scheme import Match, MatchCreate, MatchUpdatePartial
 from core.models import db_helper
+from .scheme import Match, MatchCreate, MatchUpdatePartial
 
 router = APIRouter(tags=["Matches"])
 

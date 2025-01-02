@@ -1,8 +1,7 @@
-from datetime import datetime
-
-from sqlalchemy.orm import Mapped
-
 from .base import Base
+
+from datetime import datetime
+from sqlalchemy.orm import Mapped
 
 
 class Match(Base):

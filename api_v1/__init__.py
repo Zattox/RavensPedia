@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from .player.views import router as player_router
 from .team.views import router as team_router
 from .match.views import router as match_router
+from .player.views import router as player_router
 from .tournament.views import router as tournament_router
 
 router = APIRouter()

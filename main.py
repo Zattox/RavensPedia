@@ -1,8 +1,9 @@
 import uvicorn
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from core.models import Base, db_helper
+from contextlib import asynccontextmanager
+
 from api_v1 import router as router_v1
+from core.models import Base, db_helper
 
 
 # Function for configuring the application (creating a database)
