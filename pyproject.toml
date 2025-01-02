@@ -15,6 +15,7 @@ sqlalchemy = { extras = ["asyncio"], version = ">2.0.25" }
 aiosqlite = "^0.20.0"
 pydantic-settings = ">2.1.0"
 alembic = ">1.13.1"
+sqlalchemy-utils = "^0.41.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
