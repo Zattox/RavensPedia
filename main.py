@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from api_v1 import router as router_v1
-from core.models import Base, db_helper
+from core.project_models import Base, db_helper
 
 
 # Function for configuring the application (creating a database)
