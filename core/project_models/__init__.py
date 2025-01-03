@@ -9,7 +9,7 @@ __all__ = (
     "Tournament",
 )
 
-from .base import Base
+from core.base import Base
 from .db_helper import db_helper, DatabaseHelper
 
 from .team import Team

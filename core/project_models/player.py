@@ -1,4 +1,4 @@
-from .base import Base
+from core.base import Base
 
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy_utils import ScalarListType
