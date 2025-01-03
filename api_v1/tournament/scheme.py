@@ -1,40 +1,32 @@
-from typing import Optional, List
+from typing import Union
 from pydantic import BaseModel, ConfigDict
-import importlib
-
-from api_v1.team.scheme import Team
 
 
+# The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
-    name: str
-    prize: str
-    description: Optional[str] = None
-    matches: Optional[List[dict]] = None
-    teams: Optional[List[Team]] = None
+    tournament_name: str  # The tournament name
+    prize: str  # The prize of tournament
+    description: str  # The description of the tournament
+    matches: list[int]  # The IDs of the matches the tournament participated in
+    teams: list[int]  # The IDs of the teams the tournament participated in
 
 
+# A class for create a Tournament
 class TournamentCreate(TournamentBase):
     pass
 
 
-class TournamentUpdate(TournamentBase):
-    pass
-
-
+# A class for partial update a Tournament
 class TournamentUpdatePartial(TournamentCreate):
-    pass
+    tournament_name: Union[str | None] = None
+    prize: Union[str | None] = None
+    description: Union[str | None] = None
+    matches: Union[list[int] | None] = None
+    teams: Union[list[int] | None] = None
 
 
+# The main class for work with a Tournament
 class Tournament(TournamentBase):
+    # Convert objects from sqlalchemy to pydantic objects
     model_config = ConfigDict(from_attributes=True)
-    id: int = ...
-
-    def add_team(self, team_data):
-        Team = importlib.import_module("api_v1.team.scheme").Player
-        team = Team(**team_data)
-        self.teams.append(team)
-
-    def add_match(self, match_data):
-        Match = importlib.import_module("api_v1.match.scheme").Match
-        match = Match(**match_data)
-        self.matches.append(match)
+    id: int  # Tournament id in the database
