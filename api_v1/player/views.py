@@ -49,7 +49,7 @@ async def update_player(
 
 # A view for delete a player from the database
 @router.delete("/{player_id}/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(
+async def delete_player(
     player: Player = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
