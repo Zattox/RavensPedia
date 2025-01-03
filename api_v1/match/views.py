@@ -49,7 +49,7 @@ async def update_match(
 
 # A view for delete a match from the database
 @router.delete("/{match_id}/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(
+async def delete_match(
     match: Match = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
