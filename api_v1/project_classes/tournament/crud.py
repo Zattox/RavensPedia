@@ -2,8 +2,11 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import Tournament
-from api_v1.tournament.scheme import TournamentCreate, TournamentUpdatePartial
+from core.project_models import Tournament
+from api_v1.project_classes.tournament.scheme import (
+    TournamentCreate,
+    TournamentUpdatePartial,
+)
 
 
 # A function to get all the Tournaments from the database

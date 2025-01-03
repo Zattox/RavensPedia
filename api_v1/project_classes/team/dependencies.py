@@ -3,20 +3,20 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
 
-from api_v1.player import crud
-from core.models import db_helper
+from api_v1.project_classes.team import crud
+from core.project_models import db_helper
 
 
-# A function for get a player from the database by id
-async def get_player_by_id(
-    player_id: Annotated[int, Path],
+# A function for get a Team from the database by id
+async def get_team_by_id(
+    team_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    player = await crud.get_player(session=session, player_id=player_id)
+    team = await crud.get_team(session=session, team_id=team_id)
     # If such an id does not exist, then throw an exception.
-    if player is None:
+    if team is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"player {player_id} not found",
+            detail=f"team {team_id} not found",
         )
-    return player
+    return team
