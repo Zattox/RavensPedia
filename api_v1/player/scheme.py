@@ -1,15 +1,15 @@
 from typing import Union
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy_utils import ScalarListType
 
 
 # The base class for the Player (without id)
 class PlayerBase(BaseModel):
-    nickname: str
-    name: str
-    surname: str
-    team_id: int
-    matches: list[int]
+    nickname: str  # The player's game name
+    name: str  # The player's real name
+    surname: str  # The player's real surname
+    team_id: int  # The ID of the player's current team
+    matches: list[int]  # The IDs of the matches the player participated in
+    tournaments: list[int]  # The IDs of the tournaments the team participated in
 
 
 # A class for create a Player
@@ -24,6 +24,7 @@ class PlayerUpdatePartial(PlayerCreate):
     surname: Union[str | None] = None
     team_id: Union[int | None] = None
     matches: Union[list[int] | None] = None
+    tournaments: Union[list[int] | None] = None
 
 
 # The main class for work with a Player

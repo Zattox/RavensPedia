@@ -13,5 +13,7 @@ class Player(Base):
     surname: Mapped[str]
     # The ID of the player's current team
     team_id: Mapped[int]
-    # The ID's of the matches the player participated in
+    # The IDs of the matches the player participated in
     matches: Mapped[list[int]] = mapped_column(ScalarListType(int))
+    # The IDs of the tournaments the team participated in
+    tournaments: Mapped[list[int]] = mapped_column(ScalarListType(int))
