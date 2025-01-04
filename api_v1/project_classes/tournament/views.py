@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
 from core.project_models import db_helper
-from .scheme import Tournament, TournamentCreate, TournamentUpdatePartial
+from .schemes import Tournament, TournamentCreate, TournamentUpdatePartial
 
 router = APIRouter(tags=["Tournaments"])
 

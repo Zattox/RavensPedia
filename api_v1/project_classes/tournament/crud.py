@@ -3,7 +3,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.project_models import Tournament
-from api_v1.project_classes.tournament.scheme import (
+from api_v1.project_classes.tournament.schemes import (
     TournamentCreate,
     TournamentUpdatePartial,
 )

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
 from core.project_models import db_helper
-from .scheme import Match, MatchCreate, MatchUpdatePartial
+from .schemes import Match, MatchCreate, MatchUpdatePartial
 
 router = APIRouter(tags=["Matches"])
 
