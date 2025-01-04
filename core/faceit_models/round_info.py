@@ -1,8 +1,15 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy_utils import ScalarListType
 
-from .round_stats import RoundStats
 from .team_info import TeamInfo
+
+
+class RoundStats:
+    Score: Mapped[str]
+    Map: Mapped[str]
+    Rounds: Mapped[int]
+    Region: Mapped[str]
+    Winner: Mapped[str]
 
 
 class RoundInfo:
