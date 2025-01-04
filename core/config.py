@@ -1,5 +1,10 @@
+import os
+from dotenv import load_dotenv
+
 from pathlib import Path
 from pydantic_settings import BaseSettings
+
+load_dotenv()
 
 # Find the project folder
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,5 +17,12 @@ class Settings(BaseSettings):
     db_echo: bool = False
 
 
+class FaceitSettings:
+    faceit_base_url = os.getenv("FACEIT_BASE_URL")
+    faceit_api_key = os.getenv("FACEIT_API_KEY")
+
+
 # Init class Settings
 settings = Settings()
+# Init class FaceitSettings
+faceit_settings = FaceitSettings()
