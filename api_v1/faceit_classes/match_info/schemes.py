@@ -13,11 +13,6 @@ class MatchInfoCreate(MatchInfoBase):
     pass
 
 
-class MatchInfoUpdatePartial(MatchInfoBase):
-    faceit_match_id: Union[str, None] = None
-    rounds: Union[list[RoundInfo], None] = None
-
-
 class MatchInfo(MatchInfoBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
