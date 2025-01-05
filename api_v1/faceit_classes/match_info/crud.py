@@ -33,6 +33,17 @@ async def get_matches_info(session: AsyncSession) -> list[MatchInfo]:
     return list(matches)
 
 
+async def update_match_info(
+    session: AsyncSession,
+    match_info: MatchInfo,
+    match_info_update: MatchInfo,
+) -> MatchInfo:
+    for name, value in match_info_update.model_dump().items():
+        setattr(match_info, name, value)
+    await session.commit()  # Make changes to the database
+    return match_info
+
+
 # A function for delete a Match from the database
 async def delete_match_info(
     session: AsyncSession,

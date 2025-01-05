@@ -36,6 +36,19 @@ async def get_match_info(
     return match_info
 
 
+@router.put("/{match_info_id}/", response_model=MatchInfo)
+async def update_match_info(
+    match_info_update: MatchInfo = Depends(dependencies.get_data_from_faceit),
+    match_info: MatchInfo = Depends(dependencies.get_match_info_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    return await crud.update_match_info(
+        session=session,
+        match_info=match_info,
+        match_info_update=match_info_update,
+    )
+
+
 # A view for delete a match from the database
 @router.delete("/{match_info_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_match_info(
