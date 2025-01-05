@@ -14,7 +14,7 @@ class MatchInfoCreate(MatchInfoBase):
 
 
 class MatchInfoUpdatePartial(MatchInfoBase):
-    address: Union[str, None] = None
+    faceit_match_id: Union[str, None] = None
     rounds: Union[list[RoundInfo], None] = None
 
 
