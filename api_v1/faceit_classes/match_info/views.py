@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
 from core.project_models import db_helper
-from .schemes import MatchInfo
-from core.faceit_models.round_info import RoundInfo
+from .schemes import MatchInfo, MatchInfoUpdate
+from core.faceit_models.round_info import RoundInfo, RoundStats
 
 router = APIRouter(tags=["Matches Info"])
 
@@ -37,12 +37,16 @@ async def get_match_info(
     return match_info
 
 
-@router.put("/{match_info_id}/", response_model=MatchInfo)
+@router.put("/{match_info_id}/")
 async def update_match_info(
-    match_info_update: MatchInfo = Depends(dependencies.get_data_from_faceit),
+    data: list[RoundInfo] = Depends(dependencies.get_data_from_faceit),
     match_info: MatchInfo = Depends(dependencies.get_match_info_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
+    match_info_update: MatchInfoUpdate = MatchInfoUpdate(
+        faceit_match_id=data[0].match_id,
+        rounds=data,
+    )
     return await crud.update_match_info(
         session=session,
         match_info=match_info,

@@ -13,6 +13,10 @@ class MatchInfoCreate(MatchInfoBase):
     pass
 
 
+class MatchInfoUpdate(MatchInfoBase):
+    pass
+
+
 class MatchInfo(MatchInfoBase):
     model_config = ConfigDict(from_attributes=True)
     id: int

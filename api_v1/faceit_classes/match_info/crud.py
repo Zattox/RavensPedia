@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api_v1.faceit_classes.match_info.schemes import MatchInfoUpdate
 from core.faceit_models import MatchInfo
 from core.faceit_models.round_info import RoundInfo
 
@@ -41,7 +42,7 @@ async def get_matches_info(session: AsyncSession) -> list[MatchInfo]:
 async def update_match_info(
     session: AsyncSession,
     match_info: MatchInfo,
-    match_info_update: MatchInfo,
+    match_info_update: MatchInfoUpdate,
 ) -> MatchInfo:
     for name, value in match_info_update.model_dump().items():
         setattr(match_info, name, value)
