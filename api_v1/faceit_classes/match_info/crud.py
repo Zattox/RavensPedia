@@ -32,7 +32,7 @@ async def get_match_info(
 
 
 async def get_matches_info(session: AsyncSession) -> list[MatchInfo]:
-    statement = select(MatchInfo).order_by(MatchInfo.faceit_match_id)
+    statement = select(MatchInfo).order_by(MatchInfo.id)
     result: Result = await session.execute(statement)
     matches = result.scalars().all()
     return list(matches)
