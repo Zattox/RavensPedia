@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud, dependencies
 from core.project_models import db_helper
 from .schemes import MatchInfo
+from core.faceit_models.round_info import RoundInfo
 
 router = APIRouter(tags=["Matches Info"])
 
@@ -11,12 +12,12 @@ router = APIRouter(tags=["Matches Info"])
 # A view for create a match_info in the database
 @router.post("/", response_model=MatchInfo, status_code=status.HTTP_201_CREATED)
 async def create_match_info(
-    match_info: MatchInfo = Depends(dependencies.get_data_from_faceit),
+    data: list[RoundInfo] = Depends(dependencies.get_data_from_faceit),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     return await crud.create_match_info(
         session=session,
-        match_info_create=match_info,
+        data=data,
     )
 
 

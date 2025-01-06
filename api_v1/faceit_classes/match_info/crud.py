@@ -4,18 +4,23 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.faceit_models import MatchInfo
+from core.faceit_models.round_info import RoundInfo
 
 
 # A function for create a MatchInfo in the database
 async def create_match_info(
     session: AsyncSession,
-    match_info_create: MatchInfo,
+    data: list[RoundInfo],
 ) -> MatchInfo:
-    session.add(match_info_create)
+    match_info = MatchInfo(
+        faceit_match_id=data[0].match_id,
+        rounds=data,
+    )
+    session.add(match_info)
     await session.commit()  # Make changes to the database
     # It is necessary if there are changes on the database side
     # await session.refresh(match_info_create)
-    return match_info_create
+    return match_info
 
 
 # A function for getting a Match by its id from the database

@@ -9,6 +9,7 @@ from core.project_models import db_helper
 from .funcs import json_to_round_info
 from core.config import faceit_settings
 from .schemes import MatchInfo
+from core.faceit_models.round_info import RoundInfo
 
 
 # A function for get a match_info from the database by id
@@ -28,7 +29,7 @@ async def get_match_info_by_id(
 
 async def get_data_from_faceit(
     faceit_match_id: str,
-) -> MatchInfo:
+) -> list[RoundInfo]:
     headers = {
         "Accept": "application/json",
         "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
@@ -37,8 +38,4 @@ async def get_data_from_faceit(
         f"{faceit_settings.faceit_base_url}/{faceit_match_id}/stats", headers=headers
     )
     data = json_to_round_info(response.json())
-    result: MatchInfo = MatchInfo(
-        faceit_match_id=faceit_match_id,
-        rounds=data,
-    )
-    return result
+    return data
