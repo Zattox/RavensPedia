@@ -10,16 +10,17 @@ if TYPE_CHECKING:
 
 class Match(Base):
     __tablename__ = "matches"
+
     # ID of the first participant of the match
     first_team_id: Mapped[int]
     # ID of the second participant of the match
     second_team_id: Mapped[int]
     # Additional information about the match
     description: Mapped[str] = mapped_column(String(255))
+
     # ID of the tournament in which the match is being played
-    tournament_id: Mapped[int] = mapped_column(
-        ForeignKey("tournaments.id"),
-    )
+    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
     tournament: Mapped["Tournament"] = relationship(back_populates="matches")
+
     # Match start date
     date: Mapped[datetime]
