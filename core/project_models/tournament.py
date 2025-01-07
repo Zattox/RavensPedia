@@ -7,7 +7,7 @@ from sqlalchemy_utils import ScalarListType
 
 class Tournament(Base):
     # The tournament name
-    tournament_name: Mapped[str] = mapped_column(String(100))
+    tournament_name: Mapped[str] = mapped_column(String(100), unique=True)
     # The prize of tournament
     prize: Mapped[str] = mapped_column(String(50))
     # The description of the tournament
