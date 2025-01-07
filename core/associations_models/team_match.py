@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from core.base import Base
 
 
-class TeamMatchAssociationTable(Base):
+class TeamMatchAssociation(Base):
     __tablename__ = "team_match_association"
     __table_args__ = (
         UniqueConstraint("team_id", "match_id", name="index_unique_team_match"),

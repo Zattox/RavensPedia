@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from core.base import Base
 
 
-class PlayerTournamentAssociationTable(Base):
+class PlayerTournamentAssociation(Base):
     __tablename__ = "player_tournament_association"
     __table_args__ = (
         UniqueConstraint(

@@ -1,11 +1,11 @@
 __all__ = (
-    "TeamTournamentAssociationTable",
-    "TeamMatchAssociationTable",
-    "PlayerTournamentAssociationTable",
-    "PlayerMatchAssociationTable",
+    "TeamTournamentAssociation",
+    "TeamMatchAssociation",
+    "PlayerTournamentAssociation",
+    "PlayerMatchAssociation",
 )
 
-from .team_tournament import TeamTournamentAssociationTable
-from .team_match import TeamMatchAssociationTable
-from .player_tournament import PlayerTournamentAssociationTable
-from .player_match import PlayerMatchAssociationTable
+from .team_tournament import TeamTournamentAssociation
+from .team_match import TeamMatchAssociation
+from .player_tournament import PlayerTournamentAssociation
+from .player_match import PlayerMatchAssociation
