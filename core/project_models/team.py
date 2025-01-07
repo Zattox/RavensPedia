@@ -1,7 +1,7 @@
 from core import Base
 from core.associations_models import (
-    TeamTournamentAssociationTable,
-    TeamMatchAssociationTable,
+    TeamTournamentAssociation,
+    TeamMatchAssociation,
 )
 
 from typing import TYPE_CHECKING
