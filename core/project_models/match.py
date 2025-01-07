@@ -1,7 +1,8 @@
 from core.base import Base
 
 from datetime import datetime
-from sqlalchemy.orm import Mapped
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Match(Base):
@@ -11,7 +12,7 @@ class Match(Base):
     # ID of the second participant of the match
     second_team_id: Mapped[int]
     # Additional information about the match
-    description: Mapped[str]
+    description: Mapped[str] = mapped_column(String(255))
     # ID of the tournament in which the match is being played
     tournament_id: Mapped[int]
     # Match start date
