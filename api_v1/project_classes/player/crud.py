@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.project_models import Player
-from api_v1.project_classes.player.schemes import PlayerCreate, PlayerUpdatePartial
+from core import Player
+from .schemes import PlayerCreate, PlayerUpdatePartial
 
 
 # A function to get all the Players from the database

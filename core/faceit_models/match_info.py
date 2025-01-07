@@ -1,7 +1,7 @@
 from sqlalchemy import PickleType
 from sqlalchemy.orm import mapped_column, Mapped
 
-from core.base import Base
+from core import Base
 from .round_info import RoundInfo
 
 

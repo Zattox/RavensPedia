@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.project_models import Match
-from api_v1.project_classes.match.schemes import MatchCreate, MatchUpdatePartial
+from core import Match
+from .schemes import MatchCreate, MatchUpdatePartial
 
 
 # A function to get all the Matches from the database

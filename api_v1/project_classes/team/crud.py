@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.project_models import Team
-from api_v1.project_classes.team.schemes import TeamCreate, TeamUpdatePartial
+from core import Team
+from .schemes import TeamCreate, TeamUpdatePartial
 
 
 # A function to get all the Teams from the database

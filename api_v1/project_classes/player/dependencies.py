@@ -3,8 +3,8 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
 
-from api_v1.project_classes.player import crud
-from core.project_models import db_helper
+from . import crud
+from core import db_helper
 
 
 # A function for get a player from the database by id

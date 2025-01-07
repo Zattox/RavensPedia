@@ -1,6 +1,6 @@
 from typing import Union
 
-from core.faceit_models.round_info import RoundInfo
+from core.faceit_models import RoundInfo
 from pydantic import BaseModel, ConfigDict
 
 

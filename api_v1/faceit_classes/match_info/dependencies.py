@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
 
 from api_v1.faceit_classes.match_info import crud
-from core.project_models import db_helper
+from core import db_helper
 from .funcs import json_to_round_info
 from core.config import faceit_settings
 from .schemes import MatchInfo
-from core.faceit_models.round_info import RoundInfo
+from core.faceit_models import RoundInfo
 
 
 # A function for get a match_info from the database by id

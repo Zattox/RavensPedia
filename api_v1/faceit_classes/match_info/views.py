@@ -2,9 +2,9 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from core.project_models import db_helper
+from core import db_helper
 from .schemes import MatchInfo, MatchInfoUpdate
-from core.faceit_models.round_info import RoundInfo, RoundStats
+from core.faceit_models import RoundInfo, RoundStats
 
 router = APIRouter(tags=["Matches Info"])
 

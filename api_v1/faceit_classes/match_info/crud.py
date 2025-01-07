@@ -4,8 +4,8 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api_v1.faceit_classes.match_info.schemes import MatchInfoUpdate
-from core.faceit_models import MatchInfo
-from core.faceit_models.round_info import RoundInfo
+from core import MatchInfo
+from core.faceit_models import RoundInfo
 
 
 # A function for create a MatchInfo in the database

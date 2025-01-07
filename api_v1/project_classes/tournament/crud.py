@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.project_models import Tournament
-from api_v1.project_classes.tournament.schemes import (
+from core import Tournament
+from .schemes import (
     TournamentCreate,
     TournamentUpdatePartial,
 )
