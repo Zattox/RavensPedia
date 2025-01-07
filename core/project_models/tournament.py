@@ -1,7 +1,7 @@
 from core import Base
 from core.associations_models import (
-    team_tournament_association_table,
-    player_tournament_association_table,
+    TeamTournamentAssociationTable,
+    PlayerTournamentAssociationTable,
 )
 
 from typing import TYPE_CHECKING
@@ -27,11 +27,11 @@ class Tournament(Base):
 
     # The IDs of the teams the tournament participated in
     teams: Mapped[list["Team"]] = relationship(
-        secondary=team_tournament_association_table,
+        secondary="team_tournament_association",
         back_populates="tournaments",
     )
 
     players: Mapped[list["Player"]] = relationship(
-        secondary=player_tournament_association_table,
+        secondary="player_tournament_association",
         back_populates="tournaments",
     )

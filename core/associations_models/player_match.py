@@ -1,12 +1,15 @@
-from sqlalchemy import Table, ForeignKey, Column, Integer, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
 from core.base import Base
 
-player_match_association_table = Table(
-    "player_match_association",
-    Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("player_id", ForeignKey("players.id"), nullable=False),
-    Column("match_id", ForeignKey("matches.id"), nullable=False),
-    UniqueConstraint("player_id", "match_id", name="index_unique_player_match"),
-)
+
+class PlayerMatchAssociationTable(Base):
+    __tablename__ = "player_match_association"
+    __table_args__ = (
+        UniqueConstraint("player_id", "match_id", name="index_unique_player_match"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    player_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
+    match_id: Mapped[int] = mapped_column(ForeignKey("matches.id"))

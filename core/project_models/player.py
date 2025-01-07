@@ -1,13 +1,12 @@
 from core import Base
 from core.associations_models import (
-    player_tournament_association_table,
-    player_match_association_table,
+    PlayerTournamentAssociationTable,
+    PlayerMatchAssociationTable,
 )
 
 from typing import TYPE_CHECKING
 from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy_utils import ScalarListType
 
 if TYPE_CHECKING:
     from .team import Team
@@ -32,12 +31,12 @@ class Player(Base):
 
     # The IDs of the matches the player participated in
     matches: Mapped[list["Match"]] = relationship(
-        secondary=player_match_association_table,
+        secondary="player_match_association",
         back_populates="players",
     )
 
     # The IDs of the tournaments the team participated in
     tournaments: Mapped[list["Tournament"]] = relationship(
-        secondary=player_tournament_association_table,
+        secondary="player_tournament_association",
         back_populates="players",
     )
