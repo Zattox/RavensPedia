@@ -90,18 +90,6 @@ async def create_team(
     )
 
 
-# # A function for partial update a Team in the database
-# async def update_team_partial(
-#     session: AsyncSession,
-#     team: Team,
-#     team_update: TeamUpdatePartial,
-# ) -> Team:
-#     for name, value in team_update.model_dump(exclude_unset=True).items():
-#         setattr(team, name, value)
-#     await session.commit()  # Make changes to the database
-#     return team
-
-
 # A function for delete a Team from the database
 async def delete_team(
     session: AsyncSession,
@@ -109,3 +97,19 @@ async def delete_team(
 ) -> None:
     await session.delete(team)
     await session.commit()  # Make changes to the database
+
+
+# A function for partial update a Team in the database
+async def update_general_team_info(
+    session: AsyncSession,
+    team: TableTeam,
+    new_team_name: str | None = None,
+    new_description: str | None = None,
+) -> ResponseTeam:
+    if new_team_name is not None:
+        setattr(team, "team_name", new_team_name)
+    if new_description is not None:
+        setattr(team, "description", new_description)
+    await session.commit()  # Make changes to the database
+
+    return await table_to_response_form(team)
