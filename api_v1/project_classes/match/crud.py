@@ -61,30 +61,43 @@ async def get_match(
     return table_to_response_form(table_match)
 
 
-# A function for create a Match in the database
 async def create_match(
     session: AsyncSession,
-    match_in: MatchCreate,
-) -> Match:
-    # Turning it into a Match class without Mapped fields
-    match = Match(**match_in.model_dump())
-    session.add(match)
-    await session.commit()  # Make changes to the database
-    # It is necessary if there are changes on the database side
-    # await session.refresh(match)
-    return match
+    tournament_name: str,
+    date: datetime,
+    description: Union[str | None] = None,
+    team_name_1: Union[str | None] = None,
+    team_name_2: Union[str | None] = None,
+) -> ResponseMatch:
+    tournament_of_match: TableTournament = await session.scalar(
+        select(TableTournament)
+        .where(TableTournament.tournament_name == tournament_name)
+        .options(
+            selectinload(TableTournament.players),
+            selectinload(TableTournament.matches),
+            selectinload(TableTournament.teams),
+        ),
+    )
+    team1 = await get_team_by_name(team_name_1, session=session)
+    team2 = await get_team_by_name(team_name_2, session=session)
+    table_match = TableMatch(
+        tournament_id=tournament_of_match.id,
+        tournament=tournament_of_match,
+        date=date,
+        description=description,
+    )
+    if team1 is not None:
+        table_match.teams.append(team1)
+        for player in team1.players:
+            table_match.players.append(player)
+    if team2 is not None:
+        table_match.teams.append(team2)
+        for player in team2.players:
+            table_match.players.append(player)
 
-
-# A function for partial update a Match in the database
-async def update_match_partial(
-    session: AsyncSession,
-    match: Match,
-    match_update: MatchUpdatePartial,
-) -> Match:
-    for name, value in match_update.model_dump(exclude_unset=True).items():
-        setattr(match, name, value)
+    session.add(table_match)
     await session.commit()  # Make changes to the database
-    return match
+    return table_to_response_form(table_match)
 
 
 # A function for delete a Match from the database
