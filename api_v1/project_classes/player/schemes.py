@@ -1,34 +1,20 @@
-from typing import Union
-from pydantic import BaseModel, ConfigDict
+from typing import Optional, List
+from pydantic import BaseModel
 
 
 # The base class for the Player (without id)
 class PlayerBase(BaseModel):
     nickname: str  # The player's game name
-    name: str  # The player's real name
-    surname: str  # The player's real surname
-    team_id: int  # The ID of the player's current team
-    matches: list[int]  # The IDs of the matches the player participated in
-    tournaments: list[int]  # The IDs of the tournaments the team participated in
-
-
-# A class for create a Player
-class PlayerCreate(PlayerBase):
-    pass
-
-
-# A class for partial update a Player
-class PlayerUpdatePartial(PlayerCreate):
-    nickname: Union[str | None] = None
-    name: Union[str | None] = None
-    surname: Union[str | None] = None
-    team_id: Union[int | None] = None
-    matches: Union[list[int] | None] = None
-    tournaments: Union[list[int] | None] = None
+    name: Optional[str]  # The player's real name
+    surname: Optional[str]  # The player's real surname
+    team: Optional[str]  # The ID of the player's current team
+    matches_id: List[int]  # The IDs of the matches the player participated in
+    tournaments: List[str]  # The IDs of the tournaments the team participated in
 
 
 # The main class for work with a Player
 class Player(PlayerBase):
-    # Convert objects from sqlalchemy to pydantic objects
-    model_config = ConfigDict(from_attributes=True)
     id: int  # Player id in the database
+
+    class Config:
+        from_attributes = True  # Enables compatibility with ORM models

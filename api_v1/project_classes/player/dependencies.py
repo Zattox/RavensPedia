@@ -1,22 +1,35 @@
 from typing import Annotated
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
+from sqlalchemy.orm import selectinload
 
 from . import crud
 from core import db_helper
+from core import Player as TablePlayer
 
 
-# A function for get a player from the database by id
+# A function for get a Tournament from the database by id
 async def get_player_by_id(
     player_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
-    player = await crud.get_player(session=session, player_id=player_id)
+) -> TablePlayer:
+    table_tournament = await session.scalar(
+        select(TablePlayer)
+        .where(TablePlayer.id == player_id)
+        .options(
+            selectinload(TablePlayer.matches),
+            selectinload(TablePlayer.tournaments),
+            selectinload(TablePlayer.team),
+        ),
+    )
+
     # If such an id does not exist, then throw an exception.
-    if player is None:
+    if table_tournament is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"player {player_id} not found",
+            detail=f"Player {player_id} not found",
         )
-    return player
+
+    return table_tournament
