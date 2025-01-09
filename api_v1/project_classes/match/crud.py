@@ -26,12 +26,6 @@ def table_to_response_form(
         players=[player.nickname for player in table_match.players],
     )
 
-# A function to get all the Matches from the database
-async def get_matches(session: AsyncSession) -> list[Match]:
-    statement = select(Match).order_by(Match.id)
-    result: Result = await session.execute(statement)
-    matches = result.scalars().all()
-    return list(matches)
 
 async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
     stmt = (
@@ -103,7 +97,7 @@ async def create_match(
 # A function for delete a Match from the database
 async def delete_match(
     session: AsyncSession,
-    match: Match,
+    match: TableMatch,
 ) -> None:
     await session.delete(match)
     await session.commit()  # Make changes to the database
