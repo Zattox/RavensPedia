@@ -1,10 +1,30 @@
+from datetime import datetime
+
+from typing import Union
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from core import Match
-from .schemes import MatchCreate, MatchUpdatePartial
+import api_v1.project_classes.team.dependencies
+from core import Match as TableMatch
+from .dependencies import get_match_by_id
+from .schemes import Match as ResponseMatch
+from core import Tournament as TableTournament
+from api_v1.project_classes.team.dependencies import get_team_by_name
 
+
+def table_to_response_form(
+    table_match: TableMatch,
+) -> ResponseMatch:
+    return ResponseMatch(
+        id=table_match.id,
+        tournament=table_match.tournament.tournament_name,
+        description=table_match.description,
+        date=table_match.date,
+        teams=[team.team_name for team in table_match.teams],
+        players=[player.nickname for player in table_match.players],
+    )
 
 # A function to get all the Matches from the database
 async def get_matches(session: AsyncSession) -> list[Match]:
