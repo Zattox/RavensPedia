@@ -41,19 +41,20 @@ async def create_team(
     )
 
 
-#
-# # A view for partial or full update a team in the database
-# @router.patch("/{team_id}/")
-# async def update_team(
-#     team_update: TeamUpdatePartial,
-#     team: Team = Depends(dependencies.get_team_by_id),
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ):
-#     return await crud.update_team_partial(
-#         session=session,
-#         team=team,
-#         team_update=team_update,
-#     )
+# A view for partial or full update a team in the database
+@router.patch("/{team_id}/")
+async def update_general_team_info(
+    new_team_name: str | None = None,
+    new_description: str | None = None,
+    team: TableTeam = Depends(dependencies.get_team_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    return await crud.update_general_team_info(
+        session=session,
+        team=team,
+        new_team_name=new_team_name,
+        new_description=new_description,
+    )
 
 
 # A view for delete a team from the database
