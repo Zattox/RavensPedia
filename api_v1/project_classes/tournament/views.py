@@ -45,17 +45,21 @@ async def create_tournament(
 
 
 # A view for partial or full update a tournament in the database
-# @router.patch("/{tournament_id}/")
-# async def update_tournament(
-#     tournament_update: TournamentUpdatePartial,
-#     tournament: Tournament = Depends(dependencies.get_tournament_by_id),
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ):
-#     return await crud.update_tournament_partial(
-#         session=session,
-#         tournament=tournament,
-#         tournament_update=tournament_update,
-#     )
+@router.patch("/{tournament_id}/")
+async def update_tournament(
+    new_tournament_name: str | None = None,
+    new_prize: str | None = None,
+    new_description: str | None = None,
+    tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    return await crud.update_general_tournament_info(
+        session=session,
+        tournament=tournament,
+        new_tournament_name=new_tournament_name,
+        new_prize=new_prize,
+        new_description=new_description,
+    )
 
 
 # A view for delete a tournament from the database

@@ -78,18 +78,6 @@ async def create_tournament(
     )
 
 
-# # A function for partial update a Tournament in the database
-# async def update_tournament_partial(
-#     session: AsyncSession,
-#     tournament: Tournament,
-#     tournament_update: TournamentUpdatePartial,
-# ) -> Tournament:
-#     for name, value in tournament_update.model_dump(exclude_unset=True).items():
-#         setattr(tournament, name, value)
-#     await session.commit()  # Make changes to the database
-#     return tournament
-
-
 # A function for delete a Tournament from the database
 async def delete_tournament(
     session: AsyncSession,
@@ -97,3 +85,21 @@ async def delete_tournament(
 ) -> None:
     await session.delete(tournament)
     await session.commit()  # Make changes to the database
+
+
+# A function for partial update a Tournament in the database
+async def update_general_tournament_info(
+    session: AsyncSession,
+    tournament: TableTournament,
+    new_tournament_name: str | None = None,
+    new_prize: str | None = None,
+    new_description: str | None = None,
+) -> ResponseTournament:
+    if new_tournament_name is not None:
+        setattr(tournament, "tournament_name", new_tournament_name)
+    if new_prize is not None:
+        setattr(tournament, "prize", new_prize)
+    if new_description is not None:
+        setattr(tournament, "description", new_description)
+    await session.commit()  # Make changes to the database
+    return table_to_response_form(tournament)
