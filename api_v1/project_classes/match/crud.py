@@ -33,13 +33,32 @@ async def get_matches(session: AsyncSession) -> list[Match]:
     matches = result.scalars().all()
     return list(matches)
 
+async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
+    stmt = (
+        select(TableMatch)
+        .options(
+            selectinload(TableMatch.players),
+            selectinload(TableMatch.teams),
+            selectinload(TableMatch.tournament),
+        )
+        .order_by(TableMatch.id)
+    )
+    matches = await session.scalars(stmt)
+    result = []
+    for match in list(matches):
+        result.append(table_to_response_form(match))
+    return result
 
-# A function for getting a Match by its id from the database
+
 async def get_match(
     session: AsyncSession,
     match_id: int,
-) -> Match | None:
-    return await session.get(Match, match_id)
+) -> ResponseMatch | None:
+    table_match: TableMatch = await get_match_by_id(
+        match_id=match_id,
+        session=session,
+    )
+    return table_to_response_form(table_match)
 
 
 # A function for create a Match in the database
