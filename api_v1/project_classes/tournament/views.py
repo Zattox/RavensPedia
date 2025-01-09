@@ -27,12 +27,21 @@ async def get_tournament(
 
 
 # A view for create a tournament in the database
-# @router.post("/", response_model=Tournament, status_code=status.HTTP_201_CREATED)
-# async def create_tournament(
-#     tournament_in: TournamentCreate,
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ):
-#     return await crud.create_tournament(session=session, tournament_in=tournament_in)
+@router.post(
+    "/", response_model=ResponseTournament, status_code=status.HTTP_201_CREATED
+)
+async def create_tournament(
+    tournament_name: str,
+    prize: str | None = None,
+    description: str | None = None,
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    return await crud.create_tournament(
+        session=session,
+        tournament_name=tournament_name,
+        prize=prize,
+        description=description,
+    )
 
 
 # A view for partial or full update a tournament in the database

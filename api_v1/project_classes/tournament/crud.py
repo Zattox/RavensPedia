@@ -52,24 +52,30 @@ async def get_tournament(
     return table_to_response_form(table_match)
 
 
-# # A function for create a Tournament in the database
-# async def create_tournament(
-#     session: AsyncSession,
-#     tournament_name: str,
-#     prize: str | None = None,
-#     description: str | None = None,
-# ) -> ResponseTournament:
-#     # Turning it into a Tournament class without Mapped fields
-#     tournament = Tournament(
-#         tournament_name=tournament_name,
-#         prize=prize,
-#         description=description,
-#     )
-#     session.add(tournament)
-#     await session.commit()  # Make changes to the database
-#     # It is necessary if there are changes on the database side
-#     # await session.refresh(tournament)
-#     return tournament
+# A function for create a Tournament in the database
+async def create_tournament(
+    session: AsyncSession,
+    tournament_name: str,
+    prize: str | None = None,
+    description: str | None = None,
+) -> ResponseTournament:
+    # Turning it into a Tournament class without Mapped fields
+    table_tournament = TableTournament(
+        tournament_name=tournament_name,
+        prize=prize,
+        description=description,
+    )
+    session.add(table_tournament)
+    await session.commit()
+    return ResponseTournament(
+        tournament_name=table_tournament.tournament_name,
+        description=table_tournament.description,
+        prize=table_tournament.prize,
+        matches_id=[],
+        players=[],
+        teams=[],
+        id=table_tournament.id,
+    )
 
 
 # # A function for partial update a Tournament in the database
