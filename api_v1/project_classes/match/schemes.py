@@ -1,33 +1,20 @@
-from typing import Union
+from typing import Union, Optional, List
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):
-    first_team_id: int  # ID of the first participant of the Match
-    second_team_id: int  # ID of the second participant of the Match
-    description: str  # Additional information about the Match
-    tournament_id: int  # ID of the tournament in which the Match is being played
-    date: datetime  # Match start date
-
-
-# A class for create a Match
-class MatchCreate(MatchBase):
-    pass
-
-
-# A class for partial update a Match
-class MatchUpdatePartial(MatchCreate):
-    first_team_id: Union[int | None] = None
-    second_team_id: Union[int | None] = None
-    description: Union[str | None] = None
-    tournament_id: Union[int | None] = None
-    date: Union[datetime | None] = None
+    teams: list[str]
+    players: list[str]
+    description: Optional[str]
+    tournament: str
+    date: datetime
 
 
 # The main class for work with a Match
 class Match(MatchBase):
-    # Convert objects from sqlalchemy to pydantic objects
-    model_config = ConfigDict(from_attributes=True)
     id: int  # Match id in the database
+
+    class Config:
+        from_attributes = True  # Enables compatibility with ORM models
