@@ -16,7 +16,7 @@ def table_to_response_form(
         description=table_tournament.description,
         prize=table_tournament.prize,
         matches_id=[match.id for match in table_tournament.matches],
-        teams=[team.team_name for team in table_tournament.teams],
+        teams=[team.name for team in table_tournament.teams],
         players=[player.nickname for player in table_tournament.players],
     )
 

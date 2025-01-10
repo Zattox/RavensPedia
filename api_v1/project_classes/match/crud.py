@@ -19,7 +19,7 @@ def table_to_response_form(
         tournament=table_match.tournament.tournament_name,
         description=table_match.description,
         date=table_match.date,
-        teams=[team.team_name for team in table_match.teams],
+        teams=[team.name for team in table_match.teams],
         players=[player.nickname for player in table_match.players],
     )
 

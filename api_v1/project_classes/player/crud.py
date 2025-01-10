@@ -10,7 +10,7 @@ from .dependencies import get_player_by_id
 def table_to_response_form(player: TablePlayer) -> ResponsePlayer:
     team = "None"
     if player.team_id != -1:
-        team = player.team.team_name
+        team = player.team.name
     return ResponsePlayer(
         nickname=player.nickname,
         name=player.name,

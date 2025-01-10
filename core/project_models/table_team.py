@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class TableTeam(Base):
     # The team name
-    team_name: Mapped[str] = mapped_column(String(15), unique=True)
+    name: Mapped[str] = mapped_column(String(15), unique=True)
     # The description of the team
     description: Mapped[str | None] = mapped_column(String(255))
 

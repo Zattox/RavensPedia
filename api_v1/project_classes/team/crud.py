@@ -10,7 +10,7 @@ async def table_to_response_form(
     table_team: TableTeam,
 ) -> ResponseTeam:
     return ResponseTeam(
-        team_name=table_team.team_name,
+        team_name=table_team.name,
         description=table_team.description,
         players=[
             StringIntPair(name=player.nickname, id=player.id)
@@ -75,7 +75,7 @@ async def create_team(
     await session.commit()  # Make changes to the database
 
     return ResponseTeam(
-        team_name=table_team.team_name,
+        team_name=table_team.name,
         description=table_team.description,
         players=[],
         matches_id=[],
