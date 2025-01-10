@@ -3,13 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies, match_management
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
-from core import db_helper, TableMatch, TableTeam
+from core import db_helper, TableMatch, TableTeam, TablePlayer
 
 from .dependencies import get_match_by_id
+from ..player.dependencies import get_player_by_nickname
 from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Matches"])
-managment_router = APIRouter(tags=["Match Manager"])
+manager_router = APIRouter(tags=["Matches Manager"])
 
 
 # A view to get all the matches from the database
@@ -89,8 +90,8 @@ async def delete_match(
     )
 
 
-@managment_router.patch(
-    "/{match_id}",
+@manager_router.patch(
+    "/add_team/{match_id}",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -106,8 +107,8 @@ async def add_team_in_match(
     )
 
 
-@managment_router.delete(
-    "/{match_id}",
+@manager_router.delete(
+    "/delete_team/{match_id}",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -120,4 +121,38 @@ async def delete_team_from_match(
         session=session,
         match=match,
         team=team,
+    )
+
+
+@manager_router.patch(
+    "/add_player/{match_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def add_player_in_match(
+    match: TableMatch = Depends(get_match_by_id),
+    player: TablePlayer = Depends(get_player_by_nickname),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.add_player_in_match(
+        session=session,
+        match=match,
+        player=player,
+    )
+
+
+@manager_router.delete(
+    "/delete_player/{match_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_player_from_match(
+    match: TableMatch = Depends(get_match_by_id),
+    player: TablePlayer = Depends(get_player_by_nickname),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.delete_player_from_match(
+        session=session,
+        match=match,
+        player=player,
     )

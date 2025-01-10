@@ -40,7 +40,7 @@ async def get_player_by_nickname(
 ) -> TablePlayer | None:
     player = await session.scalar(
         select(TablePlayer)
-        .where(TablePlayer.name == player_nickname)
+        .where(TablePlayer.nickname == player_nickname)
         .options(
             selectinload(TablePlayer.team),
             selectinload(TablePlayer.matches),
