@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import TableTeam
-from .schemes import ResponseTeam, StringIntPair
+from .schemes import ResponseTeam
 
 
 async def table_to_response_form(
@@ -12,15 +12,9 @@ async def table_to_response_form(
     return ResponseTeam(
         team_name=table_team.name,
         description=table_team.description,
-        players=[
-            StringIntPair(name=player.nickname, id=player.id)
-            for player in table_team.players
-        ],
+        players=[player.nickname for player in table_team.players],
         matches_id=[match.id for match in table_team.matches],
-        tournaments=[
-            StringIntPair(name=tournament.name, id=tournament.id)
-            for tournament in table_team.tournaments
-        ],
+        tournaments=[tournament.name for tournament in table_team.tournaments],
         id=table_team.id,
     )
 
@@ -68,7 +62,7 @@ async def create_team(
 ) -> ResponseTeam:
     # Turning it into a Team class without Mapped fields
     table_team: TableTeam = TableTeam(
-        team_name=team_name,
+        name=team_name,
         description=description,
     )
     session.add(table_team)
