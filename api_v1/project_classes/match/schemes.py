@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):
+    max_number_of_teams: int
+    max_number_of_players: int
     teams: List[str] = []
     players: List[str] = []
     description: Union[str | None] = None
@@ -14,6 +16,8 @@ class MatchBase(BaseModel):
 
 
 class MatchCreate(BaseModel):
+    max_number_of_teams: int
+    max_number_of_players: int
     tournament: str
     date: datetime
     description: Union[str | None] = None
