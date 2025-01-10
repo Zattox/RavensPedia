@@ -3,7 +3,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from .schemes import Player as ResponsePlayer
+from .schemes import ResponsePlayer
 from .dependencies import get_player_by_id
 from core import TablePlayer
 

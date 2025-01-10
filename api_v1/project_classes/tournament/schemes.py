@@ -16,7 +16,7 @@ class TournamentBase(BaseModel):
 
 
 # The main class for work with a Tournament
-class Tournament(TournamentBase):
+class ResponseTournament(TournamentBase):
     id: int  # Tournament id in the database
 
     class Config:

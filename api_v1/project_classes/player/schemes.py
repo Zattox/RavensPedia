@@ -13,7 +13,7 @@ class PlayerBase(BaseModel):
 
 
 # The main class for work with a Player
-class Player(PlayerBase):
+class ResponsePlayer(PlayerBase):
     id: int  # Player id in the database
 
     class Config:

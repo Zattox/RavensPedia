@@ -8,7 +8,7 @@ from . import crud, dependencies
 from core import db_helper
 from core import TableMatch
 from .crud import table_to_response_form
-from .schemes import Match as ResponseMatch
+from .schemes import ResponseMatch
 
 router = APIRouter(tags=["Matches"])
 

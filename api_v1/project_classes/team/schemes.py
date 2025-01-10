@@ -1,7 +1,5 @@
-from typing import Union, Optional, List
-from pydantic import BaseModel, ConfigDict
-
-from core import Team as TableTeam
+from typing import Optional, List
+from pydantic import BaseModel
 
 from dataclasses import dataclass
 
@@ -24,7 +22,7 @@ class TeamBase(BaseModel):
 
 
 # The main class for work with a Team
-class Team(TeamBase):
+class ResponseTeam(TeamBase):
     id: int  # Team id in the database
 
     class Config:

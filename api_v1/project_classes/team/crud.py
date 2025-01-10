@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from core import TableTeam
 
-from .schemes import Team as ResponseTeam
+from .schemes import ResponseTeam
 
 from .schemes import StringIntPair
 

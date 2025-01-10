@@ -13,7 +13,7 @@ class MatchBase(BaseModel):
 
 
 # The main class for work with a Match
-class Match(MatchBase):
+class ResponseMatch(MatchBase):
     id: int  # Match id in the database
 
     class Config:

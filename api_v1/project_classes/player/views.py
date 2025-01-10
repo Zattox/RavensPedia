@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud, dependencies
 from core import db_helper
 from .crud import table_to_response_form
-from .schemes import Player as ResponsePlayer
+from .schemes import ResponsePlayer
 from core import TablePlayer
 
 router = APIRouter(tags=["Players"])

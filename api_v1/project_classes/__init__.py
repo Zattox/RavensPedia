@@ -1,12 +1,12 @@
 # Data for export
 __all__ = (
-    "Match",
-    "Player",
-    "Team",
-    "Tournament",
+    "ResponseMatch",
+    "ResponsePlayer",
+    "ResponseTeam",
+    "ResponseTournament",
 )
 
-from .team.schemes import Team
-from .match.schemes import Match
-from .player.schemes import Player
-from .tournament.schemes import Tournament
+from .team.schemes import ResponseTeam
+from .match.schemes import ResponseMatch
+from .player.schemes import ResponsePlayer
+from .tournament.schemes import ResponseTournament

@@ -9,7 +9,7 @@ from sqlalchemy.orm import selectinload
 import api_v1.project_classes.team.dependencies
 from core import TableMatch
 from .dependencies import get_match_by_id
-from .schemes import Match as ResponseMatch
+from .schemes import ResponseMatch
 from core import TableTournament as TableTournament
 from api_v1.project_classes.team.dependencies import get_team_by_name
 

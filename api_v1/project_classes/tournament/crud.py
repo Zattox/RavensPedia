@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from core import TableTournament
-from .schemes import Tournament as ResponseTournament
+from .schemes import ResponseTournament
 from .dependencies import get_tournament_by_id
 
 

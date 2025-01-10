@@ -5,7 +5,7 @@ from . import crud, dependencies
 from core import db_helper
 
 from core import TableTeam
-from .schemes import Team as ResponseTeam
+from .schemes import ResponseTeam
 
 router = APIRouter(tags=["Teams"])
 
