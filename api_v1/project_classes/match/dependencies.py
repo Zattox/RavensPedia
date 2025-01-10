@@ -13,7 +13,7 @@ async def get_match_by_id(
     match_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> TableMatch:
-    table_match = await session.scalar(
+    match = await session.scalar(
         select(TableMatch)
         .where(TableMatch.id == match_id)
         .options(
@@ -24,10 +24,10 @@ async def get_match_by_id(
     )
 
     # If such an id does not exist, then throw an exception.
-    if table_match is None:
+    if match is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Match {match_id} not found",
         )
 
-    return table_match
+    return match

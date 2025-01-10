@@ -1,3 +1,4 @@
+from msilib import Table
 from typing import Union
 from datetime import datetime
 
@@ -5,23 +6,28 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemes import ResponseMatch
+from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
 from .dependencies import get_match_by_id
 from core import TableMatch, TableTournament
-from api_v1.project_classes.team.dependencies import get_team_by_name
+from ..tournament.dependencies import get_tournament_by_name
 
 
 def table_to_response_form(
-    table_match: TableMatch,
+    match: TableMatch,
+    is_create: bool = False,
 ) -> ResponseMatch:
-    return ResponseMatch(
-        id=table_match.id,
-        tournament=table_match.tournament.name,
-        description=table_match.description,
-        date=table_match.date,
-        teams=[team.name for team in table_match.teams],
-        players=[player.nickname for player in table_match.players],
+    result = ResponseMatch(
+        id=match.id,
+        tournament=match.tournament.name,
+        description=match.description,
+        date=match.date,
     )
+
+    if not is_create:
+        result.teams = [team.name for team in match.teams]
+        result.players = [player.nickname for player in match.players]
+
+    return result
 
 
 async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
@@ -35,9 +41,7 @@ async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
         .order_by(TableMatch.id)
     )
     matches = await session.scalars(stmt)
-    result = []
-    for match in list(matches):
-        result.append(table_to_response_form(match))
+    result = [table_to_response_form(match) for match in list(matches)]
     return result
 
 
@@ -54,41 +58,24 @@ async def get_match(
 
 async def create_match(
     session: AsyncSession,
-    tournament_name: str,
-    date: datetime,
-    description: Union[str | None] = None,
-    team_name_1: Union[str | None] = None,
-    team_name_2: Union[str | None] = None,
+    match_in: MatchCreate,
 ) -> ResponseMatch:
-    tournament_of_match: TableTournament = await session.scalar(
-        select(TableTournament)
-        .where(TableTournament.name == tournament_name)
-        .options(
-            selectinload(TableTournament.players),
-            selectinload(TableTournament.matches),
-            selectinload(TableTournament.teams),
-        ),
+    tournament_of_match: TableTournament = await get_tournament_by_name(
+        tournament_name=match_in.tournament,
+        session=session,
     )
-    team1 = await get_team_by_name(team_name_1, session=session)
-    team2 = await get_team_by_name(team_name_2, session=session)
-    table_match = TableMatch(
+
+    match = TableMatch(
         tournament_id=tournament_of_match.id,
         tournament=tournament_of_match,
-        date=date,
-        description=description,
+        date=match_in.date,
+        description=match_in.description,
     )
-    if team1 is not None:
-        table_match.teams.append(team1)
-        for player in team1.players:
-            table_match.players.append(player)
-    if team2 is not None:
-        table_match.teams.append(team2)
-        for player in team2.players:
-            table_match.players.append(player)
 
-    session.add(table_match)
+    session.add(match)
     await session.commit()  # Make changes to the database
-    return table_to_response_form(table_match)
+
+    return table_to_response_form(match=match, is_create=True)
 
 
 # A function for delete a Match from the database
@@ -98,3 +85,23 @@ async def delete_match(
 ) -> None:
     await session.delete(match)
     await session.commit()  # Make changes to the database
+
+
+async def update_general_match_info(
+    session: AsyncSession,
+    match: TableMatch,
+    match_update: MatchGeneralInfoUpdate,
+) -> ResponseMatch:
+    for class_field, value in match_update.model_dump(exclude_unset=True).items():
+        if class_field == "tournament":
+            tournament_of_match: TableTournament = await get_tournament_by_name(
+                tournament_name=value,
+                session=session,
+            )
+            setattr(match, "tournament_id", tournament_of_match.id)
+            match.tournament = tournament_of_match
+        else:
+            setattr(match, class_field, value)
+
+    await session.commit()  # Make changes to the database
+    return table_to_response_form(match=match)

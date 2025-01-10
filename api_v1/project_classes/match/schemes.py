@@ -1,16 +1,28 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Union, List
 
 from pydantic import BaseModel
 
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):
-    teams: List[str]
-    players: List[str]
-    description: Optional[str]
+    teams: List[str] = []
+    players: List[str] = []
+    description: Union[str | None] = None
     tournament: str
     date: datetime
+
+
+class MatchCreate(BaseModel):
+    tournament: str
+    date: datetime
+    description: Union[str | None] = None
+
+
+class MatchGeneralInfoUpdate(BaseModel):
+    tournament: Union[str | None] = None
+    date: Union[datetime | None] = None
+    description: Union[str | None] = None
 
 
 # The main class for work with a Match
