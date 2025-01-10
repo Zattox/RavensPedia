@@ -1,11 +1,15 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud, dependencies
+from . import crud, dependencies, match_management
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
-from core import db_helper, TableMatch
+from core import db_helper, TableMatch, TableTeam
+
+from .dependencies import get_match_by_id
+from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Matches"])
+managment_router = APIRouter(tags=["Match Manager"])
 
 
 # A view to get all the matches from the database
@@ -82,4 +86,38 @@ async def delete_match(
     await crud.delete_match(
         session=session,
         match=match,
+    )
+
+
+@managment_router.patch(
+    "/{match_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def add_team_in_match(
+    match: TableMatch = Depends(get_match_by_id),
+    team: TableTeam = Depends(get_team_by_name),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.add_team_in_match(
+        session=session,
+        match=match,
+        team=team,
+    )
+
+
+@managment_router.delete(
+    "/{match_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_team_from_match(
+    match: TableMatch = Depends(get_match_by_id),
+    team: TableTeam = Depends(get_team_by_name),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.delete_team_from_match(
+        session=session,
+        match=match,
+        team=team,
     )
