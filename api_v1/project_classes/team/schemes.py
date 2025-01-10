@@ -1,15 +1,25 @@
-from typing import Optional, List
+from typing import Union, List
 
 from pydantic import BaseModel
 
 
 # The base class for the Team (without id)
 class TeamBase(BaseModel):
-    team_name: str  # The team name
-    description: Optional[str]  # The description of the team
-    players: List[str]  # IDs of the main team members
-    matches_id: List[int]  # The IDs of the matches the team participated in
-    tournaments: List[str]  # The IDs of the tournaments the team participated in
+    name: str  # The team name
+    description: Union[str | None] = None  # The description of the team
+    players: List[str] = []  # IDs of the main team members
+    matches_id: List[int] = []  # The IDs of the matches the team participated in
+    tournaments: List[str] = []  # The IDs of the tournaments the team participated in
+
+
+class TeamCreate(BaseModel):
+    name: str
+    description: Union[str | None] = None
+
+
+class TeamGeneralInfoUpdate(BaseModel):
+    name: Union[str | None] = None
+    description: Union[str | None] = None
 
 
 # The main class for work with a Team
