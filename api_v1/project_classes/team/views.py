@@ -1,11 +1,13 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud, dependencies
+from . import crud, dependencies, team_management
 from .schemes import ResponseTeam, TeamCreate, TeamGeneralInfoUpdate
-from core import db_helper, TableTeam
+from core import db_helper, TableTeam, TablePlayer
+from ..player.dependencies import get_player_by_nickname
 
 router = APIRouter(tags=["Teams"])
+manager_router = APIRouter(tags=["Teams Manager"])
 
 
 # A view to get all the teams from the database
@@ -80,3 +82,37 @@ async def delete_team(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_team(session=session, team=team)
+
+
+@manager_router.patch(
+    "/add_player/{team_id}/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseTeam,
+)
+async def add_player_in_team(
+    team: TableTeam = Depends(dependencies.get_team_by_name),
+    player: TablePlayer = Depends(get_player_by_nickname),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseTeam:
+    return await team_management.add_player_in_team(
+        team=team,
+        player=player,
+        session=session,
+    )
+
+
+@manager_router.delete(
+    "/delete_player/{team_id}/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseTeam,
+)
+async def delete_player_from_team(
+    team: TableTeam = Depends(dependencies.get_team_by_name),
+    player: TablePlayer = Depends(get_player_by_nickname),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseTeam:
+    return await team_management.delete_player_from_team(
+        team=team,
+        player=player,
+        session=session,
+    )
