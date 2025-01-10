@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 # The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
-    tournament_name: str  # The tournament name
+    name: str  # The tournament name
     prize: Union[str | None] = None  # The prize of tournament
     description: Union[str | None] = None  # The description of the tournament
     matches_id: List[int] = []  # The IDs of the matches the tournament participated in
