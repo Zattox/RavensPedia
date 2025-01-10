@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import TableTournament
-from .schemes import ResponseTournament
+from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
 from .dependencies import get_tournament_by_id
 
 
@@ -44,36 +44,34 @@ async def get_tournament(
     session: AsyncSession,
     tournament_id: int,
 ) -> ResponseTournament | None:
-    table_match: TableTournament = await get_tournament_by_id(
+    tournament: TableTournament = await get_tournament_by_id(
         tournament_id=tournament_id,
         session=session,
     )
-    return table_to_response_form(table_match)
+    return table_to_response_form(tournament)
 
 
 # A function for create a Tournament in the database
 async def create_tournament(
     session: AsyncSession,
-    tournament_name: str,
-    prize: str | None = None,
-    description: str | None = None,
+    tournament_in: TournamentCreate,
 ) -> ResponseTournament:
     # Turning it into a Tournament class without Mapped fields
-    table_tournament = TableTournament(
-        tournament_name=tournament_name,
-        prize=prize,
-        description=description,
+    tournament = TableTournament(
+        name=tournament_in.name,
+        prize=tournament_in.prize,
+        description=tournament_in.description,
     )
-    session.add(table_tournament)
+    session.add(tournament)
     await session.commit()
     return ResponseTournament(
-        tournament_name=table_tournament.name,
-        description=table_tournament.description,
-        prize=table_tournament.prize,
+        tournament_name=tournament.name,
+        description=tournament.description,
+        prize=tournament.prize,
         matches_id=[],
         players=[],
         teams=[],
-        id=table_tournament.id,
+        id=tournament.id,
     )
 
 
@@ -90,15 +88,9 @@ async def delete_tournament(
 async def update_general_tournament_info(
     session: AsyncSession,
     tournament: TableTournament,
-    new_tournament_name: str | None = None,
-    new_prize: str | None = None,
-    new_description: str | None = None,
+    tournament_update: TournamentGeneralInfoUpdate,
 ) -> ResponseTournament:
-    if new_tournament_name is not None:
-        setattr(tournament, "tournament_name", new_tournament_name)
-    if new_prize is not None:
-        setattr(tournament, "prize", new_prize)
-    if new_description is not None:
-        setattr(tournament, "description", new_description)
+    for class_field, value in tournament_update.model_dump(exclude_unset=True).items():
+        setattr(tournament, class_field, value)
     await session.commit()  # Make changes to the database
     return table_to_response_form(tournament)
