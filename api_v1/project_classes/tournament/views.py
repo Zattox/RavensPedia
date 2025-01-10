@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
@@ -46,10 +46,13 @@ async def create_tournament(
     tournament_in: TournamentCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await crud.create_tournament(
-        session=session,
-        tournament_in=tournament_in,
-    )
+    try:
+        return await crud.create_tournament(
+            session=session,
+            tournament_in=tournament_in,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # A view for partial or full update a tournament in the database

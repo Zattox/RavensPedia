@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,16 +10,21 @@ from .dependencies import get_tournament_by_id
 
 def table_to_response_form(
     table_tournament: TableTournament,
+    is_create: bool = False,
 ) -> ResponseTournament:
-    return ResponseTournament(
+    result = ResponseTournament(
         id=table_tournament.id,
         tournament_name=table_tournament.name,
         description=table_tournament.description,
         prize=table_tournament.prize,
-        matches_id=[match.id for match in table_tournament.matches],
-        teams=[team.name for team in table_tournament.teams],
-        players=[player.nickname for player in table_tournament.players],
     )
+
+    if not is_create:
+        result.matches_id = [match.id for match in table_tournament.matches]
+        result.teams = [team.name for team in table_tournament.teams]
+        result.players = [player.nickname for player in table_tournament.players]
+
+    return result
 
 
 # A function to get all the Tournaments from the database
@@ -33,9 +39,10 @@ async def get_tournaments(session: AsyncSession) -> list[ResponseTournament]:
         .order_by(TableTournament.id)
     )
     tournaments = await session.scalars(stmt)
-    result = []
-    for tournament in list(tournaments):
-        result.append(table_to_response_form(tournament))
+    result = [
+        table_to_response_form(table_tournament=tournament)
+        for tournament in list(tournaments)
+    ]
     return result
 
 
@@ -48,7 +55,7 @@ async def get_tournament(
         tournament_id=tournament_id,
         session=session,
     )
-    return table_to_response_form(tournament)
+    return table_to_response_form(table_tournament=tournament)
 
 
 # A function for create a Tournament in the database
@@ -62,17 +69,15 @@ async def create_tournament(
         prize=tournament_in.prize,
         description=tournament_in.description,
     )
-    session.add(tournament)
-    await session.commit()
-    return ResponseTournament(
-        tournament_name=tournament.name,
-        description=tournament.description,
-        prize=tournament.prize,
-        matches_id=[],
-        players=[],
-        teams=[],
-        id=tournament.id,
-    )
+
+    try:
+        session.add(tournament)
+        await session.commit()
+    except IntegrityError:
+        await session.rollback()
+        raise ValueError("A tournament with that name already exists")
+
+    return table_to_response_form(table_tournament=tournament, is_create=True)
 
 
 # A function for delete a Tournament from the database
@@ -93,4 +98,4 @@ async def update_general_tournament_info(
     for class_field, value in tournament_update.model_dump(exclude_unset=True).items():
         setattr(tournament, class_field, value)
     await session.commit()  # Make changes to the database
-    return table_to_response_form(tournament)
+    return table_to_response_form(table_tournament=tournament)
