@@ -1,25 +1,32 @@
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import TablePlayer
-from .schemes import ResponsePlayer
+from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
 from .dependencies import get_player_by_id
 
 
-def table_to_response_form(player: TablePlayer) -> ResponsePlayer:
-    team = "None"
-    if player.team_id != -1:
-        team = player.team.name
-    return ResponsePlayer(
+def table_to_response_form(
+    player: TablePlayer,
+    is_create: bool = False,
+) -> ResponsePlayer:
+    result = ResponsePlayer(
+        id=player.id,
         nickname=player.nickname,
         name=player.name,
         surname=player.surname,
-        team=team,
-        matches_id=[match.id for match in player.matches],
-        tournaments=[tournament.name for tournament in player.tournaments],
-        id=player.id,
     )
+
+    if not is_create:
+        result.matches_id = [match.id for match in player.matches]
+        result.tournaments = [tournament.name for tournament in player.tournaments]
+        if player.team is not None:
+            result.team = player.team.name
+
+    return result
 
 
 # A function to get all the Players from the database
@@ -34,9 +41,7 @@ async def get_players(session: AsyncSession) -> list[ResponsePlayer]:
         .order_by(TablePlayer.id)
     )
     players = await session.scalars(statement)
-    result = []
-    for player in list(players):
-        result.append(table_to_response_form(player))
+    result = [table_to_response_form(player=player) for player in list(players)]
     return result
 
 
@@ -49,55 +54,44 @@ async def get_player(
         session=session,
         player_id=player_id,
     )
-    return table_to_response_form(player)
+    return table_to_response_form(player=player)
 
 
 # A function for create a Player in the database
 async def create_player(
     session: AsyncSession,
-    nickname: str,
-    team_id: int,
-    name: str | None = None,
-    surname: str | None = None,
+    player_in: PlayerCreate,
 ) -> ResponsePlayer:
     # Turning it into a Player class without Mapped fields
     player = TablePlayer(
-        nickname=nickname,
-        name=name,
-        surname=surname,
-        team_id=team_id,
+        nickname=player_in.nickname,
+        name=player_in.name,
+        surname=player_in.surname,
     )
-    session.add(player)
-    await session.commit()  # Make changes to the database
-    # It is necessary if there are changes on the database side
-    # await session.refresh(player)
-    return ResponsePlayer(
-        nickname=player.nickname,
-        name=player.name,
-        surname=player.surname,
-        team="None",
-        matches_id=[],
-        tournaments=[],
-        id=player.id,
-    )
+
+    try:
+        session.add(player)
+        await session.commit()  # Make changes to the database
+    except IntegrityError:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Player {player_in.nickname} already exists",
+        )
+
+    return table_to_response_form(player=player, is_create=True)
 
 
 # A function for partial update a Player in the database
 async def update_general_player_info(
     session: AsyncSession,
     player: TablePlayer,
-    new_nickname: str | None = None,
-    new_name: str | None = None,
-    new_surname: str | None = None,
+    player_update: PlayerGeneralInfoUpdate,
 ) -> ResponsePlayer:
-    if new_nickname is not None:
-        setattr(player, "nickname", new_nickname)
-    if new_name is not None:
-        setattr(player, "name", new_name)
-    if new_surname is not None:
-        setattr(player, "surname", new_surname)
+    for class_field, value in player_update.model_dump(exclude_unset=True).items():
+        setattr(player, class_field, value)
     await session.commit()  # Make changes to the database
-    return player
+    return table_to_response_form(player=player)
 
 
 # A function for delete a Player from the database
