@@ -12,7 +12,7 @@ def table_to_response_form(
 ) -> ResponseTournament:
     return ResponseTournament(
         id=table_tournament.id,
-        tournament_name=table_tournament.tournament_name,
+        tournament_name=table_tournament.name,
         description=table_tournament.description,
         prize=table_tournament.prize,
         matches_id=[match.id for match in table_tournament.matches],
@@ -67,7 +67,7 @@ async def create_tournament(
     session.add(table_tournament)
     await session.commit()
     return ResponseTournament(
-        tournament_name=table_tournament.tournament_name,
+        tournament_name=table_tournament.name,
         description=table_tournament.description,
         prize=table_tournament.prize,
         matches_id=[],

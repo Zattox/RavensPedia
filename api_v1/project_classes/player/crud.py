@@ -17,7 +17,7 @@ def table_to_response_form(player: TablePlayer) -> ResponsePlayer:
         surname=player.surname,
         team=team,
         matches_id=[match.id for match in player.matches],
-        tournaments=[tournament.tournament_name for tournament in player.tournaments],
+        tournaments=[tournament.name for tournament in player.tournaments],
         id=player.id,
     )
 

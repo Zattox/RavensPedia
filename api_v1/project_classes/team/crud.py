@@ -18,7 +18,7 @@ async def table_to_response_form(
         ],
         matches_id=[match.id for match in table_team.matches],
         tournaments=[
-            StringIntPair(name=tournament.tournament_name, id=tournament.id)
+            StringIntPair(name=tournament.name, id=tournament.id)
             for tournament in table_team.tournaments
         ],
         id=table_team.id,

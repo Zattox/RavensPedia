@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class TableTournament(Base):
     # The tournament name
-    tournament_name: Mapped[str] = mapped_column(String(100), unique=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
     # The prize of tournament
     prize: Mapped[str | None] = mapped_column(String(50))
     # The description of the tournament

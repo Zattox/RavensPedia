@@ -16,7 +16,7 @@ def table_to_response_form(
 ) -> ResponseMatch:
     return ResponseMatch(
         id=table_match.id,
-        tournament=table_match.tournament.tournament_name,
+        tournament=table_match.tournament.name,
         description=table_match.description,
         date=table_match.date,
         teams=[team.name for team in table_match.teams],
@@ -62,7 +62,7 @@ async def create_match(
 ) -> ResponseMatch:
     tournament_of_match: TableTournament = await session.scalar(
         select(TableTournament)
-        .where(TableTournament.tournament_name == tournament_name)
+        .where(TableTournament.name == tournament_name)
         .options(
             selectinload(TableTournament.players),
             selectinload(TableTournament.matches),
