@@ -10,19 +10,20 @@ from .schemes import ResponseTeam, TeamCreate, TeamGeneralInfoUpdate
 
 
 def table_to_response_form(
-    table_team: TableTeam,
+    team: TableTeam,
     is_create: bool = False,
 ) -> ResponseTeam:
     result = ResponseTeam(
-        id=table_team.id,
-        name=table_team.name,
-        description=table_team.description,
+        id=team.id,
+        name=team.name,
+        description=team.description,
+        max_number_of_players=team.max_number_of_players,
     )
 
     if not is_create:
-        result.players = [player.nickname for player in table_team.players]
-        result.matches_id = [match.id for match in table_team.matches]
-        result.tournaments = [tournament.name for tournament in table_team.tournaments]
+        result.players = [player.nickname for player in team.players]
+        result.matches_id = [match.id for match in team.matches]
+        result.tournaments = [tournament.name for tournament in team.tournaments]
 
     return result
 
@@ -39,7 +40,7 @@ async def get_teams(session: AsyncSession) -> list[ResponseTeam]:
         .order_by(TableTeam.id)
     )
     teams = await session.scalars(stmt)
-    result = [table_to_response_form(table_team=team) for team in list(teams)]
+    result = [table_to_response_form(team=team) for team in list(teams)]
     return result
 
 
@@ -52,7 +53,7 @@ async def get_team(
         team_id=team_id,
         session=session,
     )
-    return table_to_response_form(table_team=team)
+    return table_to_response_form(team=team)
 
 
 # A function for create a Team in the database
@@ -64,6 +65,7 @@ async def create_team(
     team: TableTeam = TableTeam(
         name=team_in.name,
         description=team_in.description,
+        max_number_of_players=team_in.max_number_of_players,
     )
 
     try:
@@ -76,7 +78,7 @@ async def create_team(
             detail=f"Team {team_in.name} already exists",
         )
 
-    return table_to_response_form(table_team=team, is_create=True)
+    return table_to_response_form(team=team, is_create=True)
 
 
 # A function for delete a Team from the database

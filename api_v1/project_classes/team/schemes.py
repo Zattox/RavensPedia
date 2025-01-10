@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 # The base class for the Team (without id)
 class TeamBase(BaseModel):
+    max_number_of_players: int
     name: str  # The team name
     description: Union[str | None] = None  # The description of the team
     players: List[str] = []  # IDs of the main team members
@@ -13,6 +14,7 @@ class TeamBase(BaseModel):
 
 
 class TeamCreate(BaseModel):
+    max_number_of_players: int
     name: str
     description: Union[str | None] = None
 

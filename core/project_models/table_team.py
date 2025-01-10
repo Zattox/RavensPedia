@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 
 class TableTeam(Base):
+    max_number_of_players: Mapped[int]
+
     # The team name
     name: Mapped[str] = mapped_column(String(15), unique=True)
     # The description of the team
