@@ -1,16 +1,16 @@
 from typing import Union, List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 # The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
     tournament_name: str  # The tournament name
-    prize: Union[str | None]  # The prize of tournament
-    description: Union[str | None]  # The description of the tournament
-    matches_id: List[int]  # The IDs of the matches the tournament participated in
-    teams: List[str]  # The IDs of the teams the tournament participated in
-    players: List[str]
+    prize: Union[str | None] = None  # The prize of tournament
+    description: Union[str | None] = None  # The description of the tournament
+    matches_id: List[int] = []  # The IDs of the matches the tournament participated in
+    teams: List[str] = []  # The IDs of the teams the tournament participated in
+    players: List[str] = []
 
 
 class TournamentCreate(BaseModel):
