@@ -1,11 +1,10 @@
 from sqlalchemy import select
-from sqlalchemy.engine import Result
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from core import TablePlayer
 from .schemes import ResponsePlayer
 from .dependencies import get_player_by_id
-from core import TablePlayer
 
 
 def table_to_response_form(player: TablePlayer) -> ResponsePlayer:

@@ -2,10 +2,8 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from core import db_helper
-from .crud import table_to_response_form
 from .schemes import ResponsePlayer
-from core import TablePlayer
+from core import db_helper, TablePlayer
 
 router = APIRouter(tags=["Players"])
 
@@ -23,7 +21,7 @@ async def get_players(
 async def get_player(
     player: TablePlayer = Depends(dependencies.get_player_by_id),
 ):
-    return table_to_response_form(player)
+    return crud.table_to_response_form(player)
 
 
 # A view for create a player in the database
