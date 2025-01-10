@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 class TableMatch(Base):
     __tablename__ = "matches"
 
+    max_number_of_teams: Mapped[int]
+    max_number_of_players: Mapped[int]
+
     # ID of the first participant of the match
     teams: Mapped[list["TableTeam"]] = relationship(
         secondary="team_match_association",
