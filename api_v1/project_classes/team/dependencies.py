@@ -22,12 +22,14 @@ async def get_team_by_id(
             selectinload(TableTeam.tournaments),
         ),
     )
+
     # If such an id does not exist, then throw an exception.
     if table_team is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"team {team_id} not found",
+            detail=f"Team {team_id} not found",
         )
+
     return table_team
 
 
@@ -38,6 +40,7 @@ async def get_team_by_name(
 ) -> TableTeam | None:
     if team_name is None:
         return None
+
     table_team = await session.scalar(
         select(TableTeam)
         .where(TableTeam.name == team_name)
@@ -47,10 +50,12 @@ async def get_team_by_name(
             selectinload(TableTeam.tournaments),
         ),
     )
+
     # If such an id does not exist, then throw an exception.
     if table_team is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"team {team_name} not found",
+            detail=f"Team {team_name} not found",
         )
+
     return table_team
