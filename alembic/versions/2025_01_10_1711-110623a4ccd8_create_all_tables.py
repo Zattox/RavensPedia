@@ -1,8 +1,8 @@
 """Create all tables
 
-Revision ID: 9d4b29c9d504
+Revision ID: 110623a4ccd8
 Revises: 
-Create Date: 2025-01-07 23:13:19.018057
+Create Date: 2025-01-10 17:11:39.351143
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "9d4b29c9d504"
+revision: str = "110623a4ccd8"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,20 +30,20 @@ def upgrade() -> None:
     )
     op.create_table(
         "teams",
-        sa.Column("team_name", sa.String(length=15), nullable=False),
+        sa.Column("name", sa.String(length=15), nullable=False),
         sa.Column("description", sa.String(length=255), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("team_name"),
+        sa.UniqueConstraint("name"),
     )
     op.create_table(
         "tournaments",
-        sa.Column("tournament_name", sa.String(length=100), nullable=False),
+        sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("prize", sa.String(length=50), nullable=True),
         sa.Column("description", sa.String(length=255), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("tournament_name"),
+        sa.UniqueConstraint("name"),
     )
     op.create_table(
         "matches",
