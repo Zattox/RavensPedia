@@ -1,13 +1,12 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from core import TableTournament
-from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
 from .dependencies import get_tournament_by_id
+from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
 
 
 def table_to_response_form(
