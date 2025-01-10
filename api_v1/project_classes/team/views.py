@@ -7,7 +7,7 @@ from core import db_helper, TableTeam, TablePlayer
 from ..player.dependencies import get_player_by_nickname
 
 router = APIRouter(tags=["Teams"])
-manager_router = APIRouter(tags=["Teams Manager"])
+manager_team_router = APIRouter(tags=["Teams Manager"])
 
 
 # A view to get all the teams from the database
@@ -84,8 +84,8 @@ async def delete_team(
     await crud.delete_team(session=session, team=team)
 
 
-@manager_router.patch(
-    "/add_player/{team_id}/",
+@manager_team_router.patch(
+    "/{team_name}/add_player/{player_nickname}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseTeam,
 )
@@ -101,8 +101,8 @@ async def add_player_in_team(
     )
 
 
-@manager_router.delete(
-    "/delete_player/{team_id}/",
+@manager_team_router.delete(
+    "/{team_name}/delete_player/{player_nickname}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseTeam,
 )
