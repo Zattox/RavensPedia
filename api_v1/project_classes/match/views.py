@@ -10,7 +10,7 @@ from ..player.dependencies import get_player_by_nickname
 from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Matches"])
-manager_router = APIRouter(tags=["Matches Manager"])
+manager_match_router = APIRouter(tags=["Matches Manager"])
 
 
 # A view to get all the matches from the database
@@ -90,8 +90,8 @@ async def delete_match(
     )
 
 
-@manager_router.patch(
-    "/add_team/{match_id}/",
+@manager_match_router.patch(
+    "/{match_id}/add_team/{team_name}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -107,8 +107,8 @@ async def add_team_in_match(
     )
 
 
-@manager_router.delete(
-    "/delete_team/{match_id}/",
+@manager_match_router.delete(
+    "/{match_id}/delete_team/{team_name}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -124,8 +124,8 @@ async def delete_team_from_match(
     )
 
 
-@manager_router.patch(
-    "/add_player/{match_id}/",
+@manager_match_router.patch(
+    "{match_id}/add_player/{player_nickname}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -141,8 +141,8 @@ async def add_player_in_match(
     )
 
 
-@manager_router.delete(
-    "/delete_player/{match_id}/",
+@manager_match_router.delete(
+    "/{match_id}/delete_player/{player_nickname}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
