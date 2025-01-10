@@ -26,7 +26,8 @@ async def add_team_in_match(
         )
 
     match.teams.append(team)
-    match.players = [player for player in team.players]
+    for player in team.players:
+        match.players.append(player)
 
     await session.commit()
 
