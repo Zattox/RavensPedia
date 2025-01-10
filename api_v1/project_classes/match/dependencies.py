@@ -1,13 +1,11 @@
 from typing import Annotated
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
-from sqlalchemy.orm import selectinload
 
-from . import crud
-from core import db_helper
-from core import TableMatch
+from core import db_helper, TableMatch
 
 
 # A function for get a match from the database by id

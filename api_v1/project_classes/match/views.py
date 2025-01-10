@@ -1,14 +1,13 @@
-from datetime import datetime
 from typing import Union
+from datetime import datetime
 
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from core import db_helper
-from core import TableMatch
-from .crud import table_to_response_form
 from .schemes import ResponseMatch
+from core import db_helper, TableMatch
+
 
 router = APIRouter(tags=["Matches"])
 
@@ -26,7 +25,7 @@ async def get_matches(
 async def get_match(
     match: TableMatch = Depends(dependencies.get_match_by_id),
 ):
-    return table_to_response_form(match)
+    return crud.table_to_response_form(match)
 
 
 # A view for create a match in the database

@@ -1,16 +1,13 @@
+from typing import Union
 from datetime import datetime
 
-from typing import Union
 from sqlalchemy import select
-from sqlalchemy.engine import Result
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
-import api_v1.project_classes.team.dependencies
-from core import TableMatch
-from .dependencies import get_match_by_id
 from .schemes import ResponseMatch
-from core import TableTournament as TableTournament
+from .dependencies import get_match_by_id
+from core import TableMatch, TableTournament
 from api_v1.project_classes.team.dependencies import get_team_by_name
 
 

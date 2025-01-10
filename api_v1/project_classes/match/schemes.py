@@ -1,12 +1,13 @@
-from typing import Union, Optional, List
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from typing import Optional, List
+
+from pydantic import BaseModel
 
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):
-    teams: list[str]
-    players: list[str]
+    teams: List[str]
+    players: List[str]
     description: Optional[str]
     tournament: str
     date: datetime
