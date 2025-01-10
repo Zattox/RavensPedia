@@ -1,11 +1,13 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud, dependencies
+from . import crud, dependencies, tournament_management
 from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
-from core import db_helper, TableTournament
+from core import db_helper, TableTournament, TableTeam, TablePlayer, TableMatch
+from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Tournaments"])
+manager_tournament_router = APIRouter(tags=["Tournaments Manager"])
 
 
 # A view to get all the tournaments from the database
@@ -82,4 +84,38 @@ async def delete_tournament(
     await crud.delete_tournament(
         session=session,
         tournament=tournament,
+    )
+
+
+@manager_tournament_router.patch(
+    "/{tournament_name}/add_team/{team_name}/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseTournament,
+)
+async def add_team_in_tournament(
+    team: TableTeam = Depends(get_team_by_name),
+    tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseTournament:
+    return await tournament_management.add_team_in_tournament(
+        team=team,
+        tournament=tournament,
+        session=session,
+    )
+
+
+@manager_tournament_router.delete(
+    "/{tournament_name}/delete_team/{team_name}/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseTournament,
+)
+async def delete_team_from_tournament(
+    team: TableTeam = Depends(get_team_by_name),
+    tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseTournament:
+    return await tournament_management.delete_team_from_tournament(
+        team=team,
+        tournament=tournament,
+        session=session,
     )
