@@ -1,8 +1,9 @@
-from core import Base
-
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Integer, ForeignKey
+
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from core import Base
 
 if TYPE_CHECKING:
     from .table_team import TableTeam

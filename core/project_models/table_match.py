@@ -1,13 +1,10 @@
-from core import Base
-from core.associations_models import (
-    TeamMatchAssociation,
-    PlayerMatchAssociation,
-)
-
-from typing import TYPE_CHECKING
 from datetime import datetime
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from core import Base
 
 if TYPE_CHECKING:
     from .table_team import TableTeam

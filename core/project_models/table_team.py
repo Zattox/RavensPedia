@@ -1,12 +1,9 @@
-from core import Base
-from core.associations_models import (
-    TeamTournamentAssociation,
-    TeamMatchAssociation,
-)
-
 from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from core import Base
 
 if TYPE_CHECKING:
     from .table_player import TablePlayer
