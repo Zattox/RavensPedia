@@ -39,9 +39,16 @@ async def delete_team_from_match(
     team: TableTeam,
 ) -> ResponseMatch:
 
+    if not team in match.teams:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"The team is no longer participate in the match",
+        )
+
     match.teams.remove(team)
     for player in team.players:
-        match.players.remove(player)
+        if player in match.players:
+            match.players.remove(player)
 
     await session.commit()
 
@@ -76,6 +83,12 @@ async def delete_player_from_match(
     match: TableMatch,
     player: TablePlayer,
 ) -> ResponseMatch:
+
+    if not player in match.players:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"The player is no longer participate in the match",
+        )
 
     match.players.remove(player)
     await session.commit()
