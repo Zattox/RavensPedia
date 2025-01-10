@@ -2,10 +2,8 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from core import db_helper
-
-from core import TableTeam
 from .schemes import ResponseTeam
+from core import db_helper, TableTeam
 
 router = APIRouter(tags=["Teams"])
 

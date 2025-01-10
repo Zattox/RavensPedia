@@ -1,15 +1,9 @@
-import asyncio
-
 from sqlalchemy import select
-from sqlalchemy.engine import Result
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import TableTeam
-
-from .schemes import ResponseTeam
-
-from .schemes import StringIntPair
+from .schemes import ResponseTeam, StringIntPair
 
 
 async def table_to_response_form(
