@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud, dependencies
 from core import db_helper
 
-from core import Team as TableTeam
+from core import TableTeam
 from .schemes import Team as ResponseTeam
 
 router = APIRouter(tags=["Teams"])

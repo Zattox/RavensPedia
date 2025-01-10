@@ -5,7 +5,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from core import Team as TableTeam
+from core import TableTeam
 
 from .schemes import Team as ResponseTeam
 

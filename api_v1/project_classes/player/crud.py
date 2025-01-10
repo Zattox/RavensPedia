@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 
 from .schemes import Player as ResponsePlayer
 from .dependencies import get_player_by_id
-from core import Player as TablePlayer
+from core import TablePlayer
 
 
 def table_to_response_form(player: TablePlayer) -> ResponsePlayer:

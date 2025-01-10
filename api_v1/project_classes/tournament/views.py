@@ -5,7 +5,7 @@ from . import crud, dependencies
 from core import db_helper
 from .crud import table_to_response_form
 from .schemes import Tournament as ResponseTournament
-from core import Tournament as TableTournament
+from core import TableTournament
 
 router = APIRouter(tags=["Tournaments"])
 

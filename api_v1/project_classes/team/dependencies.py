@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from . import crud
 from core import db_helper
-from core import Team as TableTeam
+from core import TableTeam
 
 
 # A function for get a Team from the database by id

@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from . import crud
 from core import db_helper
-from core import Match as TableMatch
+from core import TableMatch
 
 
 # A function for get a match from the database by id

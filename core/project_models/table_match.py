@@ -10,21 +10,21 @@ from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .team import Team
-    from .tournament import Tournament
-    from .player import Player
+    from .table_team import TableTeam
+    from .table_tournament import TableTournament
+    from .table_player import TablePlayer
 
 
-class Match(Base):
+class TableMatch(Base):
     __tablename__ = "matches"
 
     # ID of the first participant of the match
-    teams: Mapped[list["Team"]] = relationship(
+    teams: Mapped[list["TableTeam"]] = relationship(
         secondary="team_match_association",
         back_populates="matches",
     )
 
-    players: Mapped[list["Player"]] = relationship(
+    players: Mapped[list["TablePlayer"]] = relationship(
         secondary="player_match_association",
         back_populates="matches",
     )
@@ -34,7 +34,7 @@ class Match(Base):
 
     # ID of the tournament in which the match is being played
     tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
-    tournament: Mapped["Tournament"] = relationship(back_populates="matches")
+    tournament: Mapped["TableTournament"] = relationship(back_populates="matches")
 
     # Match start date
     date: Mapped[datetime] = mapped_column(

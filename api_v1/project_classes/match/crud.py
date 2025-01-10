@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 import api_v1.project_classes.team.dependencies
-from core import Match as TableMatch
+from core import TableMatch
 from .dependencies import get_match_by_id
 from .schemes import Match as ResponseMatch
-from core import Tournament as TableTournament
+from core import TableTournament as TableTournament
 from api_v1.project_classes.team.dependencies import get_team_by_name
 
 

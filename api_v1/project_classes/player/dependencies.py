@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from . import crud
 from core import db_helper
-from core import Player as TablePlayer
+from core import TablePlayer
 
 
 # A function for get a Tournament from the database by id

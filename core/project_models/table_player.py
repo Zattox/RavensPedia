@@ -1,20 +1,16 @@
 from core import Base
-from core.associations_models import (
-    PlayerTournamentAssociation,
-    PlayerMatchAssociation,
-)
 
 from typing import TYPE_CHECKING
 from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .team import Team
-    from .match import Match
-    from .tournament import Tournament
+    from .table_team import TableTeam
+    from .table_match import TableMatch
+    from .table_tournament import TableTournament
 
 
-class Player(Base):
+class TablePlayer(Base):
     # The player's game name
     nickname: Mapped[str] = mapped_column(
         String(12),
@@ -27,16 +23,16 @@ class Player(Base):
 
     # The ID of the player's current team
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
-    team: Mapped["Team"] = relationship(back_populates="players")
+    team: Mapped["TableTeam"] = relationship(back_populates="players")
 
     # The IDs of the matches the player participated in
-    matches: Mapped[list["Match"]] = relationship(
+    matches: Mapped[list["TableMatch"]] = relationship(
         secondary="player_match_association",
         back_populates="players",
     )
 
     # The IDs of the tournaments the team participated in
-    tournaments: Mapped[list["Tournament"]] = relationship(
+    tournaments: Mapped[list["TableTournament"]] = relationship(
         secondary="player_tournament_association",
         back_populates="players",
     )

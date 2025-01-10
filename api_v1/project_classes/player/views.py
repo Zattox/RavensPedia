@@ -5,7 +5,7 @@ from . import crud, dependencies
 from core import db_helper
 from .crud import table_to_response_form
 from .schemes import Player as ResponsePlayer
-from core import Player as TablePlayer
+from core import TablePlayer
 
 router = APIRouter(tags=["Players"])
 

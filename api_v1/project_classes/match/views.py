@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
 from core import db_helper
-from core import Match as TableMatch
+from core import TableMatch
 from .crud import table_to_response_form
 from .schemes import Match as ResponseMatch
 
