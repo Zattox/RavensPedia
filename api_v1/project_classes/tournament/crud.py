@@ -10,20 +10,21 @@ from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfo
 
 
 def table_to_response_form(
-    table_tournament: TableTournament,
+    tournament: TableTournament,
     is_create: bool = False,
 ) -> ResponseTournament:
     result = ResponseTournament(
-        id=table_tournament.id,
-        name=table_tournament.name,
-        description=table_tournament.description,
-        prize=table_tournament.prize,
+        id=tournament.id,
+        name=tournament.name,
+        description=tournament.description,
+        prize=tournament.prize,
+        max_count_of_teams=tournament.max_count_of_teams,
     )
 
     if not is_create:
-        result.matches_id = [match.id for match in table_tournament.matches]
-        result.teams = [team.name for team in table_tournament.teams]
-        result.players = [player.nickname for player in table_tournament.players]
+        result.matches_id = [match.id for match in tournament.matches]
+        result.teams = [team.name for team in tournament.teams]
+        result.players = [player.nickname for player in tournament.players]
 
     return result
 
@@ -41,7 +42,7 @@ async def get_tournaments(session: AsyncSession) -> list[ResponseTournament]:
     )
     tournaments = await session.scalars(stmt)
     result = [
-        table_to_response_form(table_tournament=tournament)
+        table_to_response_form(tournament=tournament)
         for tournament in list(tournaments)
     ]
     return result
@@ -56,7 +57,7 @@ async def get_tournament(
         tournament_id=tournament_id,
         session=session,
     )
-    return table_to_response_form(table_tournament=tournament)
+    return table_to_response_form(tournament=tournament)
 
 
 # A function for create a Tournament in the database
@@ -69,6 +70,7 @@ async def create_tournament(
         name=tournament_in.name,
         prize=tournament_in.prize,
         description=tournament_in.description,
+        max_count_of_teams=tournament_in.max_count_of_teams,
     )
 
     try:
@@ -81,7 +83,7 @@ async def create_tournament(
             detail=f"Tournament {tournament_in.name} already exists",
         )
 
-    return table_to_response_form(table_tournament=tournament, is_create=True)
+    return table_to_response_form(tournament=tournament, is_create=True)
 
 
 # A function for delete a Tournament from the database
@@ -102,4 +104,4 @@ async def update_general_tournament_info(
     for class_field, value in tournament_update.model_dump(exclude_unset=True).items():
         setattr(tournament, class_field, value)
     await session.commit()  # Make changes to the database
-    return table_to_response_form(table_tournament=tournament)
+    return table_to_response_form(tournament=tournament)

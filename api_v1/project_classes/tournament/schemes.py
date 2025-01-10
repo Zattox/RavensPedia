@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 # The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
+    max_count_of_teams: int
     name: str  # The tournament name
     prize: Union[str | None] = None  # The prize of tournament
     description: Union[str | None] = None  # The description of the tournament
@@ -14,6 +15,7 @@ class TournamentBase(BaseModel):
 
 
 class TournamentCreate(BaseModel):
+    max_count_of_teams: int
     name: str
     prize: Union[str | None] = None
     description: Union[str | None] = None

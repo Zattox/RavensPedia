@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 class TableTournament(Base):
+    max_count_of_teams: Mapped[int]
     # The tournament name
     name: Mapped[str] = mapped_column(String(100), unique=True)
     # The prize of tournament
