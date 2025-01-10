@@ -1,7 +1,9 @@
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from core import TableTournament
 from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
@@ -75,7 +77,10 @@ async def create_tournament(
         await session.commit()
     except IntegrityError:
         await session.rollback()
-        raise ValueError("A tournament with that name already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Tournament {tournament_in.name} already exists",
+        )
 
     return table_to_response_form(table_tournament=tournament, is_create=True)
 
