@@ -23,7 +23,7 @@ class TablePlayer(Base):
     surname: Mapped[str | None] = mapped_column(String(30))
 
     # The ID of the player's current team
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
     team: Mapped["TableTeam"] = relationship(back_populates="players")
 
     # The IDs of the matches the player participated in
