@@ -8,14 +8,27 @@ __all__ = (
     "TableTeam",
     "TableTournament",
     "MatchInfo",
+    "TeamTournamentAssociation",
+    "TeamMatchAssociation",
+    "PlayerTournamentAssociation",
+    "PlayerMatchAssociation",
 )
 
 from .base import Base
 from .db_helper import db_helper, DatabaseHelper
 
-from .project_models.table_team import TableTeam
-from .project_models.table_match import TableMatch
-from .project_models.table_player import TablePlayer
-from .project_models.table_tournament import TableTournament
+from .project_models import (
+    TableTeam,
+    TableMatch,
+    TablePlayer,
+    TableTournament,
+)
+
+from .associations_models import (
+    TeamMatchAssociation,
+    TeamTournamentAssociation,
+    PlayerMatchAssociation,
+    PlayerTournamentAssociation,
+)
 
 from .faceit_models.match_info import MatchInfo
