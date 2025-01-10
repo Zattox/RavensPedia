@@ -91,7 +91,7 @@ async def delete_match(
 
 
 @manager_router.patch(
-    "/add_team/{match_id}",
+    "/add_team/{match_id}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -108,7 +108,7 @@ async def add_team_in_match(
 
 
 @manager_router.delete(
-    "/delete_team/{match_id}",
+    "/delete_team/{match_id}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -125,7 +125,7 @@ async def delete_team_from_match(
 
 
 @manager_router.patch(
-    "/add_player/{match_id}",
+    "/add_player/{match_id}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -142,7 +142,7 @@ async def add_player_in_match(
 
 
 @manager_router.delete(
-    "/delete_player/{match_id}",
+    "/delete_player/{match_id}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
