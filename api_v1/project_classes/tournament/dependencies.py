@@ -1,13 +1,11 @@
 from typing import Annotated
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
-from sqlalchemy.orm import selectinload
 
-from . import crud
-from core import db_helper
-from core import TableTournament
+from core import db_helper, TableTournament
 
 
 # A function for get a Tournament from the database by id

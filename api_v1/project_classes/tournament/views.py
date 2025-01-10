@@ -2,10 +2,8 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from core import db_helper
-from .crud import table_to_response_form
 from .schemes import ResponseTournament
-from core import TableTournament
+from core import db_helper, TableTournament
 
 router = APIRouter(tags=["Tournaments"])
 
@@ -23,7 +21,7 @@ async def get_tournaments(
 async def get_tournament(
     tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
 ):
-    return table_to_response_form(tournament)
+    return crud.table_to_response_form(tournament)
 
 
 # A view for create a tournament in the database

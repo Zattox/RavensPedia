@@ -1,8 +1,6 @@
 from typing import Optional, List
-from pydantic import BaseModel, ConfigDict
 
-
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
 # The base class for the Tournament (without id)
