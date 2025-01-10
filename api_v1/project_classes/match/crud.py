@@ -1,7 +1,3 @@
-from msilib import Table
-from typing import Union
-from datetime import datetime
-
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,6 +17,8 @@ def table_to_response_form(
         tournament=match.tournament.name,
         description=match.description,
         date=match.date,
+        max_number_of_players=match.max_number_of_players,
+        max_number_of_teams=match.max_number_of_teams,
     )
 
     if not is_create:
@@ -70,6 +68,8 @@ async def create_match(
         tournament=tournament_of_match,
         date=match_in.date,
         description=match_in.description,
+        max_number_of_teams=match_in.max_number_of_teams,
+        max_number_of_players=match_in.max_number_of_players,
     )
 
     session.add(match)
