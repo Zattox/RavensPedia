@@ -32,3 +32,31 @@ async def test_create_full_team(client: AsyncClient):
     )
     assert response.status_code == 201
     assert response.json() == response_team.model_dump()
+
+
+@pytest.mark.asyncio
+async def test_partial_create_team(client: AsyncClient):
+    team = TeamCreate(
+        max_number_of_players=5,
+        name="Black Ravens",
+    )
+    response_team = ResponseTeam(
+        max_number_of_players=team.max_number_of_players,
+        name=team.name,
+        description=team.description,
+        id=1,
+    )
+
+    response = await client.post(
+        "/teams/",
+        json=team.model_dump(),
+    )
+    assert response.status_code == 201
+    assert response.json() == response_team.model_dump()
+
+
+@pytest.mark.asyncio
+async def test_read_empty_team(client: AsyncClient):
+    response = await client.get("/teams/1/")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Team 1 not found"}
