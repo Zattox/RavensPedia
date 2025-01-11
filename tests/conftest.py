@@ -1,11 +1,11 @@
-import pytest
+import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from ravenspedia.core import Base, db_helper, test_db_helper
 from ravenspedia.main import app
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def setup_database():
     async with test_db_helper.engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -16,7 +16,7 @@ async def setup_database():
         await conn.run_sync(Base.metadata.drop_all)
 
 
-@pytest.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module")
 async def client():
     app.dependency_overrides[db_helper.session_dependency] = (
         test_db_helper.session_dependency

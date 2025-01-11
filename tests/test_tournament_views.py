@@ -1,15 +1,16 @@
 import pytest
+from httpx import AsyncClient
 
 
-@pytest.mark.anyio
-async def test_read_empty_tournaments(client):
+@pytest.mark.asyncio
+async def test_read_empty_tournaments(client: AsyncClient):
     response = await client.get("/tournaments/")
     assert response.status_code == 200
     assert response.json() == []
 
 
-@pytest.mark.anyio
-async def test_create_full_team(client):
+@pytest.mark.asyncio
+async def test_create_full_team(client: AsyncClient):
     response = await client.post(
         "/tournaments/",
         json={
