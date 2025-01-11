@@ -1,5 +1,8 @@
 import pytest
 
+from ravenspedia.api_v1.project_classes import ResponseTeam
+from ravenspedia.api_v1.project_classes.team.schemes import TeamCreate
+
 
 @pytest.mark.anyio
 async def test_read_empty_teams(client):
@@ -10,21 +13,21 @@ async def test_read_empty_teams(client):
 
 @pytest.mark.anyio
 async def test_create_full_team(client):
+    team = TeamCreate(
+        max_number_of_players=5,
+        name="Black Ravens",
+        description="First team of HSE",
+    )
+    response_team = ResponseTeam(
+        max_number_of_players=team.max_number_of_players,
+        name=team.name,
+        description=team.description,
+        id=1,
+    )
+
     response = await client.post(
         "/teams/",
-        json={
-            "max_number_of_players": 5,
-            "name": "Black Ravens",
-            "description": "First Team of HSE",
-        },
+        json=team.model_dump(),
     )
     assert response.status_code == 201
-    assert response.json() == {
-        "max_number_of_players": 5,
-        "name": "Black Ravens",
-        "description": "First Team of HSE",
-        "players": [],
-        "matches_id": [],
-        "tournaments": [],
-        "id": 1,
-    }
+    assert response.json() == response_team.model_dump()
