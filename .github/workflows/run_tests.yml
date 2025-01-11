@@ -1,7 +1,16 @@
 name: Automated tests
 
 on:
-  push
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: Choose target
+        required: true
+        default:
+        type: Choice
+        options:
+          - test_team_views
+          - test_tournament_views
 
 jobs:
   test:
@@ -18,5 +27,9 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: Install dependencies
         run: poetry install
-      - name: Run tests
-        run: poetry run pytest
+      - name: test_team_views
+        if: "github.event.inputs.deployment_target == 'test_team_views'"
+        run: poetry run pytest tests/test_team_views.py
+      - name: test_tournament_views
+        if: "github.event.inputs.deployment_target == 'test_tournament_views'"
+        run: poetry run pytest tests/test_tournament_views.py
