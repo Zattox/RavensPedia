@@ -6,9 +6,10 @@ on:
       deployment_target:
         description: Choose target
         required: true
-        default:
+        default: all_tests
         type: Choice
         options:
+          - all_tests
           - test_team_views
           - test_tournament_views
 
@@ -27,6 +28,9 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: Install dependencies
         run: poetry install
+      - name: all_tests
+        if: "github.event.inputs.deployment_target == 'all_tests'"
+        run: poetry run pytest
       - name: test_team_views
         if: "github.event.inputs.deployment_target == 'test_team_views'"
         run: poetry run pytest tests/test_team_views.py
