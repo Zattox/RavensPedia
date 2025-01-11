@@ -18,6 +18,8 @@ alembic = ">1.13.1"
 sqlalchemy-utils = "^0.41.2"
 requests = "^2.32.3"
 python-dotenv = "^1.0.1"
+httpx = "^0.28.1"
+pytest = "^8.3.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
