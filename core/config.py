@@ -24,5 +24,9 @@ class FaceitSettings:
 
 # Init class Settings
 settings = Settings()
+#
+test_settings = Settings(
+    db_url=f"sqlite+aiosqlite:///{BASE_DIR}/test_db.sqlite3",
+)
 # Init class FaceitSettings
 faceit_settings = FaceitSettings()

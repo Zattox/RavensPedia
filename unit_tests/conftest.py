@@ -1,0 +1,29 @@
+import pytest
+from httpx import ASGITransport, AsyncClient
+
+from core import Base, db_helper, test_db_helper
+from main import app
+
+
+@pytest.fixture(scope="function", autouse=True)
+async def setup_database():
+    async with test_db_helper.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    yield
+
+    async with test_db_helper.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest.fixture(scope="module")
+async def client():
+    app.dependency_overrides[db_helper.session_dependency] = (
+        test_db_helper.session_dependency
+    )
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://test",
+    ) as client:
+        yield client
+    app.dependency_overrides.clear()
