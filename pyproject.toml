@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "RavensPedia"
+name = "ravenspedia"
 version = "0.1.0"
 description = ""
 authors = ["Zattox <vladcsgoogurechik@mail.ru>"]

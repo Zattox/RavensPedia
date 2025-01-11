@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from core import Base
+from ravenspedia.core import Base
 
 target_metadata = Base.metadata
 
@@ -27,7 +27,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-from core.config import settings
+from ravenspedia.core.config import settings
 
 config.set_main_option("sqlalchemy.url", settings.db_url)
 

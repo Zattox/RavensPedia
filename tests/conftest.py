@@ -1,8 +1,8 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from core import Base, db_helper, test_db_helper
-from main import app
+from ravenspedia.core import Base, db_helper, test_db_helper
+from ravenspedia.main import app
 
 
 @pytest.fixture(scope="function", autouse=True)
