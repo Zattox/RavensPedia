@@ -5,7 +5,7 @@ from ravenspedia.core import Base, db_helper, test_db_helper
 from ravenspedia.main import app
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(scope="module", autouse=True)
 async def setup_database():
     async with test_db_helper.engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
