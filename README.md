@@ -14,7 +14,7 @@ Go to the project folder, then write in the terminal ```poetry install```
 
 4. Creating Environment variables
 
-Create a ```.env``` file in the root folder of the project and enter your environment variable values: ```FACEIT_BASE_URL``` и ```FACEIT_API_KEY```
+Create a ```.env``` file in the root folder of the project and enter your environment variable values: ```FACEIT_BASE_URL``` and ```FACEIT_API_KEY```
 
 5. Getting FACEIT_BASE_URL
    
