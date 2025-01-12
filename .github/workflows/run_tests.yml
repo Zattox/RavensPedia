@@ -12,6 +12,8 @@ on:
           - all_tests
           - test_team_views
           - test_tournament_views
+          - test_player_views
+          - test_match_views
 
 jobs:
   test:
@@ -37,3 +39,9 @@ jobs:
       - name: test_tournament_views
         if: "github.event.inputs.deployment_target == 'test_tournament_views'"
         run: poetry run pytest tests/test_tournament_views.py
+      - name: test_player_views
+        if: "github.event.inputs.deployment_target == 'test_player_views'"
+        run: poetry run pytest tests/test_player_views.py
+      - name: test_match_views
+        if: "github.event.inputs.deployment_target == 'test_match_views'"
+        run: poetry run pytest tests/test_match_views.py
