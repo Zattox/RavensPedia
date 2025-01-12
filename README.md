@@ -1,25 +1,25 @@
-<!--Установка-->
-## Установка
-1. Клонирование репозитория
+<!--Installation-->
+## Installation
+1. Cloning the repository
 
 ```git clone https://github.com/Zattox/RavensPedia.git```
 
-2. Установка poetry
+2. Installation of poetry
  
-Процесс установки описан [здесь](https://www.jetbrains.com/help/pycharm/poetry.html#install-poetry)
+The installation process is described [here](https://www.jetbrains.com/help/pycharm/poetry.html#install-poetry)
 
-3. Установка зависимостей
+3. Installing dependencies
  
-Перейдите в папку проекта, затем пропишите в терминале ```poetry install```
+Go to the project folder, then write in the terminal ```poetry install```
 
-4. Создание переменных окружения
+4. Creating Environment variables
 
-Создайте файл ```.env``` в корневой папке проекта и введите ваши значения переменных окружения: ```FACEIT_BASE_URL``` и ```FACEIT_API_KEY```
+Create a ```.env``` file in the root folder of the project and enter your environment variable values: ```FACEIT_BASE_URL``` и ```FACEIT_API_KEY```
 
-5. Получение FACEIT_BASE_URL
+5. Getting FACEIT_BASE_URL
    
-Есть разные версии API, в коде описано взаимодействие с 4-ой версией ```https://open.faceit.com/data/v4/matches```, подробнее [тут](https://docs.faceit.com/docs/data-api/data/#tag/Matches/operation/getMatchStats)
+There are different versions of the API, and the code describes how to interact with version 4 ```https://open.faceit.com/data/v4/matches```, more details [here](https://docs.faceit.com/docs/data-api/data/#tag/Matches/operation/getMatchStats)
 
-6. Получение FACEIT_API_KEY
+6. Getting FACEIT_API_KEY
    
-Получение API_KEY описано [здесь](https://developers.faceit.com/docs/auth/api-keys)
+Getting the API_KEY is described [here](https://developers.faceit.com/docs/auth/api-keys)
