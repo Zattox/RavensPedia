@@ -1,4 +1,6 @@
+from dataclasses import asdict, dataclass
 from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
@@ -62,11 +64,7 @@ async def create_team(
     team_in: TeamCreate,
 ) -> ResponseTeam:
     # Turning it into a Team class without Mapped fields
-    team: TableTeam = TableTeam(
-        name=team_in.name,
-        description=team_in.description,
-        max_number_of_players=team_in.max_number_of_players,
-    )
+    team: TableTeam = TableTeam(**team_in.model_dump())
 
     try:
         session.add(team)
