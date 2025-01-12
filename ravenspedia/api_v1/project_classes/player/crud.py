@@ -63,11 +63,7 @@ async def create_player(
     player_in: PlayerCreate,
 ) -> ResponsePlayer:
     # Turning it into a Player class without Mapped fields
-    player = TablePlayer(
-        nickname=player_in.nickname,
-        name=player_in.name,
-        surname=player_in.surname,
-    )
+    player: TablePlayer = TablePlayer(**player_in.model_dump())
 
     try:
         session.add(player)

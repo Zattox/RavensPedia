@@ -66,12 +66,7 @@ async def create_tournament(
     tournament_in: TournamentCreate,
 ) -> ResponseTournament:
     # Turning it into a Tournament class without Mapped fields
-    tournament = TableTournament(
-        name=tournament_in.name,
-        prize=tournament_in.prize,
-        description=tournament_in.description,
-        max_count_of_teams=tournament_in.max_count_of_teams,
-    )
+    tournament: TableTournament = TableTournament(**tournament_in.model_dump())
 
     try:
         session.add(tournament)
