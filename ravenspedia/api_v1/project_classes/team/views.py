@@ -58,7 +58,7 @@ async def create_team(
 @router.patch(
     "/{team_id}/",
     response_model=ResponseTeam,
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
 )
 async def update_general_team_info(
     team_update: TeamGeneralInfoUpdate,

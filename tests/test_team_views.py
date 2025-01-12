@@ -7,6 +7,7 @@ async def test_read_teams_from_empty_database(client: AsyncClient):
     response = await client.get(
         f"/teams/",
     )
+
     assert response.status_code == 200
     assert response.json() == []
 
@@ -17,6 +18,7 @@ async def test_read_not_exists_team(client: AsyncClient):
     response = await client.get(
         f"/teams/{team_id}/",
     )
+
     assert response.status_code == 404
     assert response.json() == {
         "detail": f"Team {team_id} not found",
@@ -25,43 +27,52 @@ async def test_read_not_exists_team(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_create_team_without_name(client: AsyncClient):
+    data = {
+        "max_number_of_players": 5,
+        "description": "First team of HSE",
+    }
+
     response = await client.post(
         "/teams/",
-        json={
-            "max_number_of_players": 5,
-            "description": "First team of HSE",
-        },
+        json=data,
     )
+
     assert response.status_code == 422
 
 
 @pytest.mark.asyncio
 async def test_create_team_without_max_number(client: AsyncClient):
+    data = {
+        "name": "Black Ravens",
+        "description": "First team of HSE",
+    }
+
     response = await client.post(
         "/teams/",
-        json={
-            "name": "Black Ravens",
-            "description": "First team of HSE",
-        },
+        json=data,
     )
+
     assert response.status_code == 422
 
 
 @pytest.mark.asyncio
 async def test_create_team_with_full_info(client: AsyncClient):
-    response = await client.post(
-        "/teams/",
-        json={
-            "max_number_of_players": 5,
-            "name": "Black Ravens",
-            "description": "First team of HSE",
-        },
-    )
-    assert response.status_code == 201
-    assert response.json() == {
+    data = {
         "max_number_of_players": 5,
         "name": "Black Ravens",
         "description": "First team of HSE",
+    }
+
+    response = await client.post(
+        "/teams/",
+        json=data,
+    )
+
+    assert response.status_code == 201
+    assert response.json() == {
+        "max_number_of_players": data["max_number_of_players"],
+        "name": data["name"],
+        "description": data["description"],
         "matches_id": [],
         "players": [],
         "tournaments": [],
@@ -74,6 +85,7 @@ async def test_read_team_with_full_info(client: AsyncClient):
     response = await client.get(
         f"/teams/1/",
     )
+
     assert response.status_code == 200
     assert response.json() == {
         "max_number_of_players": 5,
@@ -88,17 +100,20 @@ async def test_read_team_with_full_info(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_create_team_with_partial_info(client: AsyncClient):
-    response = await client.post(
-        "/teams/",
-        json={
-            "max_number_of_players": 5,
-            "name": "Red Ravens",
-        },
-    )
-    assert response.status_code == 201
-    assert response.json() == {
+    data = {
         "max_number_of_players": 5,
         "name": "Red Ravens",
+    }
+
+    response = await client.post(
+        "/teams/",
+        json=data,
+    )
+
+    assert response.status_code == 201
+    assert response.json() == {
+        "max_number_of_players": data["max_number_of_players"],
+        "name": data["name"],
         "description": None,
         "matches_id": [],
         "players": [],
@@ -112,6 +127,7 @@ async def test_read_team_with_partial_info(client: AsyncClient):
     response = await client.get(
         f"/teams/2/",
     )
+
     assert response.status_code == 200
     assert response.json() == {
         "max_number_of_players": 5,
@@ -130,7 +146,8 @@ async def test_empty_update_team(client: AsyncClient):
         f"/teams/1/",
         json={},
     )
-    assert response.status_code == 201
+
+    assert response.status_code == 200
     assert response.json() == {
         "max_number_of_players": 5,
         "name": "Black Ravens",
@@ -148,7 +165,8 @@ async def test_update_team_description(client: AsyncClient):
         f"/teams/2/",
         json={"description": "Second team of HSE"},
     )
-    assert response.status_code == 201
+
+    assert response.status_code == 200
     assert response.json() == {
         "max_number_of_players": 5,
         "name": "Red Ravens",
@@ -166,7 +184,8 @@ async def test_update_team_name(client: AsyncClient):
         f"/teams/2/",
         json={"name": "White Ravens"},
     )
-    assert response.status_code == 201
+
+    assert response.status_code == 200
     assert response.json() == {
         "max_number_of_players": 5,
         "name": "White Ravens",
@@ -176,6 +195,35 @@ async def test_update_team_name(client: AsyncClient):
         "tournaments": [],
         "id": 2,
     }
+
+
+@pytest.mark.asyncio
+async def test_get_teams(client: AsyncClient):
+    response = await client.get(
+        "/teams/",
+    )
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "max_number_of_players": 5,
+            "name": "Black Ravens",
+            "description": "First team of HSE",
+            "matches_id": [],
+            "players": [],
+            "tournaments": [],
+            "id": 1,
+        },
+        {
+            "max_number_of_players": 5,
+            "name": "White Ravens",
+            "description": "Second team of HSE",
+            "matches_id": [],
+            "players": [],
+            "tournaments": [],
+            "id": 2,
+        },
+    ]
 
 
 @pytest.mark.asyncio
@@ -196,15 +244,18 @@ async def test_delete_not_exist_team(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_create_team_with_existing_name(client: AsyncClient):
+    data = {
+        "max_number_of_players": 5,
+        "name": "Black Ravens",
+        "description": "First team of HSE",
+    }
+
     response = await client.post(
         "/teams/",
-        json={
-            "max_number_of_players": 5,
-            "name": "Black Ravens",
-            "description": "First team of HSE",
-        },
+        json=data,
     )
+
     assert response.status_code == 400
     assert response.json() == {
-        "detail": "Team Black Ravens already exists",
+        "detail": f"Team {data["name"]} already exists",
     }
