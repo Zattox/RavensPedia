@@ -35,7 +35,7 @@ async def get_data_from_faceit(
         "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
     }
     response = requests.get(
-        f"{faceit_settings.faceit_base_url}/{faceit_match_id}/stats", headers=headers
+        f"{faceit_settings.faceit_base_url}/matches/{faceit_match_id}/stats", headers=headers
     )
     data = json_to_round_info(response.json())
     return data
