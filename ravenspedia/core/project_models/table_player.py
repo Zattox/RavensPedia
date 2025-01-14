@@ -17,13 +17,13 @@ class TablePlayer(Base):
         String(12),
         unique=True,
     )
-    steam_id: Mapped[str]
+    steam_id: Mapped[str] = mapped_column(unique=True)
     # The player's real name
     name: Mapped[str | None] = mapped_column(String(15))
     # The player's real surname
     surname: Mapped[str | None] = mapped_column(String(30))
 
-    faceit_id: Mapped[str | None]
+    faceit_id: Mapped[str | None] = mapped_column(unique=True)
 
     # The ID of the player's current team
     team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))

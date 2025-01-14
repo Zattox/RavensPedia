@@ -28,14 +28,14 @@ def upgrade() -> None:
         sa.Column("surname", sa.String(length=30), nullable=True),
         sa.Column("steam_id", sa.String(), nullable=False),
         sa.Column("faceit_id", sa.String(), nullable=True),
-        sa.Column("team_id", sa.Integer(), nullable=False),
+        sa.Column("team_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["team_id"],
             ["teams.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("nickname"),
+        sa.UniqueConstraint("nickname", "steam_id", "faceit_id"),
     )
     # ### end Alembic commands ###
 
@@ -48,7 +48,7 @@ def downgrade() -> None:
         sa.Column("nickname", sa.String(length=12), nullable=False),
         sa.Column("name", sa.String(length=15), nullable=True),
         sa.Column("surname", sa.String(length=30), nullable=True),
-        sa.Column("team_id", sa.Integer(), nullable=False),
+        sa.Column("team_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["team_id"],

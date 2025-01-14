@@ -91,16 +91,17 @@ async def create_player(
 ) -> ResponsePlayer:
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
-    player.faceit_id = await find_player_faceit_id(player_in.steam_id)
+    faceit_id = await find_player_faceit_id(player_in.steam_id)
+    player.faceit_id = faceit_id
 
     try:
         session.add(player)
         await session.commit()  # Make changes to the database
-    except IntegrityError:
+    except IntegrityError as exp:
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Player {player_in.nickname} already exists",
+            detail=f"A player with such data already exists",
         )
 
     return table_to_response_form(player=player, is_create=True)
