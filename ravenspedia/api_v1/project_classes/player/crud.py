@@ -63,7 +63,7 @@ async def get_player(
 
 async def find_player_faceit_id(
     steam_id: str,
-) -> str:
+) -> str | None:
     headers = {
         "Accept": "application/json",
         "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
@@ -77,8 +77,11 @@ async def find_player_faceit_id(
         headers=headers,
         params=params,
     )
-    ans = response.json()["player_id"]
-    return ans
+
+    if response.status_code == status.HTTP_200_OK:
+        return response.json()["player_id"]
+    else:
+        return None
 
 
 # A function for create a Player in the database
@@ -88,7 +91,7 @@ async def create_player(
 ) -> ResponsePlayer:
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
-    player.faceit_id = find_player_faceit_id(player_in.steam_id)
+    player.faceit_id = await find_player_faceit_id(player_in.steam_id)
 
     try:
         session.add(player)
