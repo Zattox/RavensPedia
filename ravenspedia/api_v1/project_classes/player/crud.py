@@ -1,12 +1,14 @@
+import requests
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TablePlayer
-from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
+from ravenspedia.core.config import faceit_settings
 from .dependencies import get_player_by_id
+from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
 
 
 def table_to_response_form(
@@ -15,6 +17,8 @@ def table_to_response_form(
 ) -> ResponsePlayer:
     result = ResponsePlayer(
         id=player.id,
+        steam_id=player.steam_id,
+        faceit_id=player.faceit_id,
         nickname=player.nickname,
         name=player.name,
         surname=player.surname,
@@ -57,6 +61,26 @@ async def get_player(
     return table_to_response_form(player=player)
 
 
+async def find_player_faceit_id(
+    steam_id: str,
+) -> str:
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
+    }
+    params = {
+        "game": "cs2",
+        "game_player_id": steam_id,
+    }
+    response = requests.get(
+        f"{faceit_settings.faceit_base_url}/players",
+        headers=headers,
+        params=params,
+    )
+    ans = response.json()["player_id"]
+    return ans
+
+
 # A function for create a Player in the database
 async def create_player(
     session: AsyncSession,
@@ -64,6 +88,7 @@ async def create_player(
 ) -> ResponsePlayer:
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
+    player.faceit_id = find_player_faceit_id(player_in.steam_id)
 
     try:
         session.add(player)
@@ -85,6 +110,8 @@ async def update_general_player_info(
     player_update: PlayerGeneralInfoUpdate,
 ) -> ResponsePlayer:
     for class_field, value in player_update.model_dump(exclude_unset=True).items():
+        if class_field == "steam_id":
+            setattr(player, "faceit_id", find_player_faceit_id(value))
         setattr(player, class_field, value)
     await session.commit()  # Make changes to the database
     return table_to_response_form(player=player)
