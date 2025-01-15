@@ -25,7 +25,7 @@ def table_to_response_form(
     )
 
     if not is_create:
-        result.matches_id = [match.id for match in player.matches]
+        result.matches_id = [elem.match_id for elem in player.stats]
         result.tournaments = [tournament.name for tournament in player.tournaments]
         if player.team is not None:
             result.team = player.team.name
@@ -38,7 +38,7 @@ async def get_players(session: AsyncSession) -> list[ResponsePlayer]:
     statement = (
         select(TablePlayer)
         .options(
-            selectinload(TablePlayer.matches),
+            selectinload(TablePlayer.stats),
             selectinload(TablePlayer.tournaments),
             selectinload(TablePlayer.team),
         )
@@ -97,7 +97,7 @@ async def create_player(
     try:
         session.add(player)
         await session.commit()  # Make changes to the database
-    except IntegrityError as exp:
+    except IntegrityError:
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

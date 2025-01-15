@@ -7,11 +7,13 @@ from ravenspedia.core import Base
 
 if TYPE_CHECKING:
     from .table_team import TableTeam
-    from .table_match import TableMatch
     from .table_tournament import TableTournament
+    from .table_player_stats import TablePlayerStats
 
 
 class TablePlayer(Base):
+    __tablename__ = "players"
+
     # The player's game name
     nickname: Mapped[str] = mapped_column(
         String(12),
@@ -29,11 +31,8 @@ class TablePlayer(Base):
     team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
     team: Mapped["TableTeam"] = relationship(back_populates="players")
 
-    # The IDs of the matches the player participated in
-    matches: Mapped[list["TableMatch"]] = relationship(
-        secondary="player_match_association",
-        back_populates="players",
-    )
+    # Статистика игрока в матчах
+    stats: Mapped[list["TablePlayerStats"]] = relationship(back_populates="player")
 
     # The IDs of the tournaments the team participated in
     tournaments: Mapped[list["TableTournament"]] = relationship(
