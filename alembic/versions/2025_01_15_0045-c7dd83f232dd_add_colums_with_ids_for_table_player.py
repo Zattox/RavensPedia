@@ -35,7 +35,9 @@ def upgrade() -> None:
             ["teams.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("nickname", "steam_id", "faceit_id"),
+        sa.UniqueConstraint("nickname"),
+        sa.UniqueConstraint("steam_id"),
+        sa.UniqueConstraint("faceit_id"),
     )
     # ### end Alembic commands ###
 
