@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 class TableMatch(Base):
     __tablename__ = "matches"
 
+    best_of: Mapped[int]
+
     max_number_of_teams: Mapped[int]
     max_number_of_players: Mapped[int]
 

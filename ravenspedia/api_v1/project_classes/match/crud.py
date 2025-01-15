@@ -19,6 +19,7 @@ def table_to_response_form(
         date=match.date,
         max_number_of_players=match.max_number_of_players,
         max_number_of_teams=match.max_number_of_teams,
+        best_of=match.best_of,
     )
 
     if not is_create:
@@ -64,6 +65,7 @@ async def create_match(
     )
 
     match = TableMatch(
+        best_of=match_in.best_of,
         tournament_id=tournament_of_match.id,
         tournament=tournament_of_match,
         date=match_in.date,

@@ -19,6 +19,8 @@ class TablePlayerStats(Base):
     match: Mapped["TableMatch"] = relationship(back_populates="stats")
 
     # ------------------General Stats------------------
+    round: Mapped[int] = mapped_column()
+    nickname: Mapped[str] = mapped_column()
     kills: Mapped[int] = mapped_column()  # Number of kills per match
     assists: Mapped[int] = mapped_column()  # Number of assists per match
     deaths: Mapped[int] = mapped_column()  # Number of deaths per match
