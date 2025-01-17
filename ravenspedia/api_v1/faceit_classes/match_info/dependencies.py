@@ -32,10 +32,10 @@ async def get_data_from_faceit(
 ) -> list[RoundInfo]:
     headers = {
         "Accept": "application/json",
-        "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
     }
     response = requests.get(
-        f"{faceit_settings.faceit_base_url}/matches/{faceit_match_id}/stats", headers=headers
+        f"{faceit_settings.base_url}/matches/{faceit_match_id}/stats", headers=headers
     )
     data = json_to_round_info(response.json())
     return data

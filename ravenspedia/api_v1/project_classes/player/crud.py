@@ -66,14 +66,14 @@ async def find_player_faceit_id(
 ) -> str | None:
     headers = {
         "Accept": "application/json",
-        "Authorization": f"Bearer {faceit_settings.faceit_api_key}",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
     }
     params = {
         "game": "cs2",
         "game_player_id": steam_id,
     }
     response = requests.get(
-        f"{faceit_settings.faceit_base_url}/players",
+        f"{faceit_settings.base_url}/players",
         headers=headers,
         params=params,
     )

@@ -1,7 +1,7 @@
 import os
-from dotenv import load_dotenv
-
 from pathlib import Path
+
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -18,8 +18,15 @@ class Settings(BaseSettings):
 
 
 class FaceitSettings:
-    faceit_base_url = os.getenv("FACEIT_BASE_URL")
-    faceit_api_key = os.getenv("FACEIT_API_KEY")
+    base_url = "https://open.faceit.com/data/v4"
+    api_key = os.getenv("FACEIT_API_KEY")
+
+
+class SettingsForTests:
+    player1_steam_id = os.getenv("PLAYER1_STEAM_ID")
+    player2_steam_id = os.getenv("PLAYER2_STEAM_ID")
+    player1_faceit_id = os.getenv("PLAYER1_FACEIT_ID")
+    player2_faceit_id = os.getenv("PLAYER2_FACEIT_ID")
 
 
 # Init class Settings
@@ -30,3 +37,5 @@ test_settings = Settings(
 )
 # Init class FaceitSettings
 faceit_settings = FaceitSettings()
+
+data_for_tests = SettingsForTests()
