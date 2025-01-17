@@ -3,6 +3,8 @@ from typing import Union, List
 
 from pydantic import BaseModel
 
+from ravenspedia.core.faceit_models import PlayerStats
+
 
 # The base class for the Match (without id)
 class MatchBase(BaseModel):

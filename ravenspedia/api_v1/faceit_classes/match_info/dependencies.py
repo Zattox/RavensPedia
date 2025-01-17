@@ -1,15 +1,15 @@
 from typing import Annotated
-import requests
 
-from sqlalchemy.ext.asyncio import AsyncSession
+import requests
 from fastapi import Depends, HTTPException, status, Path
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.api_v1.faceit_classes.match_info import crud
 from ravenspedia.core import db_helper
-from .funcs import json_to_round_info
 from ravenspedia.core.config import faceit_settings
-from .schemes import MatchInfo
 from ravenspedia.core.faceit_models import RoundInfo
+from .funcs import json_to_round_info
+from .schemes import MatchInfo
 
 
 # A function for get a match_info from the database by id

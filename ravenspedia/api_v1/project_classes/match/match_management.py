@@ -1,10 +1,12 @@
+import requests
 from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TablePlayerStats
+from ravenspedia.core.config import faceit_settings
 from .crud import table_to_response_form
 from .schemes import ResponseMatch
-
-from ravenspedia.core import TableMatch, TableTeam, TablePlayer
 
 
 async def add_team_in_match(

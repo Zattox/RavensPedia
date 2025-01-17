@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+from ravenspedia.core.config import data_for_tests
+
 
 @pytest.mark.asyncio
 async def test_read_players_from_empty_database(client: AsyncClient):

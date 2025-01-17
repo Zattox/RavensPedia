@@ -4,10 +4,10 @@ __all__ = (
     "RoundStats",
     "TeamInfo",
     "TeamStats",
-    "PlayerInfo",
     "PlayerStats",
 )
 
+
+from .player_stats import PlayerStats, PlayerInfo
 from .round_info import RoundInfo, RoundStats
 from .team_info import TeamInfo, TeamStats
-from .player_info import PlayerInfo, PlayerStats
