@@ -74,8 +74,13 @@ async def add_match_stats_from_faceit(
     for round_data in data["rounds"]:
         for team_data in round_data["teams"]:
             for player_data in team_data["players"]:
+                player_data["player_stats"]["nickname"] = player_data["nickname"]
+                player_data["player_stats"]["round"] = round_data["match_round"]
+                player_info = PlayerInfo(**player_data)
                 result = await session.execute(
-                    select(TablePlayer).filter_by(faceit_id=player_data["player_id"])
+                    select(TablePlayer).filter_by(
+                        faceit_id=player_info.faceit_player_id
+                    )
                 )
                 player = result.scalars().first()
                 if not player:
@@ -86,14 +91,7 @@ async def add_match_stats_from_faceit(
                 player_stats = TablePlayerStats(
                     player=player,
                     match=match,
-                    nickname=player_data["nickname"],
-                    kills=player_data["player_stats"]["Kills"],
-                    deaths=player_data["player_stats"]["Deaths"],
-                    assists=player_data["player_stats"]["Assists"],
-                    headshots_percentage=player_data["player_stats"]["Headshots %"],
-                    adr=player_data["player_stats"]["ADR"],
-                    round=round_data["match_round"],
-                    result=player_data["player_stats"]["Result"],
+                    **player_info.player_stats.model_dump(),
                 )
                 session.add(player_stats)
 

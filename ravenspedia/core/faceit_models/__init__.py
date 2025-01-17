@@ -5,6 +5,7 @@ __all__ = (
     "TeamInfo",
     "TeamStats",
     "PlayerStats",
+    "PlayerInfo",
 )
 
 
