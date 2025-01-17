@@ -122,23 +122,23 @@ async def delete_team_from_match(
     )
 
 
-#
-# @manager_match_router.patch(
-#     "{match_id}/add_player/{player_nickname}/",
-#     status_code=status.HTTP_200_OK,
-#     response_model=ResponseMatch,
-# )
-# async def add_player_in_match(
-#     match: TableMatch = Depends(get_match_by_id),
-#     player: TablePlayer = Depends(get_player_by_nickname),
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ) -> ResponseMatch:
-#     return await match_management.add_player_in_match(
-#         session=session,
-#         match=match,
-#         player=player,
-#     )
-#
+@manager_match_router.patch(
+    "/{match_id}/add_faceit_stats/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def add_match_stats_from_faceit(
+    faceit_url: str,
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.add_match_stats_from_faceit(
+        session=session,
+        match=match,
+        faceit_url=faceit_url,
+    )
+
+
 #
 # @manager_match_router.delete(
 #     "/{match_id}/delete_player/{player_nickname}/",
