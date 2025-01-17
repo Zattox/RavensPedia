@@ -2,6 +2,8 @@ from typing import Union
 
 from pydantic import BaseModel, Field
 
+from ravenspedia.core.faceit_models import TeamInfo
+
 
 class RoundStats(BaseModel):
     score: str = Field(..., alias="Score")
@@ -19,5 +21,5 @@ class RoundInfo(BaseModel):
     match_id: str = Field(..., alias="match_id")
     match_round: str = Field(..., alias="match_round")
     played: str = Field(..., alias="played")
-    # round_stats: RoundStats = Field(..., alias="round_stats")
-    # teams: list[TeamInfo] = Field(..., alias="teams")
+    round_stats: RoundStats = Field(..., alias="round_stats")
+    teams: list[TeamInfo] = Field(..., alias="teams")
