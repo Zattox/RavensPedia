@@ -2,7 +2,7 @@ from typing import Union
 
 from pydantic import BaseModel, Field
 
-from ravenspedia.core.faceit_models import TeamInfo
+from ravenspedia.core.faceit_models.team_info import TeamInfo
 
 
 class RoundStats(BaseModel):

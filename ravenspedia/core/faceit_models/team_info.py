@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from ravenspedia.core.faceit_models import PlayerInfo
+from ravenspedia.core.faceit_models.player_stats import PlayerInfo
 
 
 class TeamStats(BaseModel):
