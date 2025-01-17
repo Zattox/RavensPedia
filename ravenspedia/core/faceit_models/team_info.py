@@ -1,4 +1,3 @@
-from .player_info import PlayerInfo
 from pydantic import BaseModel, Field
 
 
@@ -16,5 +15,5 @@ class TeamStats(BaseModel):
 class TeamInfo(BaseModel):
     faceit_team_id: str = Field(..., alias="team_id")
     premade: bool = Field(..., alias="premade")
-    team_stats: TeamStats = Field(..., alias="team_stats")
-    players: list[PlayerInfo] = Field(..., alias="players")
+    # team_stats: TeamStats = Field(..., alias="team_stats")
+    # players: list[PlayerInfo] = Field(..., alias="players")

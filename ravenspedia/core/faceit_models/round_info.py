@@ -1,6 +1,5 @@
 from typing import Union
 
-from .team_info import TeamInfo
 from pydantic import BaseModel, Field
 
 
@@ -20,5 +19,5 @@ class RoundInfo(BaseModel):
     match_id: str = Field(..., alias="match_id")
     match_round: str = Field(..., alias="match_round")
     played: str = Field(..., alias="played")
-    round_stats: RoundStats = Field(..., alias="round_stats")
-    teams: list[TeamInfo] = Field(..., alias="teams")
+    # round_stats: RoundStats = Field(..., alias="round_stats")
+    # teams: list[TeamInfo] = Field(..., alias="teams")
