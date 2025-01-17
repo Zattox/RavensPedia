@@ -30,6 +30,7 @@ async def test_create_player_without_nickname(client: AsyncClient):
     data = {
         "name": "Vladislav",
         "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
     }
 
     response = await client.post(
@@ -46,6 +47,7 @@ async def test_create_player_with_full_info(client: AsyncClient):
         "nickname": "Zattox",
         "name": "Vladislav",
         "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
     }
 
     response = await client.post(
@@ -58,6 +60,8 @@ async def test_create_player_with_full_info(client: AsyncClient):
         "nickname": data["nickname"],
         "name": data["name"],
         "surname": data["surname"],
+        "steam_id": data_for_tests.player1_steam_id,
+        "faceit_id": data_for_tests.player1_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -75,6 +79,8 @@ async def test_read_player_with_full_info(client: AsyncClient):
         "nickname": "Zattox",
         "name": "Vladislav",
         "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
+        "faceit_id": data_for_tests.player1_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -86,6 +92,7 @@ async def test_read_player_with_full_info(client: AsyncClient):
 async def test_create_player_with_partial_info(client: AsyncClient):
     data = {
         "nickname": "g666",
+        "steam_id": data_for_tests.player2_steam_id,
     }
 
     response = await client.post(
@@ -98,6 +105,8 @@ async def test_create_player_with_partial_info(client: AsyncClient):
         "nickname": data["nickname"],
         "name": None,
         "surname": None,
+        "steam_id": data_for_tests.player2_steam_id,
+        "faceit_id": data_for_tests.player2_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -117,6 +126,8 @@ async def test_read_player_with_partial_info(client: AsyncClient):
         "name": None,
         "surname": None,
         "team": None,
+        "steam_id": data_for_tests.player2_steam_id,
+        "faceit_id": data_for_tests.player2_faceit_id,
         "matches_id": [],
         "tournaments": [],
         "id": 2,
@@ -135,6 +146,8 @@ async def test_empty_update_player(client: AsyncClient):
         "nickname": "Zattox",
         "name": "Vladislav",
         "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
+        "faceit_id": data_for_tests.player1_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -159,6 +172,8 @@ async def test_update_player_names(client: AsyncClient):
         "nickname": "g666",
         "name": data["name"],
         "surname": data["surname"],
+        "steam_id": data_for_tests.player2_steam_id,
+        "faceit_id": data_for_tests.player2_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -182,6 +197,8 @@ async def test_update_player_nickname(client: AsyncClient):
         "nickname": "G666",
         "name": "Slava",
         "surname": "Shohin",
+        "steam_id": data_for_tests.player2_steam_id,
+        "faceit_id": data_for_tests.player2_faceit_id,
         "team": None,
         "matches_id": [],
         "tournaments": [],
@@ -201,6 +218,8 @@ async def test_get_players(client: AsyncClient):
             "nickname": "Zattox",
             "name": "Vladislav",
             "surname": "Tepliakov",
+            "steam_id": data_for_tests.player1_steam_id,
+            "faceit_id": data_for_tests.player1_faceit_id,
             "team": None,
             "matches_id": [],
             "tournaments": [],
@@ -210,6 +229,8 @@ async def test_get_players(client: AsyncClient):
             "nickname": "G666",
             "name": "Slava",
             "surname": "Shohin",
+            "steam_id": data_for_tests.player2_steam_id,
+            "faceit_id": data_for_tests.player2_faceit_id,
             "team": None,
             "matches_id": [],
             "tournaments": [],
@@ -240,6 +261,7 @@ async def test_create_player_with_existing_name(client: AsyncClient):
         "nickname": "Zattox",
         "name": "Valery",
         "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
     }
 
     response = await client.post(
@@ -249,5 +271,25 @@ async def test_create_player_with_existing_name(client: AsyncClient):
 
     assert response.status_code == 400
     assert response.json() == {
-        "detail": f"Player {data["nickname"]} already exists",
+        "detail": f"A player with such data already exists",
+    }
+
+
+@pytest.mark.asyncio
+async def test_create_player_with_existing_steam_id(client: AsyncClient):
+    data = {
+        "nickname": "Dumpling",
+        "name": "Valery",
+        "surname": "Tepliakov",
+        "steam_id": data_for_tests.player1_steam_id,
+    }
+
+    response = await client.post(
+        "/players/",
+        json=data,
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": f"A player with such data already exists",
     }
