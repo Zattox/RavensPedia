@@ -16,6 +16,7 @@ class MatchBase(BaseModel):
     description: Union[str | None] = None
     tournament: str
     date: datetime
+    stats: List[PlayerStats] = []
 
 
 class MatchCreate(BaseModel):

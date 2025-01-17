@@ -28,8 +28,6 @@ async def add_team_in_match(
         )
 
     match.teams.append(team)
-    for player in team.players:
-        match.players.append(player)
 
     await session.commit()
 
@@ -49,51 +47,55 @@ async def delete_team_from_match(
         )
 
     match.teams.remove(team)
-    for player in team.players:
-        if player in match.players:
-            match.players.remove(player)
 
     await session.commit()
 
     return table_to_response_form(match=match)
 
 
-async def add_player_in_match(
+async def add_match_stats_from_faceit(
     session: AsyncSession,
     match: TableMatch,
-    player: TablePlayer,
+    faceit_url: str,
 ) -> ResponseMatch:
-    if player in match.players:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Team {player.nickname} already exists",
-        )
+    start = faceit_url.find("/room/") + len("/room/")
+    faceit_match_id = faceit_url.replace("/scoreboard", "")[start:]
 
-    if len(match.players) == match.max_number_of_players:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"The maximum number of players will participate in the match",
-        )
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
+    }
+    response = requests.get(
+        f"{faceit_settings.base_url}/matches/{faceit_match_id}/stats",
+        headers=headers,
+    )
+    data = response.json()
+    for round_data in data["rounds"]:
+        for team_data in round_data["teams"]:
+            for player_data in team_data["players"]:
+                result = await session.execute(
+                    select(TablePlayer).filter_by(faceit_id=player_data["player_id"])
+                )
+                player = result.scalars().first()
+                if not player:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"A player {player_data["nickname"]} with this faceit_id {player_data["player_id"]} does not exist in the database",
+                    )
+                player_stats = TablePlayerStats(
+                    player=player,
+                    match=match,
+                    nickname=player_data["nickname"],
+                    kills=player_data["player_stats"]["Kills"],
+                    deaths=player_data["player_stats"]["Deaths"],
+                    assists=player_data["player_stats"]["Assists"],
+                    headshots_percentage=player_data["player_stats"]["Headshots %"],
+                    adr=player_data["player_stats"]["ADR"],
+                    round=round_data["match_round"],
+                    result=player_data["player_stats"]["Result"],
+                )
+                session.add(player_stats)
 
-    match.players.append(player)
+    await session.flush()
     await session.commit()
-
-    return table_to_response_form(match=match)
-
-
-async def delete_player_from_match(
-    session: AsyncSession,
-    match: TableMatch,
-    player: TablePlayer,
-) -> ResponseMatch:
-
-    if not player in match.players:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"The player is no longer participate in the match",
-        )
-
-    match.players.remove(player)
-    await session.commit()
-
     return table_to_response_form(match=match)

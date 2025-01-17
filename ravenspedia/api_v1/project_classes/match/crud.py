@@ -20,11 +20,13 @@ def table_to_response_form(
         max_number_of_players=match.max_number_of_players,
         max_number_of_teams=match.max_number_of_teams,
         best_of=match.best_of,
+        stats=[],
     )
 
     if not is_create:
         result.teams = [team.name for team in match.teams]
         result.players = [player.nickname for player in match.stats]
+        result.stats = match.stats
 
     return result
 
