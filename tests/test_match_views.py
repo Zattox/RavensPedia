@@ -52,6 +52,7 @@ async def test_create_match_without_tournament(client: AsyncClient):
         "max_number_of_players": 0,
         "date": "2025-01-12",
         "description": "Test match",
+        "best_of": 1,
     }
 
     response = await client.post(
@@ -68,6 +69,7 @@ async def test_create_match_without_date(client: AsyncClient):
         "max_number_of_teams": 0,
         "max_number_of_players": 0,
         "description": "Test match",
+        "best_of": 1,
     }
 
     response = await client.post(
@@ -81,6 +83,25 @@ async def test_create_match_without_date(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_create_match_without_max_number(client: AsyncClient):
     data = {
+        "date": "2025-01-12",
+        "description": "Test match",
+        "best_of": 1,
+    }
+
+    response = await client.post(
+        "/matches/",
+        json=data,
+    )
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_create_match_without_best_of(client: AsyncClient):
+    data = {
+        "max_number_of_teams": 2,
+        "max_number_of_players": 10,
+        "tournament": "Final MSCL",
         "date": "2025-01-12",
         "description": "Test match",
     }
@@ -101,6 +122,7 @@ async def test_create_match_with_full_info(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-01-12",
         "description": "Test match",
+        "best_of": 1,
     }
 
     response = await client.post(
@@ -110,6 +132,7 @@ async def test_create_match_with_full_info(client: AsyncClient):
 
     assert response.status_code == 201
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -117,6 +140,7 @@ async def test_create_match_with_full_info(client: AsyncClient):
         "description": "Test match",
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
+        "stats": [],
         "id": 1,
     }
 
@@ -129,6 +153,7 @@ async def test_read_match_with_full_info(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -136,6 +161,7 @@ async def test_read_match_with_full_info(client: AsyncClient):
         "description": "Test match",
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
+        "stats": [],
         "id": 1,
     }
 
@@ -143,6 +169,7 @@ async def test_read_match_with_full_info(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_create_match_with_partial_info(client: AsyncClient):
     data = {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
@@ -156,6 +183,7 @@ async def test_create_match_with_partial_info(client: AsyncClient):
 
     assert response.status_code == 201
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -163,6 +191,7 @@ async def test_create_match_with_partial_info(client: AsyncClient):
         "description": None,
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
+        "stats": [],
         "id": 2,
     }
 
@@ -175,6 +204,7 @@ async def test_read_match_with_partial_info(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -182,6 +212,7 @@ async def test_read_match_with_partial_info(client: AsyncClient):
         "description": None,
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
+        "stats": [],
         "id": 2,
     }
 
@@ -195,6 +226,7 @@ async def test_empty_update_match(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -202,6 +234,7 @@ async def test_empty_update_match(client: AsyncClient):
         "description": "Test match",
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
+        "stats": [],
         "id": 1,
     }
 
@@ -215,6 +248,7 @@ async def test_update_match_description(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -222,6 +256,7 @@ async def test_update_match_description(client: AsyncClient):
         "description": "Second match of HSE",
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
+        "stats": [],
         "id": 2,
     }
 
@@ -239,6 +274,7 @@ async def test_update_match_tournament(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -246,6 +282,7 @@ async def test_update_match_tournament(client: AsyncClient):
         "description": "Fun match",
         "tournament": "MSCL+",
         "date": "2025-03-12T00:00:00",
+        "stats": [],
         "id": 2,
     }
 
@@ -259,6 +296,7 @@ async def test_get_matches(client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == [
         {
+            "best_of": 1,
             "max_number_of_teams": 2,
             "max_number_of_players": 10,
             "teams": [],
@@ -266,9 +304,11 @@ async def test_get_matches(client: AsyncClient):
             "description": "Test match",
             "tournament": "Final MSCL",
             "date": "2025-01-12T00:00:00",
+            "stats": [],
             "id": 1,
         },
         {
+            "best_of": 1,
             "max_number_of_teams": 2,
             "max_number_of_players": 10,
             "teams": [],
@@ -276,6 +316,7 @@ async def test_get_matches(client: AsyncClient):
             "description": "Fun match",
             "tournament": "MSCL+",
             "date": "2025-03-12T00:00:00",
+            "stats": [],
             "id": 2,
         },
     ]
@@ -300,6 +341,7 @@ async def test_delete_not_exist_match(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_create_match_with_not_existing_tournament(client: AsyncClient):
     data = {
+        "best_of": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "ESL Pro League",
