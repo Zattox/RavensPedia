@@ -139,19 +139,16 @@ async def add_match_stats_from_faceit(
     )
 
 
-#
-# @manager_match_router.delete(
-#     "/{match_id}/delete_player/{player_nickname}/",
-#     status_code=status.HTTP_200_OK,
-#     response_model=ResponseMatch,
-# )
-# async def delete_player_from_match(
-#     match: TableMatch = Depends(get_match_by_id),
-#     player: TablePlayer = Depends(get_player_by_nickname),
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ) -> ResponseMatch:
-#     return await match_management.delete_player_from_match(
-#         session=session,
-#         match=match,
-#         player=player,
-#     )
+@manager_match_router.delete(
+    "/{match_id}/delete_match_stats/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_match_stats(
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    return await match_management.delete_match_stats(
+        session=session,
+        match=match,
+    )

@@ -1,10 +1,11 @@
 import requests
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TablePlayerStats
 from ravenspedia.core.config import faceit_settings
+from ravenspedia.core.faceit_models import PlayerInfo
 from .crud import table_to_response_form
 from .schemes import ResponseMatch
 
@@ -99,3 +100,16 @@ async def add_match_stats_from_faceit(
     await session.flush()
     await session.commit()
     return table_to_response_form(match=match)
+
+
+async def delete_match_stats(
+    session: AsyncSession,
+    match: TableMatch,
+) -> ResponseMatch:
+    await session.execute(
+        delete(TablePlayerStats).where(TablePlayerStats.match_id == match.id)
+    )
+    await session.commit()
+    await session.refresh(match)
+
+    return table_to_response_form(match)

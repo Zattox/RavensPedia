@@ -160,4 +160,4 @@ class PlayerStats(BaseModel):
 class PlayerInfo(BaseModel):
     faceit_player_id: str = Field(..., alias="player_id")
     faceit_nickname: str = Field(..., alias="nickname")
-    # player_stats: PlayerStats = Field(..., alias="player_stats")
+    player_stats: PlayerStats = Field(..., alias="player_stats")
