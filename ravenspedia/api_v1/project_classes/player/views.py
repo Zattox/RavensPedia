@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.core import db_helper, TablePlayer
+from ravenspedia.core.faceit_models import PlayerStats
 from . import crud, dependencies
 from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
-from ravenspedia.core import db_helper, TablePlayer
 
 router = APIRouter(tags=["Players"])
 
@@ -23,11 +24,17 @@ def table_to_response_form(
     )
 
     if not is_create:
-        result.matches = [(elem.match_id, elem.round) for elem in player.stats]
+        result.matches = [
+            {
+                "match_id": elem.match_stats["match_id"],
+                "round_of_match": elem.match_stats["round_of_match"],
+            }
+            for elem in player.stats
+        ]
         result.tournaments = [tournament.name for tournament in player.tournaments]
         if player.team is not None:
             result.team = player.team.name
-        result.stats = player.stats
+        result.stats = [PlayerStats(**elem.match_stats) for elem in player.stats]
 
     return result
 
@@ -77,7 +84,7 @@ async def create_player(
         session=session,
         player_in=player_in,
     )
-    return table_to_response_form(player)
+    return table_to_response_form(player, is_create=True)
 
 
 # A view for partial or full update a player in the database
