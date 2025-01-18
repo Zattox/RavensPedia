@@ -22,6 +22,7 @@ def table_to_response_form(
         nickname=player.nickname,
         name=player.name,
         surname=player.surname,
+        stats=[],
     )
 
     if not is_create:
@@ -29,6 +30,7 @@ def table_to_response_form(
         result.tournaments = [tournament.name for tournament in player.tournaments]
         if player.team is not None:
             result.team = player.team.name
+        result.stats = player.stats
 
     return result
 

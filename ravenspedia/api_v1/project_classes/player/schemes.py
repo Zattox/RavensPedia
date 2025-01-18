@@ -2,6 +2,8 @@ from typing import Union, List
 
 from pydantic import BaseModel
 
+from ravenspedia.core.faceit_models import PlayerStats
+
 
 # The base class for the Player (without id)
 class PlayerBase(BaseModel):
@@ -13,6 +15,7 @@ class PlayerBase(BaseModel):
     team: Union[str | None] = None  # The ID of the player's current team
     matches_id: List[int] = []  # The IDs of the matches the player participated in
     tournaments: List[str] = []  # The IDs of the tournaments the team participated in
+    stats: List[PlayerStats] = []
 
 
 class PlayerCreate(BaseModel):
