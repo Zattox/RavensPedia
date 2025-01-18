@@ -2,7 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import TableMatch, TableTournament
+from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
+from ravenspedia.core.faceit_models import PlayerStats
 from .dependencies import get_match_by_id
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
 from ..tournament.dependencies import get_tournament_by_name
@@ -25,8 +26,8 @@ def table_to_response_form(
 
     if not is_create:
         result.teams = [team.name for team in match.teams]
-        result.players = [player.nickname for player in match.stats]
-        result.stats = match.stats
+        result.players = list({elem.player.nickname for elem in match.stats})
+        result.stats = [PlayerStats(**elem.match_stats) for elem in match.stats]
 
     return result
 
@@ -35,7 +36,7 @@ async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
     stmt = (
         select(TableMatch)
         .options(
-            selectinload(TableMatch.stats),
+            selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
         )
