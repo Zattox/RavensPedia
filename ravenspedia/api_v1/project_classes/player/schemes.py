@@ -13,7 +13,9 @@ class PlayerBase(BaseModel):
     surname: Union[str | None] = None  # The player's real surname
     faceit_id: Union[str | None] = None
     team: Union[str | None] = None  # The ID of the player's current team
-    matches_id: List[int] = []  # The IDs of the matches the player participated in
+    matches: List[tuple[int, int]] = (
+        []
+    )  # The IDs of the matches the player participated in
     tournaments: List[str] = []  # The IDs of the tournaments the team participated in
     stats: List[PlayerStats] = []
 
