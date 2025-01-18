@@ -1,3 +1,4 @@
+import requests
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, Path
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import db_helper, TableMatch
+from ravenspedia.core.config import faceit_settings
 
 
 # A function for get a match from the database by id
@@ -31,3 +33,15 @@ async def get_match_by_id(
         )
 
     return match
+
+
+async def find_steam_id_by_faceit_id(faceit_id: str) -> str:
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
+    }
+    response = requests.get(
+        f"{faceit_settings.base_url}/players/{faceit_id}",
+        headers=headers,
+    )
+    return response.json()["games"]["cs2"]["game_player_id"]

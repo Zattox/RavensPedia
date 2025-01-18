@@ -7,7 +7,10 @@ from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TablePlayerStat
 from ravenspedia.core.config import faceit_settings
 from ravenspedia.core.faceit_models import PlayerInfo
 from .crud import table_to_response_form
+from ravenspedia.api_v1.project_classes.player.crud import create_player
+from .dependencies import find_steam_id_by_faceit_id
 from .schemes import ResponseMatch
+from ..player.schemes import PlayerCreate
 
 
 async def add_team_in_match(
@@ -84,10 +87,16 @@ async def add_match_stats_from_faceit(
                 )
                 player = result.scalars().first()
                 if not player:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"A player {player_data["nickname"]} with this faceit_id {player_data["player_id"]} does not exist in the database",
+                    player = await create_player(
+                        session=session,
+                        player_in=PlayerCreate(
+                            nickname=player_data["nickname"],
+                            steam_id=await find_steam_id_by_faceit_id(
+                                faceit_id=player_data["player_id"]
+                            ),
+                        ),
                     )
+
                 player_stats = TablePlayerStats(
                     player=player,
                     match=match,
