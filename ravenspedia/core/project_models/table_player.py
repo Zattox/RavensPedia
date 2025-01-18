@@ -8,7 +8,7 @@ from ravenspedia.core import Base
 if TYPE_CHECKING:
     from .table_team import TableTeam
     from .table_tournament import TableTournament
-    from .table_player_stats import TablePlayerStats
+    from .table_match_stats import TableMatchStats
 
 
 class TablePlayer(Base):
@@ -32,7 +32,7 @@ class TablePlayer(Base):
     team: Mapped["TableTeam"] = relationship(back_populates="players")
 
     # Статистика игрока в матчах
-    stats: Mapped[list["TablePlayerStats"]] = relationship(back_populates="player")
+    stats: Mapped[list["TableMatchStats"]] = relationship(back_populates="player")
 
     # The IDs of the tournaments the team participated in
     tournaments: Mapped[list["TableTournament"]] = relationship(

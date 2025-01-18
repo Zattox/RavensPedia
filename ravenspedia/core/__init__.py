@@ -8,7 +8,7 @@ __all__ = (
     "TablePlayer",
     "TableTeam",
     "TableTournament",
-    "TablePlayerStats",
+    "TableMatchStats",
     "TeamTournamentAssociation",
     "TeamMatchAssociation",
     "PlayerTournamentAssociation",
@@ -26,5 +26,5 @@ from .project_models import (
     TableMatch,
     TablePlayer,
     TableTournament,
-    TablePlayerStats,
+    TableMatchStats,
 )
