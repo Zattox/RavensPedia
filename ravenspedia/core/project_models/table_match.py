@@ -15,7 +15,10 @@ if TYPE_CHECKING:
 class TableMatch(Base):
     __tablename__ = "matches"
 
-    best_of: Mapped[int]
+    best_of: Mapped[int] = mapped_column(
+        default=1,
+        server_default="1",
+    )
 
     max_number_of_teams: Mapped[int]
     max_number_of_players: Mapped[int]
