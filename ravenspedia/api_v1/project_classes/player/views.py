@@ -8,6 +8,30 @@ from ravenspedia.core import db_helper, TablePlayer
 router = APIRouter(tags=["Players"])
 
 
+def table_to_response_form(
+    player: TablePlayer,
+    is_create: bool = False,
+) -> ResponsePlayer:
+    result = ResponsePlayer(
+        id=player.id,
+        steam_id=player.steam_id,
+        faceit_id=player.faceit_id,
+        nickname=player.nickname,
+        name=player.name,
+        surname=player.surname,
+        stats=[],
+    )
+
+    if not is_create:
+        result.matches = [(elem.match_id, elem.round) for elem in player.stats]
+        result.tournaments = [tournament.name for tournament in player.tournaments]
+        if player.team is not None:
+            result.team = player.team.name
+        result.stats = player.stats
+
+    return result
+
+
 # A view to get all the players from the database
 @router.get(
     "/",
@@ -17,7 +41,9 @@ router = APIRouter(tags=["Players"])
 async def get_players(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.get_players(session=session)
+    players = await crud.get_players(session=session)
+    result = [table_to_response_form(player) for player in players]
+    return result
 
 
 # A view for getting a player by its id from the database
@@ -30,10 +56,11 @@ async def get_player(
     player_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponsePlayer:
-    return await crud.get_player(
+    player = await crud.get_player(
         player_id=player_id,
         session=session,
     )
+    return table_to_response_form(player)
 
 
 # A view for create a player in the database
@@ -46,10 +73,11 @@ async def create_player(
     player_in: PlayerCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.create_player(
+    player = await crud.create_player(
         session=session,
         player_in=player_in,
     )
+    return table_to_response_form(player)
 
 
 # A view for partial or full update a player in the database
@@ -63,11 +91,12 @@ async def update_general_player_info(
     player: TablePlayer = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.update_general_player_info(
+    new_player = await crud.update_general_player_info(
         session=session,
         player=player,
         player_update=player_update,
     )
+    return table_to_response_form(new_player)
 
 
 # A view for delete a player from the database

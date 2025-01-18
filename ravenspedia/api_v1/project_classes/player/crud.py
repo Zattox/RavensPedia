@@ -8,35 +8,11 @@ from sqlalchemy.orm import selectinload
 from ravenspedia.core import TablePlayer
 from ravenspedia.core.config import faceit_settings
 from .dependencies import get_player_by_id
-from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
-
-
-def table_to_response_form(
-    player: TablePlayer,
-    is_create: bool = False,
-) -> ResponsePlayer:
-    result = ResponsePlayer(
-        id=player.id,
-        steam_id=player.steam_id,
-        faceit_id=player.faceit_id,
-        nickname=player.nickname,
-        name=player.name,
-        surname=player.surname,
-        stats=[],
-    )
-
-    if not is_create:
-        result.matches_id = [elem.match_id for elem in player.stats]
-        result.tournaments = [tournament.name for tournament in player.tournaments]
-        if player.team is not None:
-            result.team = player.team.name
-        result.stats = player.stats
-
-    return result
+from .schemes import PlayerCreate, PlayerGeneralInfoUpdate
 
 
 # A function to get all the Players from the database
-async def get_players(session: AsyncSession) -> list[ResponsePlayer]:
+async def get_players(session: AsyncSession) -> list[TablePlayer]:
     statement = (
         select(TablePlayer)
         .options(
@@ -47,20 +23,19 @@ async def get_players(session: AsyncSession) -> list[ResponsePlayer]:
         .order_by(TablePlayer.id)
     )
     players = await session.scalars(statement)
-    result = [table_to_response_form(player=player) for player in list(players)]
-    return result
+    return list(players)
 
 
 # A function for getting a Player by its id from the database
 async def get_player(
     session: AsyncSession,
     player_id: int,
-) -> ResponsePlayer | None:
+) -> TablePlayer | None:
     player = await get_player_by_id(
         session=session,
         player_id=player_id,
     )
-    return table_to_response_form(player=player)
+    return player
 
 
 async def find_player_faceit_id(
@@ -90,7 +65,7 @@ async def find_player_faceit_id(
 async def create_player(
     session: AsyncSession,
     player_in: PlayerCreate,
-) -> ResponsePlayer:
+) -> TablePlayer:
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
     faceit_id = await find_player_faceit_id(player_in.steam_id)
@@ -106,7 +81,7 @@ async def create_player(
             detail=f"A player with such data already exists",
         )
 
-    return table_to_response_form(player=player, is_create=True)
+    return player
 
 
 # A function for partial update a Player in the database
@@ -114,13 +89,13 @@ async def update_general_player_info(
     session: AsyncSession,
     player: TablePlayer,
     player_update: PlayerGeneralInfoUpdate,
-) -> ResponsePlayer:
+) -> TablePlayer:
     for class_field, value in player_update.model_dump(exclude_unset=True).items():
         if class_field == "steam_id":
             setattr(player, "faceit_id", find_player_faceit_id(value))
         setattr(player, class_field, value)
     await session.commit()  # Make changes to the database
-    return table_to_response_form(player=player)
+    return player
 
 
 # A function for delete a Player from the database
