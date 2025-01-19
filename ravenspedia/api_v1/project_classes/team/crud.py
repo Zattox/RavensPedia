@@ -1,10 +1,8 @@
-from dataclasses import asdict, dataclass
 from fastapi import HTTPException, status
-
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableTeam
 from .dependencies import get_team_by_id
@@ -84,6 +82,14 @@ async def delete_team(
     session: AsyncSession,
     team: TableTeam,
 ) -> None:
+    from .team_management import delete_player_from_team
+
+    for player in team.players:
+        await delete_player_from_team(
+            session=session,
+            team=team,
+            player=player,
+        )
     await session.delete(team)
     await session.commit()  # Make changes to the database
 
