@@ -25,8 +25,15 @@ class FaceitSettings:
 class SettingsForTests:
     player1_steam_id = os.getenv("PLAYER1_STEAM_ID")
     player2_steam_id = os.getenv("PLAYER2_STEAM_ID")
+    player3_steam_id = os.getenv("PLAYER3_STEAM_ID")
+    player4_steam_id = os.getenv("PLAYER4_STEAM_ID")
+    player5_steam_id = os.getenv("PLAYER5_STEAM_ID")
+
     player1_faceit_id = os.getenv("PLAYER1_FACEIT_ID")
     player2_faceit_id = os.getenv("PLAYER2_FACEIT_ID")
+    player3_faceit_id = os.getenv("PLAYER3_FACEIT_ID")
+    player4_faceit_id = os.getenv("PLAYER4_FACEIT_ID")
+    player5_faceit_id = os.getenv("PLAYER5_FACEIT_ID")
 
 
 # Init class Settings
