@@ -32,10 +32,13 @@ class TablePlayer(Base):
     team: Mapped["TableTeam"] = relationship(back_populates="players")
 
     # Статистика игрока в матчах
-    stats: Mapped[list["TableMatchStats"]] = relationship(back_populates="player")
+    stats: Mapped[list["TableMatchStats"]] = relationship(
+        back_populates="player", cascade="all, delete-orphan"
+    )
 
     # The IDs of the tournaments the team participated in
     tournaments: Mapped[list["TableTournament"]] = relationship(
         secondary="player_tournament_association",
         back_populates="players",
+        cascade="save-update, merge",
     )
