@@ -1,10 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.core import TableTournament, TableTeam
 from .crud import table_to_response_form
 from .schemes import ResponseTournament
-
-from ravenspedia.core import TableTournament, TableTeam
 
 
 async def add_team_in_tournament(
@@ -12,7 +11,7 @@ async def add_team_in_tournament(
     team: TableTeam,
     tournament: TableTournament,
 ) -> ResponseTournament:
-    if team in team.players:
+    if team in tournament.teams:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Team {team.name} already exists",
@@ -46,8 +45,11 @@ async def delete_team_from_tournament(
 
     tournament.teams.remove(team)
     for player in team.players:
-        tournament.players.remove(player)
+        if player in tournament.players:
+            tournament.players.remove(player)
 
     await session.commit()
+
+    await session.refresh(tournament, ["matches", "teams", "players"])
 
     return table_to_response_form(tournament=tournament)

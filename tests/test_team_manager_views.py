@@ -5,7 +5,7 @@ from ravenspedia.core.config import data_for_tests
 
 
 @pytest.mark.asyncio
-async def test_init_tournaments_for_matches(client: AsyncClient):
+async def test_init_teams_and_players(client: AsyncClient):
     player1 = {
         "nickname": "Zattox",
         "steam_id": data_for_tests.player1_steam_id,
