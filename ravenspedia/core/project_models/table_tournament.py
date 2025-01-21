@@ -20,15 +20,20 @@ class TableTournament(Base):
     # The description of the tournament
     description: Mapped[str | None] = mapped_column(String(255))
     # The IDs of the matches the tournament participated in
-    matches: Mapped[list["TableMatch"]] = relationship(back_populates="tournament")
+    matches: Mapped[list["TableMatch"]] = relationship(
+        back_populates="tournament",
+        cascade="all, delete-orphan",
+    )
 
     # The IDs of the teams the tournament participated in
     teams: Mapped[list["TableTeam"]] = relationship(
         secondary="team_tournament_association",
         back_populates="tournaments",
+        cascade="save-update, merge",
     )
 
     players: Mapped[list["TablePlayer"]] = relationship(
         secondary="player_tournament_association",
         back_populates="tournaments",
+        cascade="save-update, merge",
     )
