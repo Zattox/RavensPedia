@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union, List
 
 from pydantic import BaseModel
@@ -19,12 +20,16 @@ class TournamentCreate(BaseModel):
     name: str
     prize: Union[str | None] = None
     description: Union[str | None] = None
+    start_date: Union[datetime | None] = None
+    end_date: Union[datetime | None] = None
 
 
 class TournamentGeneralInfoUpdate(BaseModel):
     name: Union[str | None] = None
     prize: Union[str | None] = None
     description: Union[str | None] = None
+    start_date: Union[datetime | None] = None
+    end_date: Union[datetime | None] = None
 
 
 # The main class for work with a Tournament
