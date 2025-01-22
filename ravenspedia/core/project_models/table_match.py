@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 
 
 class MatchStatus(Enum):
-    SCHEDULED = "scheduled"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
+    SCHEDULED = "SCHEDULED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
 
 
 class TableMatch(Base):
