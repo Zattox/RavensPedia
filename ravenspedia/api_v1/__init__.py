@@ -13,6 +13,7 @@ from ravenspedia.api_v1.project_classes.tournament.views import (
     router as tournament_router,
     manager_tournament_router,
 )
+from ravenspedia.api_v1.schedules.views import router as schedule_router
 
 router = APIRouter()
 router.include_router(router=player_router, prefix="/players")
@@ -22,3 +23,5 @@ router.include_router(router=match_router, prefix="/matches")
 router.include_router(router=manager_match_router, prefix="/matches")
 router.include_router(router=tournament_router, prefix="/tournaments")
 router.include_router(router=manager_tournament_router, prefix="/tournaments")
+
+router.include_router(router=schedule_router, prefix="/schedules")
