@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
-from ravenspedia.core.faceit_models import PlayerStats
+from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
 from .dependencies import get_match_by_id
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
 from ..tournament.dependencies import get_tournament_by_name
@@ -27,7 +27,7 @@ def table_to_response_form(
     if not is_create:
         result.teams = [team.name for team in match.teams]
         result.players = list({elem.player.nickname for elem in match.stats})
-        result.stats = [PlayerStats(**elem.match_stats) for elem in match.stats]
+        result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
 
     return result
 
