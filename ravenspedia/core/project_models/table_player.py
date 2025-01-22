@@ -33,7 +33,8 @@ class TablePlayer(Base):
 
     # Статистика игрока в матчах
     stats: Mapped[list["TableMatchStats"]] = relationship(
-        back_populates="player", cascade="all, delete-orphan"
+        back_populates="player",
+        cascade="all, delete-orphan",
     )
 
     # The IDs of the tournaments the team participated in

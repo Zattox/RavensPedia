@@ -30,7 +30,10 @@ class TableMatch(Base):
     )
 
     # Статистика игроков в матче
-    stats: Mapped[list["TableMatchStats"]] = relationship(back_populates="match")
+    stats: Mapped[list["TableMatchStats"]] = relationship(
+        back_populates="match",
+        cascade="all, delete-orphan",
+    )
 
     # Additional information about the match
     description: Mapped[str | None] = mapped_column(String(255))

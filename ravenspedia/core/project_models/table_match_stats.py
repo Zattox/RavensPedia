@@ -13,8 +13,8 @@ class TableMatchStats(Base):
     __tablename__ = "player_stats"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    player_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
-    match_id: Mapped[int] = mapped_column(ForeignKey("matches.id"))
+    player_id: Mapped[int] = mapped_column(ForeignKey("players.id", ondelete="CASCADE"))
+    match_id: Mapped[int] = mapped_column(ForeignKey("matches.id", ondelete="CASCADE"))
     match_stats: Mapped[dict] = mapped_column(JSON)
 
     player: Mapped["TablePlayer"] = relationship(back_populates="stats")
