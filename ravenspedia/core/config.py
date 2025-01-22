@@ -35,6 +35,10 @@ class SettingsForTests:
     player4_faceit_id = os.getenv("PLAYER4_FACEIT_ID")
     player5_faceit_id = os.getenv("PLAYER5_FACEIT_ID")
 
+    faceit_bo1_match1 = os.getenv("FACEIT_BO1_MATCH1")
+
+    faceit_bo3_match1 = os.getenv("FACEIT_BO3_MATCH1")
+
 
 # Init class Settings
 settings = Settings()
