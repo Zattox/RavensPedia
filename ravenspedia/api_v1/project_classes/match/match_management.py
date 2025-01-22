@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 from fastapi import HTTPException, status
 from sqlalchemy import select, delete
@@ -7,9 +9,9 @@ from ravenspedia.api_v1.project_classes.player.crud import create_player
 from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TableMatchStats
 from ravenspedia.core.config import faceit_settings
 from ravenspedia.core.faceit_models import PlayerStats
-from .crud import table_to_response_form
+from .crud import table_to_response_form, update_general_match_info
 from .dependencies import find_steam_id_by_faceit_id
-from .schemes import ResponseMatch
+from .schemes import ResponseMatch, MatchGeneralInfoUpdate
 from ..player.schemes import PlayerCreate
 
 
@@ -57,6 +59,24 @@ async def delete_team_from_match(
     return table_to_response_form(match=match)
 
 
+async def find_start_time_from_faceit_match(
+    faceit_match_id: str,
+) -> datetime:
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
+    }
+    response = requests.get(
+        f"{faceit_settings.base_url}/matches/{faceit_match_id}",
+        headers=headers,
+    )
+    unix_time = response.json()["started_at"]
+    time = datetime.fromtimestamp(unix_time)
+    formatted_date = time.replace(second=0, microsecond=0)
+
+    return formatted_date
+
+
 async def add_match_stats_from_faceit(
     session: AsyncSession,
     match: TableMatch,
@@ -74,10 +94,32 @@ async def add_match_stats_from_faceit(
         headers=headers,
     )
     data = response.json()
+
+    if len(data["rounds"]) > match.best_of:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"There are not as many maps in the match {match.id} as indicated in the link",
+        )
+
+    if len(data["rounds"]) < match.best_of:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"There are not as few maps in the match {match.id} as indicated in the link",
+        )
+
+    await update_general_match_info(
+        session=session,
+        match=match,
+        match_update=MatchGeneralInfoUpdate(
+            date=await find_start_time_from_faceit_match(
+                faceit_match_id=faceit_match_id,
+            )
+        ),
+    )
+
     for round_data in data["rounds"]:
         for team_data in round_data["teams"]:
             for player_data in team_data["players"]:
-                player_data["player_stats"]["nickname"] = player_data["nickname"]
                 player_data["player_stats"]["round_of_match"] = round_data[
                     "match_round"
                 ]
@@ -97,6 +139,7 @@ async def add_match_stats_from_faceit(
                             ),
                         ),
                     )
+                player_data["player_stats"]["nickname"] = player.nickname
                 player_stats = PlayerStats(**player_data["player_stats"])
                 round_player_stats = TableMatchStats(
                     player=player,
@@ -107,6 +150,7 @@ async def add_match_stats_from_faceit(
 
     await session.flush()
     await session.commit()
+
     return table_to_response_form(match=match)
 
 
