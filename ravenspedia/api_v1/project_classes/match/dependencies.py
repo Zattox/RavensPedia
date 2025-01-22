@@ -1,12 +1,12 @@
-import requests
 from typing import Annotated
 
+import requests
 from fastapi import Depends, HTTPException, status, Path
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import db_helper, TableMatch
+from ravenspedia.core import db_helper, TableMatch, TableMatchStats
 from ravenspedia.core.config import faceit_settings
 
 
@@ -19,7 +19,7 @@ async def get_match_by_id(
         select(TableMatch)
         .where(TableMatch.id == match_id)
         .options(
-            selectinload(TableMatch.stats),
+            selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
         ),
