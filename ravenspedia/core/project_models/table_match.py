@@ -1,7 +1,8 @@
 from datetime import datetime
+from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, ForeignKey, func
+from sqlalchemy import String, ForeignKey, func, Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ravenspedia.core import Base
@@ -10,6 +11,12 @@ if TYPE_CHECKING:
     from .table_team import TableTeam
     from .table_tournament import TableTournament
     from .table_match_stats import TableMatchStats  # Импортируем PlayerStats
+
+
+class MatchStatus(Enum):
+    SCHEDULED = "scheduled"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
 
 
 class TableMatch(Base):
@@ -47,3 +54,12 @@ class TableMatch(Base):
         default=datetime.now,
         server_default=func.now(),
     )
+
+    status: Mapped[MatchStatus] = mapped_column(
+        SQLAlchemyEnum(MatchStatus),
+        default=MatchStatus.SCHEDULED,
+        server_default=MatchStatus.SCHEDULED.value,
+    )
+
+    def is_completed(self) -> bool:
+        return self.status == MatchStatus.COMPLETED
