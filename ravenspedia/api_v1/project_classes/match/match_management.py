@@ -82,6 +82,12 @@ async def add_match_stats_from_faceit(
     match: TableMatch,
     faceit_url: str,
 ) -> ResponseMatch:
+    if match.stats:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Statistics have already been added to the match {match.id}",
+        )
+
     start = faceit_url.find("/room/") + len("/room/")
     faceit_match_id = faceit_url.replace("/scoreboard", "")[start:]
 
@@ -95,19 +101,14 @@ async def add_match_stats_from_faceit(
     )
     data = response.json()
 
-    if len(data["rounds"]) > match.best_of:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"There are not as many maps in the match {match.id} as indicated in the link",
-        )
+    # In the json response from faceit, both bo1 and bo2 matches are marked as bo2
+    if data["rounds"][0]["best_of"] == "2" and len(data["rounds"]) == 1:
+        data["rounds"][0]["best_of"] = "1"
 
-    if (
-        len(data["rounds"]) < match.best_of
-        and int(data["rounds"][0]["best_of"]) != match.best_of
-    ):
+    if int(data["rounds"][0]["best_of"]) != match.best_of:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"There are not as few maps in the match {match.id} as indicated in the link",
+            detail=f"The best_of field differs from the specified one. Needed {match.best_of}, but passed {data["rounds"][0]["best_of"]}",
         )
 
     await update_general_match_info(
