@@ -101,7 +101,10 @@ async def add_match_stats_from_faceit(
             detail=f"There are not as many maps in the match {match.id} as indicated in the link",
         )
 
-    if len(data["rounds"]) < match.best_of:
+    if (
+        len(data["rounds"]) < match.best_of
+        and int(data["rounds"][0]["best_of"]) != match.best_of
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"There are not as few maps in the match {match.id} as indicated in the link",
