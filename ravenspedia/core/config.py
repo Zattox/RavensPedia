@@ -22,7 +22,7 @@ class FaceitSettings:
     api_key = os.getenv("FACEIT_API_KEY")
 
 
-class SettingsForTests:
+class DataForTests:
     player1_steam_id = os.getenv("PLAYER1_STEAM_ID")
     player2_steam_id = os.getenv("PLAYER2_STEAM_ID")
     player3_steam_id = os.getenv("PLAYER3_STEAM_ID")
@@ -36,7 +36,9 @@ class SettingsForTests:
     player5_faceit_id = os.getenv("PLAYER5_FACEIT_ID")
 
     faceit_bo1_match1 = os.getenv("FACEIT_BO1_MATCH1")
+    faceit_bo1_match2 = os.getenv("FACEIT_BO1_MATCH2")
 
+    faceit_bo2_match1 = os.getenv("FACEIT_BO2_MATCH1")
     faceit_bo3_match1 = os.getenv("FACEIT_BO3_MATCH1")
 
 
@@ -49,4 +51,4 @@ test_settings = Settings(
 # Init class FaceitSettings
 faceit_settings = FaceitSettings()
 
-data_for_tests = SettingsForTests()
+data_for_tests = DataForTests()
