@@ -34,6 +34,8 @@ async def add_team_in_match(
         )
 
     match.teams.append(team)
+    if not match.tournament in team.tournaments:
+        team.tournaments.append(match.tournament)
 
     await session.commit()
 
@@ -111,6 +113,7 @@ async def add_match_stats_from_faceit(
             detail=f"The best_of field differs from the specified one. Needed {match.best_of}, but passed {data["rounds"][0]["best_of"]}",
         )
 
+    # Update the starting time of the match
     await update_general_match_info(
         session=session,
         match=match,
