@@ -23,6 +23,7 @@ pytest = "^8.3.4"
 pytest-asyncio = "^0.25.2"
 deepdiff = "^8.1.1"
 pyjwt = {extras = ["crypto"], version = "^2.10.1"}
+bcrypt = "^4.2.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
