@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -15,6 +16,14 @@ class Settings(BaseSettings):
     db_url: str = f"sqlite+aiosqlite:///{BASE_DIR}/db.sqlite3"
     # Database debugging mode
     db_echo: bool = False
+
+
+class AuthJWT(BaseModel):
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    algorithm: str = "RS256"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 30
 
 
 class FaceitSettings:
@@ -52,3 +61,5 @@ test_settings = Settings(
 faceit_settings = FaceitSettings()
 
 data_for_tests = DataForTests()
+
+auth_settings = AuthJWT()
