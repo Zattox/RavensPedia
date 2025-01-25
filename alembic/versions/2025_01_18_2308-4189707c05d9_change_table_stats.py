@@ -27,6 +27,19 @@ def upgrade() -> None:
         sa.Column("player_id", sa.Integer, nullable=False),
         sa.Column("match_id", sa.Integer, nullable=False),
         sa.Column("match_stats", sa.JSON(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["match_id"],
+            ["matches.id"],
+            name="fk_player_stats_match_id",
+            ondelete="CASCADE",
+        ),
+        sa.ForeignKeyConstraint(
+            ["player_id"],
+            ["players.id"],
+            name="fk_player_stats_player_id",
+            ondelete="CASCADE",
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
 
@@ -88,5 +101,18 @@ def downgrade() -> None:
         sa.Column("entry_wins", sa.Integer, nullable=True),
         sa.Column("assists", sa.Integer, nullable=False),
         sa.Column("nickname", sa.String, nullable=False),
+        sa.ForeignKeyConstraint(
+            ["match_id"],
+            ["matches.id"],
+            name="fk_player_stats_match_id",
+            ondelete="CASCADE",
+        ),
+        sa.ForeignKeyConstraint(
+            ["player_id"],
+            ["players.id"],
+            name="fk_player_stats_player_id",
+            ondelete="CASCADE",
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
