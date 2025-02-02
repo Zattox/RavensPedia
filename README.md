@@ -25,7 +25,9 @@ Create a `.env` file in the root folder of the project and enter your environmen
    
 Getting the API_KEY is described [here](https://developers.faceit.com/docs/auth/api-keys)
 
-6. Creating Testing Environment variables
+<!--Testing-->
+## Testing
+1. Creating Testing Environment variables
 
 To test the application, add the following fields to the `.env`:
 - 5 fields of the form `PLAYER1_STEAM_ID` (You can get it from a third-party service, [for example](https://steamid.pro/`), by entering the steam user profile link, you will need to add the SteamID from the site)
@@ -39,7 +41,7 @@ $wget.Content
 - `FACEIT_BO2_MATCH1` (Find any bo2 format match on faceit)
 - `FACEIT_BO3_MATCH1` (Find any bo3 format match on faceit)
 
-7. Testing the application
+2. Testing the application
 Go to the project folder, then write in the terminal
 ```bash
 poetry run pytest
