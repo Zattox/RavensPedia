@@ -84,7 +84,7 @@ async def delete_team(
 ) -> None:
     from .team_management import delete_player_from_team
 
-    for player in team.players:
+    for player in list(team.players):
         await delete_player_from_team(
             session=session,
             team=team,

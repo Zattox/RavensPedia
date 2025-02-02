@@ -22,7 +22,7 @@ class TableTeam(Base):
     # IDs of the main team members
     players: Mapped[list["TablePlayer"]] = relationship(
         back_populates="team",
-        cascade="all, delete-orphan",
+        cascade="save-update, merge",
     )
 
     # The IDs of the matches the team participated in

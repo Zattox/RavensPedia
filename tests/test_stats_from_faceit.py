@@ -10,12 +10,16 @@ async def test_init_tournament_and_match(client: AsyncClient):
     tournament1 = {
         "max_count_of_teams": 2,
         "name": "MSCL+",
+        "start_date": "2025-02-02",
+        "end_date": "2025-02-12",
     }
     tournament2 = {
         "max_count_of_teams": 2,
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
+        "start_date": "2025-02-02",
+        "end_date": "2025-02-12",
     }
 
     response = await client.post("/tournaments/", json=tournament1)

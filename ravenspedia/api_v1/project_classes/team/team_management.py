@@ -1,7 +1,8 @@
 from fastapi import HTTPException, status
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import TableTeam, TablePlayer
+from ravenspedia.core import TableTeam, TablePlayer, PlayerTournamentAssociation
 from .crud import table_to_response_form
 from .schemes import ResponseTeam
 
@@ -40,13 +41,25 @@ async def delete_player_from_team(
     team: TableTeam,
     player: TablePlayer,
 ) -> ResponseTeam:
-    if not player in team.players:
+    if player not in team.players:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"The player is no longer participate in the team {team.name}",
         )
 
     team.players.remove(player)
+    player.team_id = None
+    player.team = None
+
+    await session.execute(
+        delete(PlayerTournamentAssociation).where(
+            PlayerTournamentAssociation.player_id == player.id,
+            PlayerTournamentAssociation.tournament_id.in_(
+                tournament.id for tournament in team.tournaments
+            ),
+        )
+    )
+
     await session.commit()
 
     return table_to_response_form(team=team)

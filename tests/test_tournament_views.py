@@ -62,6 +62,8 @@ async def test_create_tournament_with_full_info(client: AsyncClient):
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
+        "start_date": "2025-02-02",
+        "end_date": "2025-02-12",
     }
 
     response = await client.post(
@@ -105,6 +107,8 @@ async def test_create_tournament_with_partial_info(client: AsyncClient):
     data = {
         "max_count_of_teams": 2,
         "name": "MSCL+",
+        "start_date": "2025-02-02",
+        "end_date": "2025-02-12",
     }
 
     response = await client.post(
@@ -267,6 +271,8 @@ async def test_create_tournament_with_existing_name(client: AsyncClient):
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
+        "start_date": "2025-02-02",
+        "end_date": "2025-02-12",
     }
 
     response = await client.post(
