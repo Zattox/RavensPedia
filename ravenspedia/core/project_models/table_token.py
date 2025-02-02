@@ -18,3 +18,5 @@ class TableToken(Base):
     )
     subject_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
     subject: Mapped["TableUser"] = relationship(back_populates="tokens")
+    device_id: Mapped[str | None]
+    expired_time: Mapped[int | None]
