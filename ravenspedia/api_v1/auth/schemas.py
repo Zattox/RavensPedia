@@ -1,5 +1,3 @@
-from typing import Union
-
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -14,6 +12,16 @@ class UserBase(BaseModel):
 
 
 class UserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(
+        ...,
+        min_length=5,
+        max_length=50,
+        description="Password, from 5 to 50 characters",
+    )
+
+
+class UserAuth(BaseModel):
     email: EmailStr
     password: str = Field(
         ...,
