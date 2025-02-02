@@ -11,12 +11,13 @@ if TYPE_CHECKING:
 
 class TableToken(Base):
     jti: Mapped[str] = mapped_column(unique=True, nullable=False)
+    device_id: Mapped[str | None]
+    expired_time: Mapped[int | None]
     revoked: Mapped[bool] = mapped_column(
         nullable=False,
         default=False,
         server_default=text("false"),
     )
-    subject_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
+
+    subject_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     subject: Mapped["TableUser"] = relationship(back_populates="tokens")
-    device_id: Mapped[str | None]
-    expired_time: Mapped[int | None]

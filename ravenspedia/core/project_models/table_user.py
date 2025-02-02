@@ -25,7 +25,7 @@ class TableUser(Base):
     )
 
     # IDs of the main team members
-    players: Mapped[list["TableToken"]] = relationship(
+    tokens: Mapped[list["TableToken"]] = relationship(
         back_populates="subject",
         cascade="all, delete-orphan",
     )
