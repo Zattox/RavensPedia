@@ -9,7 +9,7 @@ from . import utils
 
 
 def get_access_token(request: Request):
-    token = request.cookies.get("users_access_token")
+    token = request.cookies.get("user_access_token")
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -19,7 +19,7 @@ def get_access_token(request: Request):
 
 
 def get_refresh_token(request: Request):
-    token = request.cookies.get("users_refresh_token")
+    token = request.cookies.get("user_refresh_token")
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -29,6 +29,7 @@ def get_refresh_token(request: Request):
 
 
 async def get_current_user(
+    request: Request,
     token: str = Depends(get_access_token),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> TableUser:
@@ -39,7 +40,7 @@ async def get_current_user(
 
     try:
         payload = utils.decode_jwt(token=token)
-        Request.state.device_id = payload["device_id"]
+        request.state.device_id = payload.get("device_id")
     except Exception:
         raise auth_exc
 
@@ -49,12 +50,12 @@ async def get_current_user(
     if (expire is None) or (expire_time < datetime.now(timezone.utc)):
         raise auth_exc
 
-    user_email = payload.get("sub")
-    if not user_email:
+    user_id = payload.get("sub")
+    if not user_id:
         raise auth_exc
 
     user: TableUser = await session.scalar(
-        select(TableUser).where(TableUser.email == user_email)
+        select(TableUser).where(TableUser.id == user_id)
     )
     if not user:
         raise auth_exc
