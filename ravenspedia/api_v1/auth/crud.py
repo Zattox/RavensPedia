@@ -2,7 +2,7 @@ import uuid
 
 from fastapi import HTTPException, status
 from pydantic import EmailStr
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.api_v1.auth.utils import validate_password
@@ -198,3 +198,8 @@ async def update_tokens(
     )
 
     return new_tokens
+
+
+async def delete_revoked_tokens(session: AsyncSession) -> None:
+    await session.execute(delete(TableToken).where(TableToken.revoked == True))
+    await session.commit()
