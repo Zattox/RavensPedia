@@ -10,6 +10,7 @@ __all__ = (
     "TableTournament",
     "TableMatchStats",
     "TableUser",
+    "TableToken",
     "TeamTournamentAssociation",
     "TeamMatchAssociation",
     "PlayerTournamentAssociation",
@@ -29,4 +30,5 @@ from .project_models import (
     TableTournament,
     TableMatchStats,
     TableUser,
+    TableToken,
 )

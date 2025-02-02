@@ -1,5 +1,5 @@
 from sqlalchemy import text, LargeBinary
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ravenspedia.core import Base
 
@@ -22,4 +22,10 @@ class TableUser(Base):
         default=False,
         server_default=text("false"),
         nullable=False,
+    )
+
+    # IDs of the main team members
+    players: Mapped[list["TableToken"]] = relationship(
+        back_populates="subject",
+        cascade="all, delete-orphan",
     )
