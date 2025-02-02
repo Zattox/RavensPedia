@@ -1,50 +1,49 @@
 from datetime import timedelta
 
-from ravenspedia.api_v1.demo_auth import utils as auth_utils
-from ravenspedia.core.auth_models.user import UserSchema
+from ravenspedia.api_v1.auth.utils import encode_jwt
+from ravenspedia.core import TableUser
 from ravenspedia.core.config import auth_settings
-
-TOKEN_TYPE_FIELD = "token_type"
-ACCESS_TOKEN_TYPE = "access"
-REFRESH_TOKEN_TYPE = "refresh"
 
 
 def create_jwt(
     token_type: str,
     token_data: dict,
+    device_id: str,
     expire_minutes: int = auth_settings.access_token_expire_minutes,
     expire_timedelta: timedelta | None = None,
 ) -> str:
     jwt_payload = {
-        TOKEN_TYPE_FIELD: token_type,
+        auth_settings.TOKEN_TYPE_FIELD: token_type,
+        "device_id": device_id,
     }
     jwt_payload.update(token_data)
-    return auth_utils.encode_jwt(
+
+    return encode_jwt(
         payload=jwt_payload,
         expire_minutes=expire_minutes,
         expire_timedelta=expire_timedelta,
     )
 
 
-def create_access_token(user: UserSchema) -> str:
+def create_access_token(user: TableUser, device_id: str) -> str:
     jwt_payload = {
-        "sub": user.username,
-        "username": user.username,
-        "email": user.email,
+        "sub": str(user.id),
     }
     return create_jwt(
-        token_type=ACCESS_TOKEN_TYPE,
+        token_type=auth_settings.ACCESS_TOKEN_TYPE,
         token_data=jwt_payload,
+        device_id=device_id,
         expire_minutes=auth_settings.access_token_expire_minutes,
     )
 
 
-def create_refresh_token(user: UserSchema) -> str:
+def create_refresh_token(user: TableUser, device_id: str) -> str:
     jwt_payload = {
-        "sub": user.username,
+        "sub": str(user.id),
     }
     return create_jwt(
-        token_type=REFRESH_TOKEN_TYPE,
+        token_type=auth_settings.REFRESH_TOKEN_TYPE,
         token_data=jwt_payload,
+        device_id=device_id,
         expire_timedelta=timedelta(days=auth_settings.refresh_token_expire_days),
     )
