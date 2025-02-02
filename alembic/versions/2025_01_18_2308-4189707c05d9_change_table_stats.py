@@ -30,13 +30,11 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["match_id"],
             ["matches.id"],
-            name="fk_player_stats_match_id",
             ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["player_id"],
             ["players.id"],
-            name="fk_player_stats_player_id",
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -104,14 +102,10 @@ def downgrade() -> None:
         sa.ForeignKeyConstraint(
             ["match_id"],
             ["matches.id"],
-            name="fk_player_stats_match_id",
-            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["player_id"],
             ["players.id"],
-            name="fk_player_stats_player_id",
-            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
