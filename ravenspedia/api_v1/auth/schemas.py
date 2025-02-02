@@ -37,3 +37,8 @@ class User(UserBase):
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models
+
+
+class AuthOutput(BaseModel):
+    access_token: str
+    refresh_token: str

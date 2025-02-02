@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import db_helper, TableUser
 from . import crud, dependencies
-from .schemas import UserCreate, UserAuth
+from .schemas import UserCreate, UserAuth, AuthOutput
 
 router = APIRouter(tags=["Auth"])
 
@@ -19,7 +19,7 @@ async def register_user(
     user_in: UserCreate,
     response: Response,
     session: AsyncSession = Depends(db_helper.session_dependency),
-) -> dict:
+) -> AuthOutput:
     tokens = await crud.register_user(
         user_in=user_in,
         session=session,
@@ -44,7 +44,7 @@ async def login(
     user_in: UserAuth,
     response: Response,
     session: AsyncSession = Depends(db_helper.session_dependency),
-) -> dict:
+) -> AuthOutput:
     tokens = await crud.authenticate_user(
         email=user_in.email,
         password=user_in.password,
@@ -59,12 +59,12 @@ async def login(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens["access_token"],
+        value=tokens.access_token,
         **COOKIE_OPTIONS,
     )
     response.set_cookie(
         key="user_refresh_token",
-        value=tokens["refresh_token"],
+        value=tokens.refresh_token,
         **COOKIE_OPTIONS,
     )
 
@@ -74,10 +74,15 @@ async def login(
 @router.post("/logout/")
 async def logout(
     response: Response,
-    token: str = Depends(dependencies.get_access_token),
+    access_token: str = Depends(dependencies.get_access_token),
+    refresh_token: str = Depends(dependencies.get_refresh_token),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
-    await crud.logout(token=token, session=session)
+    await crud.logout(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        session=session,
+    )
 
     response.delete_cookie(
         key="user_access_token",
@@ -96,7 +101,7 @@ async def refresh(
     response: Response,
     refresh_token: str = Depends(dependencies.get_refresh_token),
     session: AsyncSession = Depends(db_helper.session_dependency),
-) -> dict:
+) -> AuthOutput:
     tokens = await crud.update_tokens(
         refresh_token=refresh_token,
         session=session,
@@ -119,5 +124,5 @@ async def refresh(
 @router.get("/me/")
 async def get_me(
     user_data: TableUser = Depends(dependencies.get_current_user),
-):
+) -> dict:
     return {"email": user_data.email}
