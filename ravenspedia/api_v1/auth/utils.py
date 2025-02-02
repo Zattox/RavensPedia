@@ -1,8 +1,8 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 
-import jwt
-import uuid
 import bcrypt
+import jwt
 
 from ravenspedia.core.config import auth_settings
 
@@ -70,21 +70,3 @@ def decode_jwt(
         algorithms=[algorithm],
     )
     return decoded_jwt
-
-
-def create_jwt(
-    token_type: str,
-    token_data: dict,
-    expire_minutes: int,
-    expire_timedelta: timedelta | None = None,
-) -> str:
-    jwt_payload = {
-        auth_settings.TOKEN_TYPE_FIELD: token_type,
-    }
-    jwt_payload.update(token_data)
-
-    return encode_jwt(
-        payload=jwt_payload,
-        expire_minutes=expire_minutes,
-        expire_timedelta=expire_timedelta,
-    )
