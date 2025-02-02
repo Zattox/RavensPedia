@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import text, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ravenspedia.core import Base
+from ravenspedia.core.base import Base
+
+if TYPE_CHECKING:
+    from .table_token import TableToken
 
 
 class TableUser(Base):

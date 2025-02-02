@@ -21,6 +21,7 @@ from .associations_models import (
     TeamTournamentAssociation,
     PlayerTournamentAssociation,
 )
+from .auth_models import TableUser, TableToken
 from .base import Base
 from .db_helper import db_helper, DatabaseHelper, test_db_helper
 from .project_models import (
@@ -29,6 +30,4 @@ from .project_models import (
     TablePlayer,
     TableTournament,
     TableMatchStats,
-    TableUser,
-    TableToken,
 )
