@@ -66,7 +66,6 @@ async def test_create_player_with_full_info(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 1,
     }
 
 
@@ -86,7 +85,6 @@ async def test_read_player_with_full_info(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 1,
     }
 
 
@@ -113,7 +111,6 @@ async def test_create_player_with_partial_info(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 2,
     }
 
 
@@ -134,7 +131,6 @@ async def test_read_player_with_partial_info(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 2,
     }
 
 
@@ -156,7 +152,6 @@ async def test_empty_update_player(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 1,
     }
 
 
@@ -183,7 +178,6 @@ async def test_update_player_names(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 2,
     }
 
 
@@ -209,7 +203,6 @@ async def test_update_player_nickname(client: AsyncClient):
         "matches": [],
         "tournaments": [],
         "stats": [],
-        "id": 2,
     }
 
 
@@ -231,7 +224,6 @@ async def test_get_players(client: AsyncClient):
             "matches": [],
             "tournaments": [],
             "stats": [],
-            "id": 1,
         },
         {
             "nickname": "G666",
@@ -243,7 +235,6 @@ async def test_get_players(client: AsyncClient):
             "matches": [],
             "tournaments": [],
             "stats": [],
-            "id": 2,
         },
     ]
 

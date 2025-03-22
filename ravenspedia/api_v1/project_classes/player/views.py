@@ -14,7 +14,6 @@ def table_to_response_form(
     is_create: bool = False,
 ) -> ResponsePlayer:
     result = ResponsePlayer(
-        id=player.id,
         steam_id=player.steam_id,
         faceit_id=player.faceit_id,
         nickname=player.nickname,

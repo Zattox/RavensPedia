@@ -145,7 +145,6 @@ async def test_create_match_with_full_info(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
         "stats": [],
-        "id": 1,
     }
 
 
@@ -166,7 +165,6 @@ async def test_read_match_with_full_info(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
         "stats": [],
-        "id": 1,
     }
 
 
@@ -196,7 +194,6 @@ async def test_create_match_with_partial_info(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
         "stats": [],
-        "id": 2,
     }
 
 
@@ -217,7 +214,6 @@ async def test_read_match_with_partial_info(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
         "stats": [],
-        "id": 2,
     }
 
 
@@ -239,7 +235,6 @@ async def test_empty_update_match(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-01-12T00:00:00",
         "stats": [],
-        "id": 1,
     }
 
 
@@ -261,7 +256,6 @@ async def test_update_match_description(client: AsyncClient):
         "tournament": "Final MSCL",
         "date": "2025-02-12T00:00:00",
         "stats": [],
-        "id": 2,
     }
 
 
@@ -287,7 +281,6 @@ async def test_update_match_tournament(client: AsyncClient):
         "tournament": "MSCL+",
         "date": "2025-03-12T00:00:00",
         "stats": [],
-        "id": 2,
     }
 
 
@@ -309,7 +302,6 @@ async def test_get_matches(client: AsyncClient):
             "tournament": "Final MSCL",
             "date": "2025-01-12T00:00:00",
             "stats": [],
-            "id": 1,
         },
         {
             "best_of": 1,
@@ -321,7 +313,6 @@ async def test_get_matches(client: AsyncClient):
             "tournament": "MSCL+",
             "date": "2025-03-12T00:00:00",
             "stats": [],
-            "id": 2,
         },
     ]
 

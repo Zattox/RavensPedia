@@ -15,7 +15,6 @@ def table_to_response_form(
     is_create: bool = False,
 ) -> ResponseTournament:
     result = ResponseTournament(
-        id=tournament.id,
         name=tournament.name,
         description=tournament.description,
         prize=tournament.prize,

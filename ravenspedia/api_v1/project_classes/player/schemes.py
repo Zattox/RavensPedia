@@ -34,7 +34,6 @@ class PlayerGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Player
 class ResponsePlayer(PlayerBase):
-    id: int  # Player id in the database
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

@@ -15,7 +15,6 @@ def table_to_response_form(
     is_create: bool = False,
 ) -> ResponseTeam:
     result = ResponseTeam(
-        id=team.id,
         name=team.name,
         description=team.description,
         max_number_of_players=team.max_number_of_players,

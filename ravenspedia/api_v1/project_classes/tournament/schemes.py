@@ -34,7 +34,6 @@ class TournamentGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Tournament
 class ResponseTournament(TournamentBase):
-    id: int  # Tournament id in the database
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

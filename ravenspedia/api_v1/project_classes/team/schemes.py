@@ -26,7 +26,6 @@ class TeamGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Team
 class ResponseTeam(TeamBase):
-    id: int  # Team id in the database
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

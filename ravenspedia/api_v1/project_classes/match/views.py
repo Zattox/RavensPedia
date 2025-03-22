@@ -17,7 +17,6 @@ def table_to_response_form(
     is_create: bool = False,
 ) -> ResponseMatch:
     result = ResponseMatch(
-        id=match.id,
         tournament=match.tournament.name,
         description=match.description,
         date=match.date,

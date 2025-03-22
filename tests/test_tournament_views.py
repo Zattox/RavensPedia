@@ -80,7 +80,6 @@ async def test_create_tournament_with_full_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 1,
     }
 
 
@@ -98,7 +97,6 @@ async def test_read_tournament_with_full_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 1,
     }
 
 
@@ -125,7 +123,6 @@ async def test_create_tournament_with_partial_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 2,
     }
 
 
@@ -144,7 +141,6 @@ async def test_read_tournament_with_partial_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 2,
     }
 
 
@@ -164,7 +160,6 @@ async def test_empty_update_tournament(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 1,
     }
 
 
@@ -189,7 +184,6 @@ async def test_update_tournament_names(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 2,
     }
 
 
@@ -213,7 +207,6 @@ async def test_update_tournament_nickname(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
-        "id": 2,
     }
 
 
@@ -233,7 +226,6 @@ async def test_get_tournaments(client: AsyncClient):
             "matches_id": [],
             "teams": [],
             "players": [],
-            "id": 1,
         },
         {
             "max_count_of_teams": 2,
@@ -243,7 +235,6 @@ async def test_get_tournaments(client: AsyncClient):
             "matches_id": [],
             "teams": [],
             "players": [],
-            "id": 2,
         },
     ]
 

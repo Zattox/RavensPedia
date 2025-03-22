@@ -36,7 +36,6 @@ class MatchGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Match
 class ResponseMatch(MatchBase):
-    id: int  # Match id in the database
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models
