@@ -8,15 +8,13 @@ from ravenspedia.core import (
     TeamTournamentAssociation,
     PlayerTournamentAssociation,
 )
-from .crud import table_to_response_form
-from .schemes import ResponseTournament
 
 
 async def add_team_in_tournament(
     session: AsyncSession,
     team: TableTeam,
     tournament: TableTournament,
-) -> ResponseTournament:
+) -> TableTournament:
     if team in tournament.teams:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -35,14 +33,14 @@ async def add_team_in_tournament(
 
     await session.commit()
 
-    return table_to_response_form(tournament=tournament)
+    return tournament
 
 
 async def delete_team_from_tournament(
     session: AsyncSession,
     team: TableTeam,
     tournament: TableTournament,
-) -> ResponseTournament:
+) -> TableTournament:
     if team not in tournament.teams:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -68,4 +66,4 @@ async def delete_team_from_tournament(
     await session.commit()
     await session.refresh(tournament, ["matches", "teams", "players"])
 
-    return table_to_response_form(tournament=tournament)
+    return tournament

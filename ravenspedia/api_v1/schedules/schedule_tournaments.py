@@ -4,8 +4,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.api_v1.project_classes import ResponseTournament
-from ravenspedia.api_v1.project_classes.tournament.crud import table_to_response_form
 from ravenspedia.core import TableTournament
 from ravenspedia.core.project_models.table_tournament import TournamentStatus
 
@@ -13,7 +11,7 @@ from ravenspedia.core.project_models.table_tournament import TournamentStatus
 async def get_last_x_completed_tournaments(
     session: AsyncSession,
     num_tournaments: int,
-) -> list[ResponseTournament]:
+) -> list[TableTournament]:
     stmt = (
         select(TableTournament)
         .options(
@@ -28,14 +26,13 @@ async def get_last_x_completed_tournaments(
     response = await session.execute(stmt)
     tournaments = response.scalars().all()
 
-    result = [table_to_response_form(tournament) for tournament in tournaments]
-    return result
+    return list(tournaments)
 
 
 async def get_upcoming_tournaments(
     session: AsyncSession,
     num_tournaments: int,
-) -> list[ResponseTournament]:
+) -> list[TableTournament]:
     stmt = (
         select(TableTournament)
         .options(
@@ -52,13 +49,12 @@ async def get_upcoming_tournaments(
     response = await session.execute(stmt)
     tournaments = response.scalars().all()
 
-    result = [table_to_response_form(tournament) for tournament in tournaments]
-    return result
+    return list(tournaments)
 
 
 async def get_in_progress_tournaments(
     session: AsyncSession,
-) -> list[ResponseTournament]:
+) -> list[TableTournament]:
     current_time = datetime.now()
     stmt = (
         select(TableTournament)
@@ -75,5 +71,4 @@ async def get_in_progress_tournaments(
     response = await session.execute(stmt)
     tournaments = response.scalars().all()
 
-    result = [table_to_response_form(tournament) for tournament in tournaments]
-    return result
+    return list(tournaments)

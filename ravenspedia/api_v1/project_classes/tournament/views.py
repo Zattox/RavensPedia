@@ -1,13 +1,33 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.core import db_helper, TableTournament, TableTeam
 from . import crud, dependencies, tournament_management
 from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate
-from ravenspedia.core import db_helper, TableTournament, TableTeam
 from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Tournaments"])
 manager_tournament_router = APIRouter(tags=["Tournaments Manager"])
+
+
+def table_to_response_form(
+    tournament: TableTournament,
+    is_create: bool = False,
+) -> ResponseTournament:
+    result = ResponseTournament(
+        id=tournament.id,
+        name=tournament.name,
+        description=tournament.description,
+        prize=tournament.prize,
+        max_count_of_teams=tournament.max_count_of_teams,
+    )
+
+    if not is_create:
+        result.matches_id = [match.id for match in tournament.matches]
+        result.teams = [team.name for team in tournament.teams]
+        result.players = [player.nickname for player in tournament.players]
+
+    return result
 
 
 # A view to get all the tournaments from the database
@@ -19,7 +39,11 @@ manager_tournament_router = APIRouter(tags=["Tournaments Manager"])
 async def get_tournaments(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseTournament]:
-    return await crud.get_tournaments(session=session)
+    tournaments = await crud.get_tournaments(session=session)
+    result = [
+        table_to_response_form(tournament=tournament) for tournament in tournaments
+    ]
+    return result
 
 
 # A view for getting a tournament by its id from the database
@@ -32,10 +56,11 @@ async def get_tournament(
     tournament_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await crud.get_tournament(
+    tournament = await crud.get_tournament(
         session=session,
         tournament_id=tournament_id,
     )
+    return table_to_response_form(tournament=tournament)
 
 
 # A view for create a tournament in the database
@@ -48,10 +73,11 @@ async def create_tournament(
     tournament_in: TournamentCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await crud.create_tournament(
+    tournament = await crud.create_tournament(
         session=session,
         tournament_in=tournament_in,
     )
+    return table_to_response_form(tournament=tournament, is_create=True)
 
 
 # A view for partial or full update a tournament in the database
@@ -65,11 +91,12 @@ async def update_general_tournament_info(
     tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await crud.update_general_tournament_info(
+    tournament = await crud.update_general_tournament_info(
         session=session,
         tournament=tournament,
         tournament_update=tournament_update,
     )
+    return table_to_response_form(tournament=tournament)
 
 
 # A view for delete a tournament from the database
@@ -97,11 +124,12 @@ async def add_team_in_tournament(
     tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await tournament_management.add_team_in_tournament(
+    tournament = await tournament_management.add_team_in_tournament(
         team=team,
         tournament=tournament,
         session=session,
     )
+    return table_to_response_form(tournament)
 
 
 @manager_tournament_router.delete(
@@ -114,8 +142,9 @@ async def delete_team_from_tournament(
     tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
-    return await tournament_management.delete_team_from_tournament(
+    tournament = await tournament_management.delete_team_from_tournament(
         team=team,
         tournament=tournament,
         session=session,
     )
+    return table_to_response_form(tournament=tournament)
