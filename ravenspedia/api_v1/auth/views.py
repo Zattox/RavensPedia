@@ -27,12 +27,12 @@ async def register_user(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens["access_token"],
+        value=tokens.access_token,
         **COOKIE_OPTIONS,
     )
     response.set_cookie(
         key="user_refresh_token",
-        value=tokens["refresh_token"],
+        value=tokens.refresh_token,
         **COOKIE_OPTIONS,
     )
 
@@ -59,12 +59,12 @@ async def login(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens.access_token,
+        value=tokens.access_token,  # Use dot notation here
         **COOKIE_OPTIONS,
     )
     response.set_cookie(
         key="user_refresh_token",
-        value=tokens.refresh_token,
+        value=tokens.refresh_token,  # Use dot notation here
         **COOKIE_OPTIONS,
     )
 
@@ -109,12 +109,12 @@ async def refresh(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens["access_token"],
+        value=tokens.access_token,  # Use dot notation here
         **COOKIE_OPTIONS,
     )
     response.set_cookie(
         key="user_refresh_token",
-        value=tokens["refresh_token"],
+        value=tokens.refresh_token,  # Use dot notation here
         **COOKIE_OPTIONS,
     )
 
