@@ -6,30 +6,11 @@ from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableTeam
 from .dependencies import get_team_by_id
-from .schemes import ResponseTeam, TeamCreate, TeamGeneralInfoUpdate
-
-
-def table_to_response_form(
-    team: TableTeam,
-    is_create: bool = False,
-) -> ResponseTeam:
-    result = ResponseTeam(
-        id=team.id,
-        name=team.name,
-        description=team.description,
-        max_number_of_players=team.max_number_of_players,
-    )
-
-    if not is_create:
-        result.players = [player.nickname for player in team.players]
-        result.matches_id = [match.id for match in team.matches]
-        result.tournaments = [tournament.name for tournament in team.tournaments]
-
-    return result
+from .schemes import TeamCreate, TeamGeneralInfoUpdate
 
 
 # A function to get all the Teams from the database
-async def get_teams(session: AsyncSession) -> list[ResponseTeam]:
+async def get_teams(session: AsyncSession) -> list[TableTeam]:
     stmt = (
         select(TableTeam)
         .options(
@@ -40,27 +21,26 @@ async def get_teams(session: AsyncSession) -> list[ResponseTeam]:
         .order_by(TableTeam.id)
     )
     teams = await session.scalars(stmt)
-    result = [table_to_response_form(team=team) for team in list(teams)]
-    return result
+    return list(teams)
 
 
 # A function for getting a Team by its id from the database
 async def get_team(
     session: AsyncSession,
     team_id: int,
-) -> ResponseTeam | None:
+) -> TableTeam | None:
     team = await get_team_by_id(
         team_id=team_id,
         session=session,
     )
-    return table_to_response_form(team=team)
+    return team
 
 
 # A function for create a Team in the database
 async def create_team(
     session: AsyncSession,
     team_in: TeamCreate,
-) -> ResponseTeam:
+) -> TableTeam:
     # Turning it into a Team class without Mapped fields
     team: TableTeam = TableTeam(**team_in.model_dump())
 
@@ -74,7 +54,7 @@ async def create_team(
             detail=f"Team {team_in.name} already exists",
         )
 
-    return table_to_response_form(team=team, is_create=True)
+    return team
 
 
 # A function for delete a Team from the database
@@ -90,6 +70,7 @@ async def delete_team(
             team=team,
             player=player,
         )
+
     await session.delete(team)
     await session.commit()  # Make changes to the database
 
@@ -99,8 +80,9 @@ async def update_general_team_info(
     session: AsyncSession,
     team: TableTeam,
     team_update: TeamGeneralInfoUpdate,
-) -> ResponseTeam:
+) -> TableTeam:
     for class_field, value in team_update.model_dump(exclude_unset=True).items():
         setattr(team, class_field, value)
     await session.commit()  # Make changes to the database
-    return table_to_response_form(team)
+
+    return team

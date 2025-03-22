@@ -1,13 +1,32 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.core import db_helper, TableTeam, TablePlayer
 from . import crud, dependencies, team_management
 from .schemes import ResponseTeam, TeamCreate, TeamGeneralInfoUpdate
-from ravenspedia.core import db_helper, TableTeam, TablePlayer
 from ..player.dependencies import get_player_by_nickname
 
 router = APIRouter(tags=["Teams"])
 manager_team_router = APIRouter(tags=["Teams Manager"])
+
+
+def table_to_response_form(
+    team: TableTeam,
+    is_create: bool = False,
+) -> ResponseTeam:
+    result = ResponseTeam(
+        id=team.id,
+        name=team.name,
+        description=team.description,
+        max_number_of_players=team.max_number_of_players,
+    )
+
+    if not is_create:
+        result.players = [player.nickname for player in team.players]
+        result.matches_id = [match.id for match in team.matches]
+        result.tournaments = [tournament.name for tournament in team.tournaments]
+
+    return result
 
 
 # A view to get all the teams from the database
@@ -19,7 +38,9 @@ manager_team_router = APIRouter(tags=["Teams Manager"])
 async def get_teams(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseTeam]:
-    return await crud.get_teams(session=session)
+    teams = await crud.get_teams(session=session)
+    result = [table_to_response_form(team=team) for team in teams]
+    return result
 
 
 # A view for getting a team by its id from the database
@@ -32,10 +53,11 @@ async def get_team(
     team_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
-    return await crud.get_team(
+    team = await crud.get_team(
         session=session,
         team_id=team_id,
     )
+    return table_to_response_form(team=team)
 
 
 # A view for create a team in the database
@@ -48,10 +70,11 @@ async def create_team(
     team_in: TeamCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
-    return await crud.create_team(
+    team = await crud.create_team(
         session=session,
         team_in=team_in,
     )
+    return table_to_response_form(team=team, is_create=True)
 
 
 # A view for partial or full update a team in the database
@@ -64,12 +87,13 @@ async def update_general_team_info(
     team_update: TeamGeneralInfoUpdate,
     team: TableTeam = Depends(dependencies.get_team_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
-    return await crud.update_general_team_info(
+) -> ResponseTeam:
+    team = await crud.update_general_team_info(
         session=session,
         team=team,
         team_update=team_update,
     )
+    return table_to_response_form(team=team)
 
 
 # A view for delete a team from the database
@@ -94,11 +118,12 @@ async def add_player_in_team(
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
-    return await team_management.add_player_in_team(
+    team = await team_management.add_player_in_team(
         team=team,
         player=player,
         session=session,
     )
+    return table_to_response_form(team=team)
 
 
 @manager_team_router.delete(
@@ -111,8 +136,9 @@ async def delete_player_from_team(
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
-    return await team_management.delete_player_from_team(
+    team = await team_management.delete_player_from_team(
         team=team,
         player=player,
         session=session,
     )
+    return table_to_response_form(team=team)

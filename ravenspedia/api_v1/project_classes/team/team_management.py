@@ -3,15 +3,13 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import TableTeam, TablePlayer, PlayerTournamentAssociation
-from .crud import table_to_response_form
-from .schemes import ResponseTeam
 
 
 async def add_player_in_team(
     session: AsyncSession,
     team: TableTeam,
     player: TablePlayer,
-) -> ResponseTeam:
+) -> TableTeam:
     if player in team.players:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -33,14 +31,14 @@ async def add_player_in_team(
     team.players.append(player)
     await session.commit()
 
-    return table_to_response_form(team=team)
+    return team
 
 
 async def delete_player_from_team(
     session: AsyncSession,
     team: TableTeam,
     player: TablePlayer,
-) -> ResponseTeam:
+) -> TableTeam:
     if player not in team.players:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -62,4 +60,4 @@ async def delete_player_from_team(
 
     await session.commit()
 
-    return table_to_response_form(team=team)
+    return team
