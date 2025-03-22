@@ -4,8 +4,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.api_v1.project_classes import ResponseMatch
-from ravenspedia.api_v1.project_classes.match.crud import table_to_response_form
 from ravenspedia.core import TableMatch, TableMatchStats
 from ravenspedia.core.project_models.table_match import MatchStatus
 
@@ -13,7 +11,7 @@ from ravenspedia.core.project_models.table_match import MatchStatus
 async def get_last_x_completed_matches(
     session: AsyncSession,
     num_matches: int,
-) -> list[ResponseMatch]:
+) -> list[TableMatch]:
     stmt = (
         select(TableMatch)
         .options(
@@ -27,15 +25,13 @@ async def get_last_x_completed_matches(
     )
     response = await session.execute(stmt)
     matches = response.scalars().all()
-
-    result = [table_to_response_form(match) for match in matches]
-    return result
+    return list(matches)
 
 
 async def get_upcoming_matches(
     session: AsyncSession,
     num_matches: int,
-) -> list[ResponseMatch]:
+) -> list[TableMatch]:
     stmt = (
         select(TableMatch)
         .options(
@@ -51,14 +47,12 @@ async def get_upcoming_matches(
 
     response = await session.execute(stmt)
     matches = response.scalars().all()
-
-    result = [table_to_response_form(match) for match in matches]
-    return result
+    return list(matches)
 
 
 async def get_in_progress_matches(
     session: AsyncSession,
-) -> list[ResponseMatch]:
+) -> list[TableMatch]:
     current_time = datetime.now()
     stmt = (
         select(TableMatch)
@@ -74,5 +68,4 @@ async def get_in_progress_matches(
     response = await session.execute(stmt)
     matches = response.scalars().all()
 
-    result = [table_to_response_form(match) for match in matches]
-    return result
+    return list(matches)

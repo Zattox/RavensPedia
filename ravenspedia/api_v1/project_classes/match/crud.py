@@ -3,36 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
-from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
 from .dependencies import get_match_by_id
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
 from ..tournament.dependencies import get_tournament_by_name
 
 
-def table_to_response_form(
-    match: TableMatch,
-    is_create: bool = False,
-) -> ResponseMatch:
-    result = ResponseMatch(
-        id=match.id,
-        tournament=match.tournament.name,
-        description=match.description,
-        date=match.date,
-        max_number_of_players=match.max_number_of_players,
-        max_number_of_teams=match.max_number_of_teams,
-        best_of=match.best_of,
-        stats=[],
-    )
-
-    if not is_create:
-        result.teams = [team.name for team in match.teams]
-        result.players = list({elem.player.nickname for elem in match.stats})
-        result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
-
-    return result
-
-
-async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
+async def get_matches(session: AsyncSession) -> list[TableMatch]:
     stmt = (
         select(TableMatch)
         .options(
@@ -43,25 +19,24 @@ async def get_matches(session: AsyncSession) -> list[ResponseMatch]:
         .order_by(TableMatch.id)
     )
     matches = await session.scalars(stmt)
-    result = [table_to_response_form(match) for match in list(matches)]
-    return result
+    return list(matches)
 
 
 async def get_match(
     session: AsyncSession,
     match_id: int,
-) -> ResponseMatch | None:
+) -> TableMatch | None:
     table_match: TableMatch = await get_match_by_id(
         match_id=match_id,
         session=session,
     )
-    return table_to_response_form(table_match)
+    return table_match
 
 
 async def create_match(
     session: AsyncSession,
     match_in: MatchCreate,
-) -> ResponseMatch:
+) -> TableMatch:
     tournament_of_match: TableTournament = await get_tournament_by_name(
         tournament_name=match_in.tournament,
         session=session,
@@ -80,7 +55,7 @@ async def create_match(
     session.add(match)
     await session.commit()  # Make changes to the database
 
-    return table_to_response_form(match=match, is_create=True)
+    return match
 
 
 # A function for delete a Match from the database
@@ -96,7 +71,7 @@ async def update_general_match_info(
     session: AsyncSession,
     match: TableMatch,
     match_update: MatchGeneralInfoUpdate,
-) -> ResponseMatch:
+) -> TableMatch:
     for class_field, value in match_update.model_dump(exclude_unset=True).items():
         if class_field == "tournament":
             tournament_of_match: TableTournament = await get_tournament_by_name(
@@ -109,4 +84,4 @@ async def update_general_match_info(
             setattr(match, class_field, value)
 
     await session.commit()  # Make changes to the database
-    return table_to_response_form(match=match)
+    return match

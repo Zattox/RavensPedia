@@ -2,6 +2,7 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import db_helper, TableMatch, TableTeam
+from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
 from . import crud, dependencies, match_management
 from .dependencies import get_match_by_id
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
@@ -9,6 +10,29 @@ from ..team.dependencies import get_team_by_name
 
 router = APIRouter(tags=["Matches"])
 manager_match_router = APIRouter(tags=["Matches Manager"])
+
+
+def table_to_response_form(
+    match: TableMatch,
+    is_create: bool = False,
+) -> ResponseMatch:
+    result = ResponseMatch(
+        id=match.id,
+        tournament=match.tournament.name,
+        description=match.description,
+        date=match.date,
+        max_number_of_players=match.max_number_of_players,
+        max_number_of_teams=match.max_number_of_teams,
+        best_of=match.best_of,
+        stats=[],
+    )
+
+    if not is_create:
+        result.teams = [team.name for team in match.teams]
+        result.players = list({elem.player.nickname for elem in match.stats})
+        result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
+
+    return result
 
 
 # A view to get all the matches from the database
@@ -20,7 +44,9 @@ manager_match_router = APIRouter(tags=["Matches Manager"])
 async def get_matches(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseMatch]:
-    return await crud.get_matches(session=session)
+    matches = await crud.get_matches(session=session)
+    result = [table_to_response_form(match=match) for match in matches]
+    return result
 
 
 # A view for getting a match by its id from the database
@@ -33,10 +59,11 @@ async def get_match(
     match_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await crud.get_match(
+    match = await crud.get_match(
         match_id=match_id,
         session=session,
     )
+    return table_to_response_form(match=match)
 
 
 # A view for create a match in the database
@@ -49,10 +76,11 @@ async def create_match(
     match_in: MatchCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await crud.create_match(
+    match = await crud.create_match(
         session=session,
         match_in=match_in,
     )
+    return table_to_response_form(match=match, is_create=True)
 
 
 # A view for partial or full update a match in the database
@@ -66,11 +94,12 @@ async def update_general_match_info(
     match: TableMatch = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await crud.update_general_match_info(
+    match = await crud.update_general_match_info(
         session=session,
         match=match,
         match_update=match_update,
     )
+    return table_to_response_form(match=match)
 
 
 # A view for delete a match from the database
@@ -98,11 +127,12 @@ async def add_team_in_match(
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await match_management.add_team_in_match(
+    match = await match_management.add_team_in_match(
         session=session,
         match=match,
         team=team,
     )
+    return table_to_response_form(match=match)
 
 
 @manager_match_router.delete(
@@ -115,11 +145,12 @@ async def delete_team_from_match(
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await match_management.delete_team_from_match(
+    match = await match_management.delete_team_from_match(
         session=session,
         match=match,
         team=team,
     )
+    return table_to_response_form(match=match)
 
 
 @manager_match_router.patch(
@@ -132,11 +163,12 @@ async def add_match_stats_from_faceit(
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await match_management.add_match_stats_from_faceit(
+    match = await match_management.add_match_stats_from_faceit(
         session=session,
         match=match,
         faceit_url=faceit_url,
     )
+    return table_to_response_form(match=match)
 
 
 @manager_match_router.delete(
@@ -148,7 +180,8 @@ async def delete_match_stats(
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    return await match_management.delete_match_stats(
+    match = await match_management.delete_match_stats(
         session=session,
         match=match,
     )
+    return table_to_response_form(match=match)

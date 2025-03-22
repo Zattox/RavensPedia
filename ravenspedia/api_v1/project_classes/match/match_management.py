@@ -9,9 +9,9 @@ from ravenspedia.api_v1.project_classes.player.crud import create_player
 from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TableMatchStats
 from ravenspedia.core.config import faceit_settings
 from ravenspedia.core.faceit_models import PlayerStats
-from .crud import table_to_response_form, update_general_match_info
+from .crud import update_general_match_info
 from .dependencies import find_steam_id_by_faceit_id
-from .schemes import ResponseMatch, MatchGeneralInfoUpdate
+from .schemes import MatchGeneralInfoUpdate
 from ..player.schemes import PlayerCreate
 
 
@@ -19,7 +19,7 @@ async def add_team_in_match(
     session: AsyncSession,
     match: TableMatch,
     team: TableTeam,
-) -> ResponseMatch:
+) -> TableMatch:
 
     if team in match.teams:
         raise HTTPException(
@@ -39,14 +39,14 @@ async def add_team_in_match(
 
     await session.commit()
 
-    return table_to_response_form(match=match)
+    return match
 
 
 async def delete_team_from_match(
     session: AsyncSession,
     match: TableMatch,
     team: TableTeam,
-) -> ResponseMatch:
+) -> TableMatch:
 
     if not team in match.teams:
         raise HTTPException(
@@ -58,7 +58,7 @@ async def delete_team_from_match(
 
     await session.commit()
 
-    return table_to_response_form(match=match)
+    return match
 
 
 async def find_start_time_from_faceit_match(
@@ -83,7 +83,7 @@ async def add_match_stats_from_faceit(
     session: AsyncSession,
     match: TableMatch,
     faceit_url: str,
-) -> ResponseMatch:
+) -> TableMatch:
     if match.stats:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -158,17 +158,17 @@ async def add_match_stats_from_faceit(
     await session.flush()
     await session.commit()
 
-    return table_to_response_form(match=match)
+    return match
 
 
 async def delete_match_stats(
     session: AsyncSession,
     match: TableMatch,
-) -> ResponseMatch:
+) -> TableMatch:
     await session.execute(
         delete(TableMatchStats).where(TableMatchStats.match_id == match.id)
     )
     await session.commit()
     await session.refresh(match)
 
-    return table_to_response_form(match)
+    return match
