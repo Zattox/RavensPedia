@@ -66,7 +66,18 @@ async def get_current_user(
 async def get_current_admin_user(
     current_user: TableUser = Depends(get_current_user),
 ):
-    if current_user.is_admin:
+    if current_user.is_admin or current_user.is_super_admin:
+        return current_user
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Insufficient permissions!",
+    )
+
+
+async def get_current_super_admin_user(
+    current_user: TableUser = Depends(get_current_user),
+):
+    if current_user.is_super_admin:
         return current_user
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
