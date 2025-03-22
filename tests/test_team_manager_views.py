@@ -5,7 +5,7 @@ from ravenspedia.core.config import data_for_tests
 
 
 @pytest.mark.asyncio
-async def test_init_teams_and_players(client: AsyncClient):
+async def test_init_players(client: AsyncClient):
     player1 = {
         "nickname": "Zattox",
         "steam_id": data_for_tests.player1_steam_id,
@@ -39,6 +39,9 @@ async def test_init_teams_and_players(client: AsyncClient):
     assert player4_response.status_code == 201
     assert player5_response.status_code == 201
 
+
+@pytest.mark.asyncio
+async def test_init_teams(client: AsyncClient):
     team1 = {
         "max_number_of_players": 2,
         "name": "BlackRavens",
@@ -61,6 +64,7 @@ async def test_init_teams_and_players(client: AsyncClient):
     assert team3_response.status_code == 201
 
 
+@pytest.mark.asyncio
 async def test_add_players_in_team(client: AsyncClient):
     response = await client.patch(
         f"/teams/BlackRavens/add_player/Zattox/",
@@ -81,6 +85,7 @@ async def test_add_players_in_team(client: AsyncClient):
     assert response.json()["players"] == ["MacanFan"]
 
 
+@pytest.mark.asyncio
 async def test_player_team_connection(client: AsyncClient):
     response = await client.get(
         "/players/1/",
@@ -101,6 +106,7 @@ async def test_player_team_connection(client: AsyncClient):
     assert response.json()["players"] == ["Zattox", "g666"]
 
 
+@pytest.mark.asyncio
 async def test_add_player_in_full_team(client: AsyncClient):
     response = await client.patch(
         f"/teams/BlackRavens/add_player/w1lroom-/",
@@ -111,6 +117,7 @@ async def test_add_player_in_full_team(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_add_exists_player_in_team(client: AsyncClient):
     response = await client.patch(
         f"/teams/BlackRavens/add_player/g666/",
@@ -121,6 +128,7 @@ async def test_add_exists_player_in_team(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_delete_not_exists_player_from_team(client: AsyncClient):
     response = await client.delete(
         f"/teams/BlackRavens/delete_player/MacanFan/",
@@ -132,6 +140,7 @@ async def test_delete_not_exists_player_from_team(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_add_player_with_team_in_another_team(client: AsyncClient):
     response = await client.patch(
         f"/teams/BlackRavens/add_player/MacanFan/",
@@ -143,6 +152,7 @@ async def test_add_player_with_team_in_another_team(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_delete_team_with_players(client: AsyncClient):
     response = await client.delete("/teams/3/")
     assert response.status_code == 204
@@ -152,6 +162,7 @@ async def test_delete_team_with_players(client: AsyncClient):
     assert response.json()["team"] is None
 
 
+@pytest.mark.asyncio
 async def test_delete_player_with_team(client: AsyncClient):
     response = await client.delete("/players/2/")
     assert response.status_code == 204

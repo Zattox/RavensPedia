@@ -114,7 +114,7 @@ async def add_match_stats_from_faceit(
         )
 
     # Update the starting time of the match
-    await update_general_match_info(
+    match = await update_general_match_info(
         session=session,
         match=match,
         match_update=MatchGeneralInfoUpdate(

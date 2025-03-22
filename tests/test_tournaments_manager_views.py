@@ -6,7 +6,7 @@ from tests.conftest import client
 
 
 @pytest.mark.asyncio
-async def test_init_teams_and_tournaments(client: AsyncClient):
+async def test_init_teams(client: AsyncClient):
     team1 = {
         "max_number_of_players": 2,
         "name": "BlackRavens",
@@ -34,6 +34,9 @@ async def test_init_teams_and_tournaments(client: AsyncClient):
     assert team3_response.status_code == 201
     assert team4_response.status_code == 201
 
+
+@pytest.mark.asyncio
+async def test_init_tournaments(client: AsyncClient):
     tournament1 = {
         "max_count_of_teams": 2,
         "name": "MSCL",
@@ -128,6 +131,7 @@ async def test_add_teams_in_tournament(client: AsyncClient):
     assert response.json()["teams"] == ["wingman_team"]
 
 
+@pytest.mark.asyncio
 async def test_tournament_team_connection(client: AsyncClient):
     response = await client.get(
         "/teams/1/",
@@ -154,6 +158,7 @@ async def test_tournament_team_connection(client: AsyncClient):
     assert response.json()["tournaments"] == []
 
 
+@pytest.mark.asyncio
 async def test_tournament_player_connection(client: AsyncClient):
     response = await client.get(
         "/players/1/",
@@ -216,6 +221,7 @@ async def test_add_exists_team_in_tournament(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_delete_not_exists_team_from_tournament(client: AsyncClient):
     response = await client.delete(
         f"/tournaments/MSCL/delete_team/wingman_team/",
@@ -227,6 +233,7 @@ async def test_delete_not_exists_team_from_tournament(client: AsyncClient):
     }
 
 
+@pytest.mark.asyncio
 async def test_add_team_in_another_tournament(client: AsyncClient):
     response = await client.patch(
         f"/tournaments/ESEA_S52/add_team/BlackRavens/",
@@ -242,6 +249,7 @@ async def test_add_team_in_another_tournament(client: AsyncClient):
     assert sorted(response.json()["tournaments"]) == sorted(["MSCL", "ESEA_S52"])
 
 
+@pytest.mark.asyncio
 async def test_delete_tournament_with_team(client: AsyncClient):
     response = await client.delete("/tournaments/3/")
     assert response.status_code == 204
@@ -263,6 +271,7 @@ async def test_delete_tournament_with_team(client: AsyncClient):
     assert response.json()["tournaments"] == ["MSCL"]
 
 
+@pytest.mark.asyncio
 async def test_delete_team_with_tournament(client: AsyncClient):
     response = await client.delete("/teams/1/")
     assert response.status_code == 204
