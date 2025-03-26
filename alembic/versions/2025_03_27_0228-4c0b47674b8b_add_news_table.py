@@ -1,8 +1,8 @@
 """Add news table
 
-Revision ID: 2a234daf2326
+Revision ID: 4c0b47674b8b
 Revises: 7988c2f590db
-Create Date: 2025-03-27 01:50:53.972560
+Create Date: 2025-03-27 02:28:25.727780
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "2a234daf2326"
+revision: str = "4c0b47674b8b"
 down_revision: Union[str, None] = "7988c2f590db"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,12 +31,8 @@ def upgrade() -> None:
             server_default=sa.text("(CURRENT_TIMESTAMP)"),
             nullable=False,
         ),
-        sa.Column("author_id", sa.Integer(), nullable=False),
+        sa.Column("author", sa.String(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["author_id"],
-            ["users.id"],
-        ),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
