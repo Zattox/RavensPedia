@@ -26,13 +26,13 @@ async def test_read_not_exists_team(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_team_without_name(client: AsyncClient):
+async def test_create_team_without_name(authorized_admin_client: AsyncClient):
     data = {
         "max_number_of_players": 5,
         "description": "First team of HSE",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/teams/",
         json=data,
     )
@@ -41,13 +41,13 @@ async def test_create_team_without_name(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_team_without_max_number(client: AsyncClient):
+async def test_create_team_without_max_number(authorized_admin_client: AsyncClient):
     data = {
         "name": "Black Ravens",
         "description": "First team of HSE",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/teams/",
         json=data,
     )
@@ -56,14 +56,14 @@ async def test_create_team_without_max_number(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_team_with_full_info(client: AsyncClient):
+async def test_create_team_with_full_info(authorized_admin_client: AsyncClient):
     data = {
         "max_number_of_players": 5,
         "name": "Black Ravens",
         "description": "First team of HSE",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/teams/",
         json=data,
     )
@@ -97,13 +97,13 @@ async def test_read_team_with_full_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_team_with_partial_info(client: AsyncClient):
+async def test_create_team_with_partial_info(authorized_admin_client: AsyncClient):
     data = {
         "max_number_of_players": 5,
         "name": "Red Ravens",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/teams/",
         json=data,
     )
@@ -137,8 +137,8 @@ async def test_read_team_with_partial_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_empty_update_team(client: AsyncClient):
-    response = await client.patch(
+async def test_empty_update_team(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/teams/1/",
         json={},
     )
@@ -155,8 +155,8 @@ async def test_empty_update_team(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_team_description(client: AsyncClient):
-    response = await client.patch(
+async def test_update_team_description(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/teams/2/",
         json={"description": "Second team of HSE"},
     )
@@ -173,8 +173,8 @@ async def test_update_team_description(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_team_name(client: AsyncClient):
-    response = await client.patch(
+async def test_update_team_name(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/teams/2/",
         json={"name": "White Ravens"},
     )
@@ -218,30 +218,30 @@ async def test_get_teams(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_team(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_team(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/teams/2/",
     )
     assert response.status_code == 204
 
 
 @pytest.mark.asyncio
-async def test_delete_not_exist_team(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_not_exist_team(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/teams/2/",
     )
     assert response.status_code == 404
 
 
 @pytest.mark.asyncio
-async def test_create_team_with_existing_name(client: AsyncClient):
+async def test_create_team_with_existing_name(authorized_admin_client: AsyncClient):
     data = {
         "max_number_of_players": 5,
         "name": "Black Ravens",
         "description": "First team of HSE",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/teams/",
         json=data,
     )

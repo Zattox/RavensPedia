@@ -1,10 +1,11 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import db_helper, TableTeam, TablePlayer
+from ravenspedia.core import db_helper, TableTeam, TablePlayer, TableUser
 from . import crud, dependencies, team_management
 from .schemes import ResponseTeam, TeamCreate, TeamGeneralInfoUpdate
 from ..player.dependencies import get_player_by_nickname
+from ...auth.dependencies import get_current_admin_user
 
 router = APIRouter(tags=["Teams"])
 manager_team_router = APIRouter(tags=["Teams Manager"])
@@ -68,6 +69,7 @@ async def get_team(
 async def create_team(
     team_in: TeamCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await crud.create_team(
         session=session,
@@ -86,6 +88,7 @@ async def update_general_team_info(
     team_update: TeamGeneralInfoUpdate,
     team: TableTeam = Depends(dependencies.get_team_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await crud.update_general_team_info(
         session=session,
@@ -103,6 +106,7 @@ async def update_general_team_info(
 async def delete_team(
     team: TableTeam = Depends(dependencies.get_team_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_team(session=session, team=team)
 
@@ -116,6 +120,7 @@ async def add_player_in_team(
     team: TableTeam = Depends(dependencies.get_team_by_name),
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await team_management.add_player_in_team(
         team=team,
@@ -134,6 +139,7 @@ async def delete_player_from_team(
     team: TableTeam = Depends(dependencies.get_team_by_name),
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await team_management.delete_player_from_team(
         team=team,
