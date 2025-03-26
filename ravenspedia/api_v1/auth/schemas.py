@@ -6,10 +6,6 @@ class UserBase(BaseModel):
     email: EmailStr
     password: bytes
 
-    is_user: bool = True
-    is_admin: bool = False
-    is_super_admin: bool = False
-
 
 class UserCreate(BaseModel):
     email: EmailStr
