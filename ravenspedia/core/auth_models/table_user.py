@@ -1,6 +1,7 @@
+from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import text, LargeBinary
+from sqlalchemy import text, LargeBinary, Enum as SqlEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ravenspedia.core.base import Base
@@ -9,23 +10,20 @@ if TYPE_CHECKING:
     from .table_token import TableToken
 
 
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+    SUPER_ADMIN = "super_admin"
+
+
 class TableUser(Base):
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[bytes] = mapped_column(LargeBinary)
 
-    is_user: Mapped[bool] = mapped_column(
-        default=True,
-        server_default=text("true"),
-        nullable=False,
-    )
-    is_admin: Mapped[bool] = mapped_column(
-        default=False,
-        server_default=text("false"),
-        nullable=False,
-    )
-    is_super_admin: Mapped[bool] = mapped_column(
-        default=False,
-        server_default=text("false"),
+    role: Mapped[UserRole] = mapped_column(
+        SqlEnum(UserRole),
+        default=UserRole.USER,
+        server_default=text("'user'"),
         nullable=False,
     )
 
