@@ -6,7 +6,7 @@ from ravenspedia.core.config import data_for_tests
 
 
 @pytest.mark.asyncio
-async def test_init_tournament_and_match(client: AsyncClient):
+async def test_init_tournaments(authorized_admin_client: AsyncClient):
     tournament1 = {
         "max_count_of_teams": 2,
         "name": "MSCL+",
@@ -22,12 +22,14 @@ async def test_init_tournament_and_match(client: AsyncClient):
         "end_date": "2025-02-12",
     }
 
-    response = await client.post("/tournaments/", json=tournament1)
+    response = await authorized_admin_client.post("/tournaments/", json=tournament1)
     assert response.status_code == 201
 
-    response = await client.post("/tournaments/", json=tournament2)
+    response = await authorized_admin_client.post("/tournaments/", json=tournament2)
     assert response.status_code == 201
 
+
+async def test_init_matches(authorized_admin_client: AsyncClient):
     match1 = {
         "best_of": 1,
         "max_number_of_teams": 2,
@@ -50,19 +52,21 @@ async def test_init_tournament_and_match(client: AsyncClient):
         "date": "2024-02-12",
     }
 
-    response = await client.post("/matches/", json=match1)
+    response = await authorized_admin_client.post("/matches/", json=match1)
     assert response.status_code == 201
 
-    response = await client.post("/matches/", json=match2)
+    response = await authorized_admin_client.post("/matches/", json=match2)
     assert response.status_code == 201
 
-    response = await client.post("/matches/", json=match3)
+    response = await authorized_admin_client.post("/matches/", json=match3)
     assert response.status_code == 201
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo3_from_faceit_to_match_bo1(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo3_from_faceit_to_match_bo1(
+    authorized_admin_client: AsyncClient,
+):
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo3_match1}",
     )
 
@@ -73,8 +77,10 @@ async def test_add_stats_bo3_from_faceit_to_match_bo1(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo1_from_faceit_to_match_bo3(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo1_from_faceit_to_match_bo3(
+    authorized_admin_client: AsyncClient,
+):
+    response = await authorized_admin_client.patch(
         f"/matches/3/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo1_match1}",
     )
 
@@ -85,8 +91,10 @@ async def test_add_stats_bo1_from_faceit_to_match_bo3(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo1_from_faceit_to_match_bo2(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo1_from_faceit_to_match_bo2(
+    authorized_admin_client: AsyncClient,
+):
+    response = await authorized_admin_client.patch(
         f"/matches/2/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo1_match1}",
     )
 
@@ -97,8 +105,10 @@ async def test_add_stats_bo1_from_faceit_to_match_bo2(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo3_from_faceit_to_match_bo2(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo3_from_faceit_to_match_bo2(
+    authorized_admin_client: AsyncClient,
+):
+    response = await authorized_admin_client.patch(
         f"/matches/3/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo2_match1}",
     )
 
@@ -109,8 +119,8 @@ async def test_add_stats_bo3_from_faceit_to_match_bo2(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo1_from_faceit(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo1_from_faceit(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo1_match1}",
     )
 
@@ -147,8 +157,8 @@ async def test_add_stats_bo1_from_faceit(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_player_stats_connection_after_bo1(client: AsyncClient):
-    response = await client.get("/players/1/")
+async def test_player_stats_connection_after_bo1(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.get("/players/1/")
     data = response.json()
 
     assert response.status_code == 200
@@ -159,8 +169,8 @@ async def test_player_stats_connection_after_bo1(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo2_from_faceit(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_bo2_from_faceit(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/matches/2/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo2_match1}",
     )
     assert response.status_code == 200
@@ -197,8 +207,8 @@ async def test_add_stats_bo2_from_faceit(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_player_stats_connection_after_bo2(client: AsyncClient):
-    response = await client.get("/players/1/")
+async def test_player_stats_connection_after_bo2(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.get("/players/1/")
     data = response.json()
 
     assert response.status_code == 200
@@ -212,9 +222,9 @@ async def test_player_stats_connection_after_bo2(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_bo3_from_faceit(client: AsyncClient):
+async def test_add_stats_bo3_from_faceit(authorized_admin_client: AsyncClient):
     pass
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/matches/3/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo3_match1}",
     )
     assert response.status_code == 200
@@ -266,8 +276,10 @@ async def test_player_stats_connection_after_bo3(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_stats_to_match_with_already_added_stats(client: AsyncClient):
-    response = await client.patch(
+async def test_add_stats_to_match_with_already_added_stats(
+    authorized_admin_client: AsyncClient,
+):
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_faceit_stats/?faceit_url={data_for_tests.faceit_bo1_match2}",
     )
     assert response.status_code == 400
@@ -277,32 +289,32 @@ async def test_add_stats_to_match_with_already_added_stats(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_stats_from_match(client: AsyncClient):
-    response = await client.delete("/matches/3/delete_match_stats/")
+async def test_delete_stats_from_match(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete("/matches/3/delete_match_stats/")
     assert response.status_code == 200
     assert response.json()["stats"] == []
 
-    response = await client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/1/")
     assert response.status_code == 200
     assert len(response.json()["stats"]) == 3
 
 
 @pytest.mark.asyncio
-async def test_delete_match_with_stats(client: AsyncClient):
-    response = await client.delete("/matches/2/")
+async def test_delete_match_with_stats(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete("/matches/2/")
     assert response.status_code == 204
 
-    response = await client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/1/")
     assert response.status_code == 200
     assert len(response.json()["stats"]) == 1
 
 
 @pytest.mark.asyncio
-async def test_delete_player_with_stats(client: AsyncClient):
-    response = await client.delete("/players/1/")
+async def test_delete_player_with_stats(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete("/players/1/")
     assert response.status_code == 204
 
-    response = await client.get("/matches/1/")
+    response = await authorized_admin_client.get("/matches/1/")
     assert response.status_code == 200
     assert len(response.json()["stats"]) == 9
     assert len(response.json()["players"]) == 9

@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_init_tournaments_for_matches(client: AsyncClient):
+async def test_init_tournaments_for_matches(authorized_admin_client: AsyncClient):
     tournament1 = {
         "max_count_of_teams": 2,
         "name": "Final MSCL",
@@ -19,15 +19,15 @@ async def test_init_tournaments_for_matches(client: AsyncClient):
         "end_date": "2025-02-12",
     }
 
-    response1 = await client.post("/tournaments/", json=tournament1)
-    response2 = await client.post("/tournaments/", json=tournament2)
+    response1 = await authorized_admin_client.post("/tournaments/", json=tournament1)
+    response2 = await authorized_admin_client.post("/tournaments/", json=tournament2)
 
     assert response1.status_code == 201
     assert response2.status_code == 201
 
 
 @pytest.mark.asyncio
-async def test_init_matches(client: AsyncClient):
+async def test_init_matches(authorized_admin_client: AsyncClient):
     match1 = {
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
@@ -44,15 +44,15 @@ async def test_init_matches(client: AsyncClient):
         "date": "2025-02-12",
     }
 
-    response1 = await client.post("/matches/", json=match1)
-    response2 = await client.post("/matches/", json=match2)
+    response1 = await authorized_admin_client.post("/matches/", json=match1)
+    response2 = await authorized_admin_client.post("/matches/", json=match2)
 
     assert response1.status_code == 201
     assert response2.status_code == 201
 
 
 @pytest.mark.asyncio
-async def test_init_teams_for_matches(client: AsyncClient):
+async def test_init_teams_for_matches(authorized_admin_client: AsyncClient):
     team1 = {
         "max_number_of_players": 5,
         "name": "Black Ravens",
@@ -67,9 +67,9 @@ async def test_init_teams_for_matches(client: AsyncClient):
         "name": "White Ravens",
     }
 
-    response1 = await client.post("/teams/", json=team1)
-    response2 = await client.post("/teams/", json=team2)
-    response3 = await client.post("/teams/", json=team3)
+    response1 = await authorized_admin_client.post("/teams/", json=team1)
+    response2 = await authorized_admin_client.post("/teams/", json=team2)
+    response3 = await authorized_admin_client.post("/teams/", json=team3)
 
     assert response1.status_code == 201
     assert response2.status_code == 201
@@ -77,26 +77,26 @@ async def test_init_teams_for_matches(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_teams_in_match(client: AsyncClient):
-    response = await client.patch(
+async def test_add_teams_in_match(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_team/Black Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["teams"] == ["Black Ravens"]
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_team/Red Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["teams"] == ["Black Ravens", "Red Ravens"]
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/matches/2/add_team/Red Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["teams"] == ["Red Ravens"]
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/matches/2/add_team/White Ravens/",
     )
     assert response.status_code == 200
@@ -131,8 +131,8 @@ async def test_team_match_connection(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_team_in_full_match(client: AsyncClient):
-    response = await client.patch(
+async def test_add_team_in_full_match(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/matches/1/add_team/White Ravens/",
     )
 
@@ -141,7 +141,7 @@ async def test_add_team_in_full_match(client: AsyncClient):
         "detail": "The maximum number of teams will participate in the match",
     }
 
-    response = await client.get(
+    response = await authorized_admin_client.get(
         "/teams/3/",
     )
     assert response.status_code == 200
@@ -149,8 +149,8 @@ async def test_add_team_in_full_match(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_add_exists_team_in_match(client: AsyncClient):
-    response = await client.patch(
+async def test_add_exists_team_in_match(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/matches/2/add_team/Red Ravens/",
     )
 
@@ -159,7 +159,7 @@ async def test_add_exists_team_in_match(client: AsyncClient):
         "detail": "Team Red Ravens already exists",
     }
 
-    response = await client.get(
+    response = await authorized_admin_client.get(
         "/teams/2/",
     )
     assert response.status_code == 200
@@ -167,8 +167,8 @@ async def test_add_exists_team_in_match(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_not_exists_team_from_match(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_not_exists_team_from_match(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/matches/1/delete_team/White Ravens/",
     )
 
@@ -179,24 +179,24 @@ async def test_delete_not_exists_team_from_match(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_match_with_teams(client: AsyncClient):
-    response = await client.delete("/matches/1/")
+async def test_delete_match_with_teams(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete("/matches/1/")
     assert response.status_code == 204
 
-    response = await client.get("/teams/1/")
+    response = await authorized_admin_client.get("/teams/1/")
     assert response.status_code == 200
     assert response.json()["matches_id"] == []
 
-    response = await client.get("/teams/2/")
+    response = await authorized_admin_client.get("/teams/2/")
     assert response.status_code == 200
     assert response.json()["matches_id"] == [2]
 
 
 @pytest.mark.asyncio
-async def test_delete_team_with_matches(client: AsyncClient):
-    response = await client.delete("/teams/2/")
+async def test_delete_team_with_matches(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete("/teams/2/")
     assert response.status_code == 204
 
-    response = await client.get("/matches/2/")
+    response = await authorized_admin_client.get("/matches/2/")
     assert response.status_code == 200
     assert response.json()["teams"] == ["White Ravens"]
