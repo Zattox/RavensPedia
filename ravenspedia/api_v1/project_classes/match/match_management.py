@@ -9,10 +9,12 @@ from ravenspedia.api_v1.project_classes.player.crud import create_player
 from ravenspedia.core import TableMatch, TableTeam, TablePlayer, TableMatchStats
 from ravenspedia.core.config import faceit_settings
 from ravenspedia.core.faceit_models import PlayerStats
+from ravenspedia.core.project_models.table_match import MatchStatus
 from .crud import update_general_match_info
 from .dependencies import find_steam_id_by_faceit_id
 from .schemes import MatchGeneralInfoUpdate
 from ..player.schemes import PlayerCreate
+from ...schedules.schedule_updater import manual_update_match_status
 
 
 async def add_team_in_match(
@@ -122,6 +124,12 @@ async def add_match_stats_from_faceit(
                 faceit_match_id=faceit_match_id,
             )
         ),
+    )
+
+    response = await manual_update_match_status(
+        match.id,
+        MatchStatus.COMPLETED,
+        session,
     )
 
     for round_data in data["rounds"]:

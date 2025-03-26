@@ -24,6 +24,7 @@ def table_to_response_form(
         max_number_of_players=match.max_number_of_players,
         max_number_of_teams=match.max_number_of_teams,
         best_of=match.best_of,
+        status=match.status,
         stats=[],
     )
 

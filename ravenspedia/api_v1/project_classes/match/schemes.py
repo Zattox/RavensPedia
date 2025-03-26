@@ -4,6 +4,7 @@ from typing import Union, List
 from pydantic import BaseModel
 
 from ravenspedia.core.faceit_models import PlayerStats
+from ravenspedia.core.project_models.table_match import MatchStatus
 
 
 # The base class for the Match (without id)
@@ -36,6 +37,7 @@ class MatchGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Match
 class ResponseMatch(MatchBase):
+    status: MatchStatus
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

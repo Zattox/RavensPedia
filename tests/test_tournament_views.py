@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+from ravenspedia.core.project_models.table_tournament import TournamentStatus
+
 
 @pytest.mark.asyncio
 async def test_read_tournaments_from_empty_database(client: AsyncClient):
@@ -82,6 +84,7 @@ async def test_create_tournament_with_full_info(authorized_admin_client: AsyncCl
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -99,6 +102,7 @@ async def test_read_tournament_with_full_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -127,6 +131,7 @@ async def test_create_tournament_with_partial_info(
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -145,6 +150,7 @@ async def test_read_tournament_with_partial_info(client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -164,6 +170,7 @@ async def test_empty_update_tournament(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -188,6 +195,7 @@ async def test_update_tournament_names(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -211,6 +219,7 @@ async def test_update_tournament_nickname(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "teams": [],
         "players": [],
+        "status": TournamentStatus.SCHEDULED.value,
     }
 
 
@@ -230,6 +239,7 @@ async def test_get_tournaments(client: AsyncClient):
             "matches_id": [],
             "teams": [],
             "players": [],
+            "status": TournamentStatus.SCHEDULED.value,
         },
         {
             "max_count_of_teams": 2,
@@ -239,6 +249,7 @@ async def test_get_tournaments(client: AsyncClient):
             "matches_id": [],
             "teams": [],
             "players": [],
+            "status": TournamentStatus.SCHEDULED.value,
         },
     ]
 

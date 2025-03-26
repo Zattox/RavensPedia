@@ -3,6 +3,7 @@ from deepdiff import DeepDiff
 from httpx import AsyncClient
 
 from ravenspedia.core.config import data_for_tests
+from ravenspedia.core.project_models.table_match import MatchStatus
 
 
 @pytest.mark.asyncio
@@ -132,6 +133,7 @@ async def test_add_stats_bo1_from_faceit(authorized_admin_client: AsyncClient):
         "tournament": "MSCL+",
         "description": None,
         "date": "2025-01-20T22:16:00",
+        "status": MatchStatus.COMPLETED.value,
         "players": [
             "SiddeBror",
             "Bagheera-_",
@@ -182,6 +184,7 @@ async def test_add_stats_bo2_from_faceit(authorized_admin_client: AsyncClient):
         "tournament": "MSCL+",
         "description": None,
         "date": "2024-10-31T21:50:00",
+        "status": MatchStatus.COMPLETED.value,
         "players": [
             "Panda1ver",
             "Deyk0",
@@ -236,6 +239,7 @@ async def test_add_stats_bo3_from_faceit(authorized_admin_client: AsyncClient):
         "tournament": "Final MSCL",
         "description": None,
         "date": "2024-11-16T12:16:00",
+        "status": MatchStatus.COMPLETED.value,
         "players": [
             "itSl0ve",
             "Deyk0",

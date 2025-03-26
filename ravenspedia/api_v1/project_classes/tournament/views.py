@@ -20,6 +20,7 @@ def table_to_response_form(
         description=tournament.description,
         prize=tournament.prize,
         max_count_of_teams=tournament.max_count_of_teams,
+        status=tournament.status,
     )
 
     if not is_create:

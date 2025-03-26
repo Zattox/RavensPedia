@@ -3,6 +3,8 @@ from typing import Union, List
 
 from pydantic import BaseModel
 
+from ravenspedia.core.project_models.table_tournament import TournamentStatus
+
 
 # The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
@@ -34,6 +36,7 @@ class TournamentGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Tournament
 class ResponseTournament(TournamentBase):
+    status: TournamentStatus
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models
