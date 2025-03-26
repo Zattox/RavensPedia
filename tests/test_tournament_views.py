@@ -24,14 +24,14 @@ async def test_read_not_exists_tournament(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_tournament_without_name(client: AsyncClient):
+async def test_create_tournament_without_name(authorized_admin_client: AsyncClient):
     data = {
         "max_count_of_teams": 2,
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/tournaments/",
         json=data,
     )
@@ -40,14 +40,16 @@ async def test_create_tournament_without_name(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_tournament_without_max_count(client: AsyncClient):
+async def test_create_tournament_without_max_count(
+    authorized_admin_client: AsyncClient,
+):
     data = {
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/tournaments/",
         json=data,
     )
@@ -56,7 +58,7 @@ async def test_create_tournament_without_max_count(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_tournament_with_full_info(client: AsyncClient):
+async def test_create_tournament_with_full_info(authorized_admin_client: AsyncClient):
     data = {
         "max_count_of_teams": 2,
         "name": "Final MSCL",
@@ -66,7 +68,7 @@ async def test_create_tournament_with_full_info(client: AsyncClient):
         "end_date": "2025-02-12",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/tournaments/",
         json=data,
     )
@@ -101,7 +103,9 @@ async def test_read_tournament_with_full_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_tournament_with_partial_info(client: AsyncClient):
+async def test_create_tournament_with_partial_info(
+    authorized_admin_client: AsyncClient,
+):
     data = {
         "max_count_of_teams": 2,
         "name": "MSCL+",
@@ -109,7 +113,7 @@ async def test_create_tournament_with_partial_info(client: AsyncClient):
         "end_date": "2025-02-12",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/tournaments/",
         json=data,
     )
@@ -145,8 +149,8 @@ async def test_read_tournament_with_partial_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_empty_update_tournament(client: AsyncClient):
-    response = await client.patch(
+async def test_empty_update_tournament(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/tournaments/1/",
         json={},
     )
@@ -164,13 +168,13 @@ async def test_empty_update_tournament(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_tournament_names(client: AsyncClient):
+async def test_update_tournament_names(authorized_admin_client: AsyncClient):
     data = {
         "prize": "Reputation",
         "description": "Fun tournament",
     }
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/tournaments/2/",
         json=data,
     )
@@ -188,12 +192,12 @@ async def test_update_tournament_names(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_tournament_nickname(client: AsyncClient):
+async def test_update_tournament_nickname(authorized_admin_client: AsyncClient):
     data = {
         "name": "Showmatches",
     }
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/tournaments/2/",
         json=data,
     )
@@ -240,23 +244,25 @@ async def test_get_tournaments(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_tournament(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_tournament(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/tournaments/2/",
     )
     assert response.status_code == 204
 
 
 @pytest.mark.asyncio
-async def test_delete_not_exist_tournament(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_not_exist_tournament(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/tournaments/2/",
     )
     assert response.status_code == 404
 
 
 @pytest.mark.asyncio
-async def test_create_tournament_with_existing_name(client: AsyncClient):
+async def test_create_tournament_with_existing_name(
+    authorized_admin_client: AsyncClient,
+):
     data = {
         "max_count_of_teams": 2,
         "name": "Final MSCL",
@@ -266,7 +272,7 @@ async def test_create_tournament_with_existing_name(client: AsyncClient):
         "end_date": "2025-02-12",
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/tournaments/",
         json=data,
     )
