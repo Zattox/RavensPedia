@@ -14,9 +14,9 @@ async def test_read_players_from_empty_database(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_read_not_exists_player(client: AsyncClient):
+async def test_read_not_exists_player(authorized_admin_client: AsyncClient):
     player_id: int = 0
-    response = await client.get(
+    response = await authorized_admin_client.get(
         f"/players/{player_id}/",
     )
     assert response.status_code == 404
@@ -26,14 +26,14 @@ async def test_read_not_exists_player(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_player_without_nickname(client: AsyncClient):
+async def test_create_player_without_nickname(authorized_admin_client: AsyncClient):
     data = {
         "name": "Vladislav",
         "surname": "Tepliakov",
         "steam_id": data_for_tests.player1_steam_id,
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/players/",
         json=data,
     )
@@ -42,7 +42,7 @@ async def test_create_player_without_nickname(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_player_with_full_info(client: AsyncClient):
+async def test_create_player_with_full_info(authorized_admin_client: AsyncClient):
     data = {
         "nickname": "Zattox",
         "name": "Vladislav",
@@ -50,7 +50,7 @@ async def test_create_player_with_full_info(client: AsyncClient):
         "steam_id": data_for_tests.player1_steam_id,
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/players/",
         json=data,
     )
@@ -89,13 +89,13 @@ async def test_read_player_with_full_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_player_with_partial_info(client: AsyncClient):
+async def test_create_player_with_partial_info(authorized_admin_client: AsyncClient):
     data = {
         "nickname": "g666",
         "steam_id": data_for_tests.player2_steam_id,
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/players/",
         json=data,
     )
@@ -135,8 +135,8 @@ async def test_read_player_with_partial_info(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_empty_update_player(client: AsyncClient):
-    response = await client.patch(
+async def test_empty_update_player(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.patch(
         f"/players/1/",
         json={},
     )
@@ -156,13 +156,13 @@ async def test_empty_update_player(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_player_names(client: AsyncClient):
+async def test_update_player_names(authorized_admin_client: AsyncClient):
     data = {
         "name": "Slava",
         "surname": "Shohin",
     }
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/players/2/",
         json=data,
     )
@@ -182,12 +182,12 @@ async def test_update_player_names(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_player_nickname(client: AsyncClient):
+async def test_update_player_nickname(authorized_admin_client: AsyncClient):
     data = {
         "nickname": "G666",
     }
 
-    response = await client.patch(
+    response = await authorized_admin_client.patch(
         f"/players/2/",
         json=data,
     )
@@ -240,23 +240,23 @@ async def test_get_players(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_delete_player(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_player(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/players/2/",
     )
     assert response.status_code == 204
 
 
 @pytest.mark.asyncio
-async def test_delete_not_exist_player(client: AsyncClient):
-    response = await client.delete(
+async def test_delete_not_exist_player(authorized_admin_client: AsyncClient):
+    response = await authorized_admin_client.delete(
         f"/players/2/",
     )
     assert response.status_code == 404
 
 
 @pytest.mark.asyncio
-async def test_create_player_with_existing_name(client: AsyncClient):
+async def test_create_player_with_existing_name(authorized_admin_client: AsyncClient):
     data = {
         "nickname": "Zattox",
         "name": "Valery",
@@ -264,7 +264,7 @@ async def test_create_player_with_existing_name(client: AsyncClient):
         "steam_id": data_for_tests.player1_steam_id,
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/players/",
         json=data,
     )
@@ -276,7 +276,9 @@ async def test_create_player_with_existing_name(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_create_player_with_existing_steam_id(client: AsyncClient):
+async def test_create_player_with_existing_steam_id(
+    authorized_admin_client: AsyncClient,
+):
     data = {
         "nickname": "Dumpling",
         "name": "Valery",
@@ -284,7 +286,7 @@ async def test_create_player_with_existing_steam_id(client: AsyncClient):
         "steam_id": data_for_tests.player1_steam_id,
     }
 
-    response = await client.post(
+    response = await authorized_admin_client.post(
         "/players/",
         json=data,
     )

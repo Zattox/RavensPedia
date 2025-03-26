@@ -1,10 +1,11 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import db_helper, TablePlayer
+from ravenspedia.core import db_helper, TablePlayer, TableUser
 from ravenspedia.core.faceit_models import PlayerStats
 from . import crud, dependencies
 from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
+from ...auth.dependencies import get_current_admin_user
 
 router = APIRouter(tags=["Players"])
 
@@ -78,6 +79,7 @@ async def get_player(
 async def create_player(
     player_in: PlayerCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ):
     player = await crud.create_player(
         session=session,
@@ -96,6 +98,7 @@ async def update_general_player_info(
     player_update: PlayerGeneralInfoUpdate,
     player: TablePlayer = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ):
     new_player = await crud.update_general_player_info(
         session=session,
@@ -113,5 +116,6 @@ async def update_general_player_info(
 async def delete_player(
     player: TablePlayer = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_player(session=session, player=player)
