@@ -1,5 +1,10 @@
 import pytest
+from fastapi import status
 from httpx import AsyncClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ravenspedia.core import TableUser
 
 
 # Test user registration and token generation
@@ -142,3 +147,86 @@ async def test_access_protected_route_with_revoked_access_token(
     response = await authorized_client.get("/auth/me/")
     assert response.status_code == 401
     assert response.json()["detail"] in "Token not found"
+
+
+@pytest.mark.asyncio
+async def test_change_user_role_success(
+    authorized_super_admin_client: AsyncClient,
+    authorized_client: AsyncClient,
+    session: AsyncSession,
+):
+    user_info = await authorized_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_super_admin_client.get(
+        "/auth/change_user_role/",
+        params={"user_email": user_email, "new_role": "admin"},
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"detail": "User role changed to admin"}
+
+    user = await session.scalar(select(TableUser).where(TableUser.email == user_email))
+    assert user.role == "admin"
+
+
+@pytest.mark.asyncio
+async def test_change_role_invalid_role(
+    authorized_super_admin_client: AsyncClient,
+    authorized_client: AsyncClient,
+):
+    user_info = await authorized_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_super_admin_client.get(
+        "/auth/change_user_role/",
+        params={"user_email": user_email, "new_role": "super_admin"},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "Invalid role" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_change_own_role_fails(
+    authorized_super_admin_client: AsyncClient,
+    session: AsyncSession,
+):
+    user_info = await authorized_super_admin_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_super_admin_client.get(
+        "/auth/change_user_role/",
+        params={"user_email": user_email, "new_role": "admin"},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "Cannot change your own role" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_non_super_admin_cannot_change_roles(
+    authorized_admin_client: AsyncClient,
+    authorized_client: AsyncClient,
+):
+    user_info = await authorized_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_admin_client.get(
+        "/auth/change_user_role/",
+        params={"user_email": user_email, "new_role": "admin"},
+    )
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.asyncio
+async def test_change_nonexistent_user(
+    authorized_super_admin_client: AsyncClient,
+):
+    response = await authorized_super_admin_client.get(
+        "/auth/change_user_role/",
+        params={"user_email": "nonexistent@example.com", "new_role": "admin"},
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -203,3 +203,37 @@ async def update_tokens(
 async def delete_revoked_tokens(session: AsyncSession) -> None:
     await session.execute(delete(TableToken).where(TableToken.revoked == True))
     await session.commit()
+
+
+async def change_user_role(
+    user_email: str,
+    new_role: str,
+    super_admin: TableUser,
+    session: AsyncSession,
+) -> dict:
+    valid_roles = ["user", "admin"]
+    if new_role not in valid_roles:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid role. Allowed roles: {', '.join(valid_roles)}",
+        )
+
+    user: TableUser = await session.scalar(
+        select(TableUser).where(TableUser.email == user_email)
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    if user.id == super_admin.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change your own role",
+        )
+
+    setattr(user, "role", new_role)
+    await session.commit()
+
+    return {"detail": f"User role changed to {new_role}"}

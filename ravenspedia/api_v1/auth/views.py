@@ -136,24 +136,9 @@ async def change_user_role(
     super_admin: TableUser = Depends(dependencies.get_current_super_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
-    valid_roles = ["user", "admin"]
-    if new_role not in valid_roles:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid role. Allowed roles: {', '.join(valid_roles)}",
-        )
-
-    user: TableUser = await session.scalar(
-        select(TableUser).where(TableUser.email == user_email)
+    return await crud.change_user_role(
+        user_email,
+        new_role,
+        super_admin,
+        session,
     )
-
-    if user.id == super_admin.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot change your own role",
-        )
-
-    setattr(user, "role", new_role)
-    await session.commit()
-
-    return {"detail": f"User role changed to {new_role}"}
