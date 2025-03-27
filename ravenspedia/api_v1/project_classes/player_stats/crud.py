@@ -65,3 +65,15 @@ def process_general_stats(
         result.headshots_rate = result.headshots / result.kills * 100
 
     return result
+
+
+def process_detailed_stats(
+    player: TablePlayer,
+    stats_list: List[TableMatchStats],
+) -> DetailedPlayerStats:
+    result = DetailedPlayerStats(
+        nickname=player.nickname,
+        total_matches=len(stats_list),
+    )
+
+    return result
