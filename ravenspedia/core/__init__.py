@@ -15,6 +15,8 @@ __all__ = (
     "TeamMatchAssociation",
     "PlayerTournamentAssociation",
     "TableNews",
+    "TableMapResultInfo",
+    "TableMapPickBanInfo",
 )
 
 from .associations_models import (
@@ -32,4 +34,6 @@ from .project_models import (
     TableTournament,
     TableMatchStats,
     TableNews,
+    TableMapResultInfo,
+    TableMapPickBanInfo,
 )
