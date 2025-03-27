@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import String, ForeignKey, func, Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,7 +10,8 @@ from ravenspedia.core import Base
 if TYPE_CHECKING:
     from .table_team import TableTeam
     from .table_tournament import TableTournament
-    from .table_match_stats import TableMatchStats  # Импортируем PlayerStats
+    from .table_match_stats import TableMatchStats
+    from .table_match_info import TableMapResultInfo, TableMapPickBanInfo
 
 
 class MatchStatus(Enum):
@@ -59,6 +60,17 @@ class TableMatch(Base):
         SQLAlchemyEnum(MatchStatus),
         default=MatchStatus.SCHEDULED,
         server_default=MatchStatus.SCHEDULED.value,
+    )
+
+    # New relationships for MatchInfo
+    veto: Mapped[List["TableMapPickBanInfo"]] = relationship(
+        back_populates="match",
+        cascade="all, delete-orphan",
+    )
+
+    result: Mapped[List["TableMapResultInfo"]] = relationship(
+        back_populates="match",
+        cascade="all, delete-orphan",
     )
 
     def is_completed(self) -> bool:

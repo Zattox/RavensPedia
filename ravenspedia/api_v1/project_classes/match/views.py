@@ -26,12 +26,16 @@ def table_to_response_form(
         best_of=match.best_of,
         status=match.status,
         stats=[],
+        veto=[],
+        result=[],
     )
 
     if not is_create:
         result.teams = [team.name for team in match.teams]
         result.players = list({elem.player.nickname for elem in match.stats})
         result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
+        result.veto = [elem for elem in match.veto]
+        result.result = [elem for elem in match.result]
 
     return result
 

@@ -3,6 +3,10 @@ from typing import Union, List
 
 from pydantic import BaseModel
 
+from ravenspedia.api_v1.project_classes.match_stats.schemes import (
+    MapPickBanInfo,
+    MapResultInfo,
+)
 from ravenspedia.core.faceit_models import PlayerStats
 from ravenspedia.core.project_models.table_match import MatchStatus
 
@@ -18,6 +22,8 @@ class MatchBase(BaseModel):
     tournament: str
     date: datetime
     stats: List[PlayerStats] = []
+    veto: List[MapPickBanInfo] = []
+    result: List[MapResultInfo] = []
 
 
 class MatchCreate(BaseModel):

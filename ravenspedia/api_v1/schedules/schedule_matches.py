@@ -18,6 +18,8 @@ async def get_last_x_completed_matches(
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
+            selectinload(TableMatch.veto),
+            selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.COMPLETED)
         .order_by(TableMatch.date.desc())
@@ -38,6 +40,8 @@ async def get_upcoming_matches(
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
+            selectinload(TableMatch.veto),
+            selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.SCHEDULED)
         .filter(TableMatch.date >= datetime.now())
@@ -60,6 +64,8 @@ async def get_in_progress_matches(
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
+            selectinload(TableMatch.veto),
+            selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.IN_PROGRESS)
         .filter(TableMatch.date <= current_time)

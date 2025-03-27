@@ -4,7 +4,7 @@ from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
 from .dependencies import get_match_by_id
-from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
+from .schemes import MatchCreate, MatchGeneralInfoUpdate
 from ..tournament.dependencies import get_tournament_by_name
 
 
@@ -15,6 +15,8 @@ async def get_matches(session: AsyncSession) -> list[TableMatch]:
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
+            selectinload(TableMatch.veto),
+            selectinload(TableMatch.result),
         )
         .order_by(TableMatch.id)
     )

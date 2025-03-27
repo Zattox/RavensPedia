@@ -7,14 +7,21 @@ from ravenspedia.api_v1.project_classes import ResponseMatch
 from ravenspedia.api_v1.project_classes.match import match_management
 from ravenspedia.api_v1.project_classes.match.dependencies import get_match_by_id
 from ravenspedia.api_v1.project_classes.match.views import table_to_response_form
-from ravenspedia.api_v1.project_classes.match_stats import match_stats_faceit_management
+from ravenspedia.api_v1.project_classes.match_stats import (
+    match_stats_faceit_management,
+    match_info,
+)
 from ravenspedia.api_v1.project_classes.match_stats.match_stats_manual import (
     add_manual_match_stats,
 )
-from ravenspedia.api_v1.project_classes.match_stats.schemes import MatchStatsInput
+from ravenspedia.api_v1.project_classes.match_stats.schemes import (
+    MatchStatsInput,
+    MapPickBanInfo,
+)
 from ravenspedia.core import TableMatch, db_helper, TableUser
 
 router = APIRouter(tags=["Matches Stats Manager"])
+info_router = APIRouter(tags=["Matches Info Manager"])
 
 
 @router.patch(
@@ -66,3 +73,37 @@ async def add_manual_stats(
 ) -> ResponseMatch:
     match = await add_manual_match_stats(session, stats_input, match_id)
     return table_to_response_form(match)
+
+
+@info_router.patch(
+    "/{match_id}/add_pick_ban_info/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def add_pick_ban_info_in_match(
+    info: MapPickBanInfo,
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    match = await match_info.add_pick_ban_info_in_match(
+        session=session,
+        info=info,
+        match=match,
+    )
+    return table_to_response_form(match=match)
+
+
+@info_router.delete(
+    "/{match_id}/delete_pick_ban_info/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_last_pick_ban_info_from_match(
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    match = await match_info.delete_last_pick_ban_info_from_match(
+        session=session,
+        match=match,
+    )
+    return table_to_response_form(match=match)

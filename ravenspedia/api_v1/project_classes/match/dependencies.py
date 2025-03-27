@@ -22,6 +22,8 @@ async def get_match_by_id(
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams),
             selectinload(TableMatch.tournament),
+            selectinload(TableMatch.veto),
+            selectinload(TableMatch.result),
         ),
     )
 

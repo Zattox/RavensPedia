@@ -147,6 +147,8 @@ async def test_add_stats_bo1_from_faceit(authorized_admin_client: AsyncClient):
             "t3rm1n4t0r10",
         ],
         "teams": [],
+        "veto": [],
+        "result": [],
     }
 
     diff = DeepDiff(
@@ -198,6 +200,8 @@ async def test_add_stats_bo2_from_faceit(authorized_admin_client: AsyncClient):
             "t3rm1n4t0r10",
         ],
         "teams": [],
+        "veto": [],
+        "result": [],
     }
 
     diff = DeepDiff(
@@ -253,6 +257,8 @@ async def test_add_stats_bo3_from_faceit(authorized_admin_client: AsyncClient):
             "t3rm1n4t0r10",
         ],
         "teams": [],
+        "veto": [],
+        "result": [],
     }
 
     diff = DeepDiff(

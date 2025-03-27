@@ -146,6 +146,8 @@ async def test_create_match_with_full_info(authorized_admin_client: AsyncClient)
         "date": "2025-01-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -167,6 +169,8 @@ async def test_read_match_with_full_info(client: AsyncClient):
         "date": "2025-01-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -197,6 +201,8 @@ async def test_create_match_with_partial_info(authorized_admin_client: AsyncClie
         "date": "2025-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -218,6 +224,8 @@ async def test_read_match_with_partial_info(client: AsyncClient):
         "date": "2025-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -240,6 +248,8 @@ async def test_empty_update_match(authorized_admin_client: AsyncClient):
         "date": "2025-01-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -262,6 +272,8 @@ async def test_update_match_description(authorized_admin_client: AsyncClient):
         "date": "2025-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -288,6 +300,8 @@ async def test_update_match_tournament(authorized_admin_client: AsyncClient):
         "date": "2025-03-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
+        "veto": [],
+        "result": [],
     }
 
 
@@ -310,6 +324,8 @@ async def test_get_matches(client: AsyncClient):
             "date": "2025-01-12T00:00:00",
             "stats": [],
             "status": "SCHEDULED",
+            "veto": [],
+            "result": [],
         },
         {
             "best_of": 1,
@@ -322,6 +338,8 @@ async def test_get_matches(client: AsyncClient):
             "date": "2025-03-12T00:00:00",
             "stats": [],
             "status": "SCHEDULED",
+            "veto": [],
+            "result": [],
         },
     ]
 
