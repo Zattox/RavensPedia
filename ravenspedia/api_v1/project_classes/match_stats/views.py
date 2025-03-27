@@ -17,6 +17,7 @@ from ravenspedia.api_v1.project_classes.match_stats.match_stats_manual import (
 from ravenspedia.api_v1.project_classes.match_stats.schemes import (
     MatchStatsInput,
     MapPickBanInfo,
+    MapResultInfo,
 )
 from ravenspedia.core import TableMatch, db_helper, TableUser
 
@@ -76,7 +77,7 @@ async def add_manual_stats(
 
 
 @info_router.patch(
-    "/{match_id}/add_pick_ban_info/",
+    "/{match_id}/add_pick_ban_info_in_match/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
@@ -84,6 +85,7 @@ async def add_pick_ban_info_in_match(
     info: MapPickBanInfo,
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.add_pick_ban_info_in_match(
         session=session,
@@ -94,15 +96,53 @@ async def add_pick_ban_info_in_match(
 
 
 @info_router.delete(
-    "/{match_id}/delete_pick_ban_info/",
+    "/{match_id}/delete_last_pick_ban_info_from_match/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
 async def delete_last_pick_ban_info_from_match(
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.delete_last_pick_ban_info_from_match(
+        session=session,
+        match=match,
+    )
+    return table_to_response_form(match=match)
+
+
+# New endpoints for map result info
+@info_router.patch(
+    "/{match_id}/add_map_result_info_in_match/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def add_map_result_info_in_match(
+    info: MapResultInfo,
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
+) -> ResponseMatch:
+    match = await match_info.add_map_result_info_in_match(
+        session=session,
+        info=info,
+        match=match,
+    )
+    return table_to_response_form(match=match)
+
+
+@info_router.delete(
+    "/{match_id}/delete_last_map_result_info_from_match/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_last_map_result_info_from_match(
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+    admin: TableUser = Depends(get_current_admin_user),
+) -> ResponseMatch:
+    match = await match_info.delete_last_map_result_info_from_match(
         session=session,
         match=match,
     )
