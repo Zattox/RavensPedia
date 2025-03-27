@@ -1,8 +1,8 @@
 """Add match info tables
 
-Revision ID: c48016527adf
+Revision ID: 27ed4dd23ea9
 Revises: 4c0b47674b8b
-Create Date: 2025-03-27 20:40:10.849269
+Create Date: 2025-03-28 00:52:11.667688
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "c48016527adf"
+revision: str = "27ed4dd23ea9"
 down_revision: Union[str, None] = "4c0b47674b8b"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,24 +26,24 @@ def upgrade() -> None:
         sa.Column(
             "map",
             sa.Enum(
-                "ANUBIS",
-                "DUST2",
-                "MIRAGE",
-                "NUKE",
-                "VERTIGO",
-                "ANCIENT",
-                "INFERNO",
-                "TRAIN",
+                "Anubis",
+                "Dust2",
+                "Mirage",
+                "Nuke",
+                "Vertigo",
+                "Ancient",
+                "Inferno",
+                "Train",
                 name="mapname",
             ),
             nullable=False,
         ),
         sa.Column(
             "map_status",
-            sa.Enum("BANNED", "PICKED", "DEFAULT", name="mapstatus"),
+            sa.Enum("Banned", "Picked", "Default", name="mapstatus"),
             nullable=False,
         ),
-        sa.Column("initiator", sa.String(length=50), nullable=False),
+        sa.Column("initiator", sa.String(), nullable=False),
         sa.Column("match_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(["match_id"], ["matches.id"], ondelete="CASCADE"),
@@ -54,25 +54,27 @@ def upgrade() -> None:
         sa.Column(
             "map",
             sa.Enum(
-                "ANUBIS",
-                "DUST2",
-                "MIRAGE",
-                "NUKE",
-                "VERTIGO",
-                "ANCIENT",
-                "INFERNO",
-                "TRAIN",
+                "Anubis",
+                "Dust2",
+                "Mirage",
+                "Nuke",
+                "Vertigo",
+                "Ancient",
+                "Inferno",
+                "Train",
                 name="mapname",
             ),
             nullable=False,
         ),
-        sa.Column("first_team", sa.String(length=50), nullable=False),
-        sa.Column("second_team", sa.String(length=50), nullable=False),
+        sa.Column("first_team", sa.String(), nullable=False),
+        sa.Column("second_team", sa.String(), nullable=False),
         sa.Column("first_half_score_first_team", sa.Integer(), nullable=False),
         sa.Column("second_half_score_first_team", sa.Integer(), nullable=False),
+        sa.Column("overtime_score_first_team", sa.Integer(), nullable=False),
+        sa.Column("total_score_first_team", sa.Integer(), nullable=False),
         sa.Column("first_half_score_second_team", sa.Integer(), nullable=False),
         sa.Column("second_half_score_second_team", sa.Integer(), nullable=False),
-        sa.Column("total_score_first_team", sa.Integer(), nullable=False),
+        sa.Column("overtime_score_second_team", sa.Integer(), nullable=False),
         sa.Column("total_score_second_team", sa.Integer(), nullable=False),
         sa.Column("match_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),

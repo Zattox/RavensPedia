@@ -36,9 +36,13 @@ class MapResultInfo(BaseModel):
     map: MapName
     first_team: str
     second_team: str
+
     first_half_score_first_team: int
     second_half_score_first_team: int
+    overtime_score_first_team: int
+    total_score_first_team: int
+
     first_half_score_second_team: int
     second_half_score_second_team: int
-    total_score_first_team: int
+    overtime_score_second_team: int
     total_score_second_team: int

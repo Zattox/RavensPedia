@@ -107,33 +107,63 @@ async def add_map_result_info_in_match(
             detail=f"Teams must be one of: {', '.join(team_names)}",
         )
 
-    if info.first_half_score_first_team + info.first_half_score_second_team != 12:
+    total_first_half_rounds = (
+        info.first_half_score_first_team + info.first_half_score_second_team
+    )
+    if total_first_half_rounds != 12:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The sum of first half scores for both teams must equal 12.",
         )
 
-    if (
-        info.first_half_score_first_team + info.second_half_score_first_team
-        != info.total_score_first_team
-    ):
+    total_second_half_rounds = (
+        info.second_half_score_first_team + info.second_half_score_second_team
+    )
+    if total_second_half_rounds > 12:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The sum of the second half scores for both teams must be less than or equal to 12.",
+        )
+
+    total_score_first_team = (
+        info.first_half_score_first_team
+        + info.second_half_score_first_team
+        + info.overtime_score_first_team
+    )
+    if total_score_first_team != info.total_score_first_team:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="First team's total score must equal the sum of first and second half scores.",
         )
-    if (
-        info.first_half_score_second_team + info.second_half_score_second_team
-        != info.total_score_second_team
-    ):
+
+    total_score_second_team = (
+        info.first_half_score_second_team
+        + info.second_half_score_second_team
+        + info.overtime_score_second_team
+    )
+    if total_score_second_team != info.total_score_second_team:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Second team's total score must equal the sum of first and second half scores.",
         )
 
-    if max(info.total_score_first_team, info.total_score_second_team) < 13:
+    if max(total_score_first_team, total_score_second_team) < 13:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The maximum total score of the two teams must be at least 13.",
+        )
+
+    winner_of_overtime = max(
+        info.overtime_score_first_team, info.overtime_score_second_team
+    )
+    loser_of_overtime = min(
+        info.overtime_score_first_team, info.overtime_score_second_team
+    )
+    diff = winner_of_overtime - loser_of_overtime
+    if diff > 4 or diff < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect completion of overtime rounds.",
         )
 
     new_result = TableMapResultInfo(**info.model_dump())

@@ -36,7 +36,7 @@ class TableMapPickBanInfo(Base):
     map_status: Mapped[MapStatus] = mapped_column(
         SQLAlchemyEnum(MapStatus), nullable=False
     )
-    initiator: Mapped[str] = mapped_column(String(50), nullable=False)
+    initiator: Mapped[str] = mapped_column(nullable=False)
 
     match_id: Mapped[int] = mapped_column(ForeignKey("matches.id", ondelete="CASCADE"))
     match: Mapped["TableMatch"] = relationship(back_populates="veto")
@@ -47,13 +47,17 @@ class TableMapResultInfo(Base):
     __tablename__ = "map_result_info"
 
     map: Mapped[MapName] = mapped_column(SQLAlchemyEnum(MapName), nullable=False)
-    first_team: Mapped[str] = mapped_column(String(50), nullable=False)
-    second_team: Mapped[str] = mapped_column(String(50), nullable=False)
+    first_team: Mapped[str] = mapped_column(nullable=False)
+    second_team: Mapped[str] = mapped_column(nullable=False)
+
     first_half_score_first_team: Mapped[int] = mapped_column(Integer, nullable=False)
     second_half_score_first_team: Mapped[int] = mapped_column(Integer, nullable=False)
+    overtime_score_first_team: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_score_first_team: Mapped[int] = mapped_column(Integer, nullable=False)
+
     first_half_score_second_team: Mapped[int] = mapped_column(Integer, nullable=False)
     second_half_score_second_team: Mapped[int] = mapped_column(Integer, nullable=False)
-    total_score_first_team: Mapped[int] = mapped_column(Integer, nullable=False)
+    overtime_score_second_team: Mapped[int] = mapped_column(Integer, nullable=False)
     total_score_second_team: Mapped[int] = mapped_column(Integer, nullable=False)
 
     match_id: Mapped[int] = mapped_column(ForeignKey("matches.id", ondelete="CASCADE"))

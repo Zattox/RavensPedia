@@ -181,6 +181,8 @@ async def test_add_map_result_info_success(authorized_admin_client: AsyncClient)
         "second_half_score_second_team": 6,
         "total_score_first_team": 13,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -206,6 +208,8 @@ async def test_add_map_result_info_exceed_best_of(authorized_admin_client: Async
         "second_half_score_second_team": 6,
         "total_score_first_team": 13,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -230,6 +234,8 @@ async def test_add_map_result_info_not_in_veto(authorized_admin_client: AsyncCli
         "second_half_score_second_team": 6,
         "total_score_first_team": 13,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -261,6 +267,8 @@ async def test_add_map_result_info_banned_map(authorized_admin_client: AsyncClie
         "second_half_score_second_team": 7,
         "total_score_first_team": 13,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -285,6 +293,8 @@ async def test_add_map_result_info_invalid_first_half(
         "second_half_score_second_team": 6,
         "total_score_first_team": 14,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -322,6 +332,8 @@ async def test_add_map_result_info_invalid_total_score(
         "second_half_score_second_team": 6,
         "total_score_first_team": 12,
         "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
     }
 
     response = await authorized_admin_client.patch(
@@ -360,3 +372,176 @@ async def test_unauthorized_access(client: AsyncClient):
     )
     assert response.status_code == 401
     assert response.json() == {"detail": "Token not found"}
+
+
+@pytest.mark.asyncio
+async def test_add_map_result_info_with_overtime_success(
+    authorized_admin_client: AsyncClient,
+):
+    pick_ban_data = {
+        "map": "Vertigo",
+        "map_status": "Picked",
+        "initiator": "Team A",
+    }
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_pick_ban_info_in_match/",
+        json=pick_ban_data,
+    )
+    assert response.status_code == 200
+
+    result_data = {
+        "map": "Vertigo",
+        "first_team": "Team A",
+        "second_team": "Team B",
+        "first_half_score_first_team": 6,
+        "second_half_score_first_team": 6,
+        "first_half_score_second_team": 6,
+        "second_half_score_second_team": 6,
+        "total_score_first_team": 16,
+        "total_score_second_team": 14,
+        "overtime_score_first_team": 4,
+        "overtime_score_second_team": 2,
+    }
+
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_map_result_info_in_match/",
+        json=result_data,
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert len(response_json["result"]) > 0
+    assert response_json["result"][-1] == result_data
+
+
+@pytest.mark.asyncio
+async def test_add_map_result_info_invalid_overtime_diff(
+    authorized_admin_client: AsyncClient,
+):
+    pick_ban_data = {
+        "map": "Ancient",
+        "map_status": "Default",
+        "initiator": "Team A",
+    }
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_pick_ban_info_in_match/",
+        json=pick_ban_data,
+    )
+    assert response.status_code == 200
+
+    result_data = {
+        "map": "Ancient",
+        "first_team": "Team A",
+        "second_team": "Team B",
+        "first_half_score_first_team": 6,
+        "second_half_score_first_team": 6,
+        "first_half_score_second_team": 6,
+        "second_half_score_second_team": 6,
+        "total_score_first_team": 18,
+        "total_score_second_team": 12,
+        "overtime_score_first_team": 6,  # Разница 6 (>4)
+        "overtime_score_second_team": 0,
+    }
+
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_map_result_info_in_match/",
+        json=result_data,
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Incorrect completion of overtime rounds."}
+
+
+@pytest.mark.asyncio
+async def test_add_map_result_info_invalid_second_half(
+    authorized_admin_client: AsyncClient,
+):
+    pick_ban_data = {
+        "map": "Anubis",
+        "map_status": "Default",  # Исправлено на Default, так как это второй результат в best_of=2
+        "initiator": "Team A",
+    }
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_pick_ban_info_in_match/",
+        json=pick_ban_data,
+    )
+    assert response.status_code == 200
+
+    result_data = {
+        "map": "Anubis",
+        "first_team": "Team A",
+        "second_team": "Team B",
+        "first_half_score_first_team": 6,
+        "second_half_score_first_team": 8,
+        "first_half_score_second_team": 6,
+        "second_half_score_second_team": 5,
+        "total_score_first_team": 14,
+        "total_score_second_team": 11,
+        "overtime_score_first_team": 0,
+        "overtime_score_second_team": 0,
+    }
+
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_map_result_info_in_match/",
+        json=result_data,
+    )
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "The sum of the second half scores for both teams must be less than or equal to 12."
+    }
+
+
+@pytest.mark.asyncio
+async def test_add_map_result_info_incorrect_total_with_overtime(
+    authorized_admin_client: AsyncClient,
+):
+    pick_ban_data = {
+        "map": "Train",
+        "map_status": "Default",
+        "initiator": "Team A",
+    }
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_pick_ban_info_in_match/",
+        json=pick_ban_data,
+    )
+    assert response.status_code == 200
+
+    result_data = {
+        "map": "Train",
+        "first_team": "Team A",
+        "second_team": "Team B",
+        "first_half_score_first_team": 6,
+        "second_half_score_first_team": 6,
+        "first_half_score_second_team": 6,
+        "second_half_score_second_team": 6,
+        "total_score_first_team": 15,
+        "total_score_second_team": 14,
+        "overtime_score_first_team": 4,
+        "overtime_score_second_team": 2,
+    }
+
+    response = await authorized_admin_client.patch(
+        f"/matches/stats/2/add_map_result_info_in_match/",
+        json=result_data,
+    )
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "First team's total score must equal the sum of first and second half scores."
+    }
+
+
+@pytest.mark.asyncio
+async def test_delete_last_map_result_info_empty(authorized_admin_client: AsyncClient):
+    for _ in range(2):
+        response = await authorized_admin_client.delete(
+            f"/matches/stats/2/delete_last_map_result_info_from_match/",
+        )
+        if response.status_code == 200:
+            continue
+        assert response.status_code == 400
+        assert response.json() == {"detail": "No map result entries exist to delete."}
+        break
+    else:
+        response = await authorized_admin_client.delete(
+            f"/matches/stats/2/delete_last_map_result_info_from_match/",
+        )
+        assert response.status_code == 400
+        assert response.json() == {"detail": "No map result entries exist to delete."}
