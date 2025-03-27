@@ -64,9 +64,5 @@ async def add_manual_stats(
     session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
-    match = await add_manual_match_stats(
-        session=session,
-        stats_input=stats_input,
-        match_id=match_id,
-    )
-    return table_to_response_form(match=match)
+    match = await add_manual_match_stats(session, stats_input, match_id)
+    return table_to_response_form(match)

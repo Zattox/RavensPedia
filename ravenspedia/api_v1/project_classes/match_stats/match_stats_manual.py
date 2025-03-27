@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ravenspedia.api_v1.project_classes.match_stats.schemes import MatchStatsInput
 from ravenspedia.api_v1.schedules.schedule_updater import manual_update_match_status
@@ -13,8 +14,15 @@ async def add_manual_match_stats(
     stats_input: MatchStatsInput,
     match_id: int,
 ) -> TableMatch:
-    # Получаем матч
-    result = await session.execute(select(TableMatch).filter_by(id=match_id))
+    result = await session.execute(
+        select(TableMatch)
+        .where(TableMatch.id == match_id)
+        .options(
+            selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
+            selectinload(TableMatch.teams),
+            selectinload(TableMatch.tournament),
+        )
+    )
     match = result.scalars().first()
 
     if not match:
@@ -23,13 +31,10 @@ async def add_manual_match_stats(
             detail=f"Match with id {match_id} not found",
         )
 
-    # Проверяем наличие статистики (асинхронно)
     stats_result = await session.execute(
-        select(TableMatchStats).filter_by(match_id=match_id)
+        select(TableMatchStats).where(TableMatchStats.match_id == match_id)
     )
-    existing_stats = stats_result.scalars().first()
-
-    if existing_stats:
+    if stats_result.scalars().first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Statistics have already been added to the match {match.id}",
@@ -41,27 +46,28 @@ async def add_manual_match_stats(
             detail=f"The best_of field differs from the specified one. Needed {match.best_of}, but passed {stats_input.best_of}",
         )
 
-    # Обновляем статус матча
     match = await manual_update_match_status(
         match.id,
         MatchStatus.COMPLETED,
         session,
     )
 
-    # Добавляем статистику игроков
-    for player_stats in stats_input.stats:
-        # Ищем игрока
-        player_result = await session.execute(
-            select(TablePlayer).filter_by(nickname=player_stats.nickname)
+    nicknames = [p.nickname for p in stats_input.stats]
+    players_result = await session.execute(
+        select(TablePlayer).where(TablePlayer.nickname.in_(nicknames))
+    )
+    players = {p.nickname: p for p in players_result.scalars().all()}
+
+    missing_players = [
+        p.nickname for p in stats_input.stats if p.nickname not in players
+    ]
+    if missing_players:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Players not found: {', '.join(missing_players)}",
         )
-        player = player_result.scalars().first()
 
-        if not player:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Player with nickname {player_stats.nickname} not found",
-            )
-
+    for player_stats in stats_input.stats:
         stats_data = {
             "nickname": player_stats.nickname,
             "round_of_match": player_stats.round_of_match,
@@ -76,7 +82,7 @@ async def add_manual_match_stats(
         }
 
         round_player_stats = TableMatchStats(
-            player=player,
+            player=players[player_stats.nickname],
             match=match,
             match_stats=stats_data,
         )
