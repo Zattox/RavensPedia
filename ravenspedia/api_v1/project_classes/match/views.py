@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.api_v1.project_classes.match_stats import match_stats_faceit_management
 from ravenspedia.core import db_helper, TableMatch, TableTeam, TableUser
 from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
 from . import crud, dependencies, match_management
@@ -156,41 +155,5 @@ async def delete_team_from_match(
         session=session,
         match=match,
         team=team,
-    )
-    return table_to_response_form(match=match)
-
-
-@manager_match_router.patch(
-    "/{match_id}/add_faceit_stats/",
-    status_code=status.HTTP_200_OK,
-    response_model=ResponseMatch,
-)
-async def add_match_stats_from_faceit(
-    faceit_url: str,
-    match: TableMatch = Depends(get_match_by_id),
-    session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
-) -> ResponseMatch:
-    match = await match_stats_faceit_management.add_match_stats_from_faceit(
-        session=session,
-        match=match,
-        faceit_url=faceit_url,
-    )
-    return table_to_response_form(match=match)
-
-
-@manager_match_router.delete(
-    "/{match_id}/delete_match_stats/",
-    status_code=status.HTTP_200_OK,
-    response_model=ResponseMatch,
-)
-async def delete_match_stats(
-    match: TableMatch = Depends(get_match_by_id),
-    session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
-) -> ResponseMatch:
-    match = await match_management.delete_match_stats(
-        session=session,
-        match=match,
     )
     return table_to_response_form(match=match)
