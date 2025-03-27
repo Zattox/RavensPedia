@@ -28,6 +28,17 @@ class GeneralPlayerStats(BaseModel):
     kd_ratio: float = Field(0.0, alias="KD Ratio")
 
 
+GENERAL_STATS_MAPPING = {
+    "Result": "wins",
+    "Kills": "kills",
+    "Deaths": "deaths",
+    "Assists": "assists",
+    "Headshots": "headshots",
+    "ADR": "adr",
+    "K/R Ratio": "kpr",
+}
+
+
 class DetailedPlayerStats(BaseModel):
     nickname: str
     total_matches: int = Field(0)
@@ -109,3 +120,36 @@ class DetailedPlayerStats(BaseModel):
         0, alias="Enemies Flashed per Round in a Match"
     )
     flash_success_rate_per_match: float = Field(0, alias="Flash Success Rate per Match")
+
+
+DETAILED_STATS_MAPPING = {
+    "Kills": "kills",
+    "Assists": "assists",
+    "Deaths": "deaths",
+    "Headshots": "headshots",
+    "MVPs": "mvps",
+    "Damage": "damage",
+    "Double Kills": "double",
+    "Triple Kills": "triple",
+    "Quadro Kills": "quadro",
+    "Penta Kills": "penta",
+    "Clutch Kills": "clutch_kills",
+    "1v1Count": "count_1v1",
+    "1v2Count": "count_1v2",
+    "1v1Wins": "wins_1v1",
+    "1v2Wins": "wins_1v2",
+    "First Kills": "first_kills",
+    "Entry Count": "entry_count",
+    "Entry Wins": "entry_wins",
+    "Sniper Kills": "sniper_kills",
+    "Pistol Kills": "pistol_kills",
+    "Knife Kills": "knife_kills",
+    "Zeus Kills": "zeus_kills",
+    "Utility Count": "utility_count",
+    "Utility Successes": "utility_successes",
+    "Utility Enemies": "utility_enemies",
+    "Utility Damage": "utility_damage",
+    "Flash Count": "flash_count",
+    "Enemies Flashed": "enemies_flashed",
+    "Flash Successes": "flash_successes",
+}
