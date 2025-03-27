@@ -1,10 +1,9 @@
 from datetime import datetime
 
 import requests
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from ravenspedia.api_v1.project_classes.match.crud import update_general_match_info
 from ravenspedia.api_v1.project_classes.match.dependencies import (

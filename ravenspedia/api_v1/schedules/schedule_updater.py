@@ -13,7 +13,7 @@ async def manual_update_match_status(
     match_id: int,
     new_status: MatchStatus,
     session: AsyncSession,
-) -> dict:
+) -> TableMatch:
     match = await session.get(TableMatch, match_id)
     if not match:
         raise HTTPException(
@@ -24,14 +24,14 @@ async def manual_update_match_status(
     setattr(match, "status", new_status)
     await session.commit()
 
-    return {"message": f"Match {match_id} status updated to {new_status.value}"}
+    return match
 
 
 async def manual_update_tournament_status(
     tournament_id: int,
     new_status: TournamentStatus,
     session: AsyncSession,
-) -> dict:
+) -> TableTournament:
     tournament = await session.get(TableTournament, tournament_id)
     if not tournament:
         raise HTTPException(
@@ -42,9 +42,7 @@ async def manual_update_tournament_status(
     setattr(tournament, "status", new_status)
     await session.commit()
 
-    return {
-        "message": f"Tournament {tournament_id} status updated to {new_status.value}"
-    }
+    return tournament
 
 
 async def auto_update_matches_statuses(

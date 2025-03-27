@@ -153,9 +153,10 @@ async def manual_update_match_status(
     session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
 ) -> dict:
-    return await schedule_updater.manual_update_match_status(
+    result = await schedule_updater.manual_update_match_status(
         match_id, new_status, session
     )
+    return {"message": f"Match {match_id} status updated to {new_status.value}"}
 
 
 @router.patch(
@@ -168,6 +169,9 @@ async def manual_update_tournament_status(
     session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
 ) -> dict:
-    return await schedule_updater.manual_update_tournament_status(
+    result = await schedule_updater.manual_update_tournament_status(
         tournament_id, new_status, session
     )
+    return {
+        "message": f"Tournament {tournament_id} status updated to {new_status.value}"
+    }
