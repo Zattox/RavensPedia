@@ -53,10 +53,20 @@ async def delete_match_stats(
     return table_to_response_form(match=match)
 
 
-@router.post("/{match_id}/add_stats_manual/")
+@router.post(
+    "/{match_id}/add_stats_manual/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
 async def add_manual_stats(
     match_id: int,
     stats_input: MatchStatsInput,
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
-    return await add_manual_match_stats(session, stats_input, match_id)
+    admin: TableUser = Depends(get_current_admin_user),
+) -> ResponseMatch:
+    match = await add_manual_match_stats(
+        session=session,
+        stats_input=stats_input,
+        match_id=match_id,
+    )
+    return table_to_response_form(match=match)
