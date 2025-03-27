@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.api_v1.project_classes.match_stats import match_stats_faceit_management
 from ravenspedia.core import db_helper, TableMatch, TableTeam, TableUser
 from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
 from . import crud, dependencies, match_management
@@ -170,7 +171,7 @@ async def add_match_stats_from_faceit(
     session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
-    match = await match_management.add_match_stats_from_faceit(
+    match = await match_stats_faceit_management.add_match_stats_from_faceit(
         session=session,
         match=match,
         faceit_url=faceit_url,
