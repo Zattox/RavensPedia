@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .table_player import TablePlayer
     from .table_tournament import TableTournament
     from .table_match import TableMatch
+    from .table_team_stats import TableTeamMapStats
 
 
 class TableTeam(Base):
@@ -37,4 +38,9 @@ class TableTeam(Base):
         secondary="team_tournament_association",
         back_populates="teams",
         cascade="save-update, merge",
+    )
+
+    map_stats: Mapped[List["TableTeamMapStats"]] = relationship(
+        back_populates="team",
+        cascade="all, delete-orphan",
     )

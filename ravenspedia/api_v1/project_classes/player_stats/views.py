@@ -11,7 +11,7 @@ router = APIRouter(tags=["Players Stats"])
 
 
 @router.get("/{player_id}/")
-async def read_player_stats(
+async def get_player_stats(
     player: TablePlayer = Depends(get_player_by_id),
     stats_filter: PlayerStatsFilter = Depends(get_stats_filter),
     session: AsyncSession = Depends(db_helper.session_dependency),

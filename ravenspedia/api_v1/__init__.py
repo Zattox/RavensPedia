@@ -18,6 +18,9 @@ from ravenspedia.api_v1.project_classes.team.views import (
     router as team_router,
     manager_team_router,
 )
+from ravenspedia.api_v1.project_classes.team_stats.views import (
+    router as team_stats_router,
+)
 from ravenspedia.api_v1.project_classes.tournament.views import (
     router as tournament_router,
     manager_tournament_router,
@@ -30,6 +33,7 @@ router.include_router(router=player_router, prefix="/players")
 router.include_router(router=player_stats_router, prefix="/players/stats")
 router.include_router(router=team_router, prefix="/teams")
 router.include_router(router=manager_team_router, prefix="/teams")
+router.include_router(router=team_stats_router, prefix="/teams/stats")
 router.include_router(router=match_router, prefix="/matches")
 router.include_router(router=manager_match_router, prefix="/matches")
 router.include_router(router=match_stats_router, prefix="/matches/stats")

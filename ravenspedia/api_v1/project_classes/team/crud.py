@@ -5,8 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableTeam
+from ravenspedia.core.project_models.table_match_info import MapName
+from ravenspedia.core.project_models.table_team_stats import TableTeamMapStats
 from .dependencies import get_team_by_id
 from .schemes import TeamCreate, TeamGeneralInfoUpdate
+from ..team_stats.crud import delete_team_map_stats
 
 
 # A function to get all the Teams from the database
@@ -46,6 +49,13 @@ async def create_team(
 
     try:
         session.add(team)
+        for map_name in MapName:
+            new_stat = TableTeamMapStats(
+                team_id=team.id,
+                map=map_name,
+            )
+            session.add(new_stat)
+            team.map_stats.append(new_stat)
         await session.commit()  # Make changes to the database
     except IntegrityError:
         await session.rollback()
@@ -69,6 +79,13 @@ async def delete_team(
             session=session,
             team=team,
             player=player,
+        )
+
+    for map_stats in list(team.map_stats):
+        await delete_team_map_stats(
+            session=session,
+            team=team,
+            map_stats=map_stats,
         )
 
     await session.delete(team)
