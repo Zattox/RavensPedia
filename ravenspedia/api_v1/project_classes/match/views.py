@@ -79,8 +79,8 @@ async def get_match(
 )
 async def create_match(
     match_in: MatchCreate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
     match = await crud.create_match(
         session=session,
@@ -97,9 +97,9 @@ async def create_match(
 )
 async def update_general_match_info(
     match_update: MatchGeneralInfoUpdate,
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await crud.update_general_match_info(
         session=session,
@@ -115,9 +115,9 @@ async def update_general_match_info(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_match(
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_match(
         session=session,
@@ -131,10 +131,10 @@ async def delete_match(
     response_model=ResponseMatch,
 )
 async def add_team_in_match(
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_management.add_team_in_match(
         session=session,
@@ -150,10 +150,10 @@ async def add_team_in_match(
     response_model=ResponseMatch,
 )
 async def delete_team_from_match(
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_management.delete_team_from_match(
         session=session,

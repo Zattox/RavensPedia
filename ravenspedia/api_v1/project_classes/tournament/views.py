@@ -72,8 +72,8 @@ async def get_tournament(
 )
 async def create_tournament(
     tournament_in: TournamentCreate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
     tournament = await crud.create_tournament(
         session=session,
@@ -90,9 +90,9 @@ async def create_tournament(
 )
 async def update_general_tournament_info(
     tournament_update: TournamentGeneralInfoUpdate,
+    admin: TableUser = Depends(get_current_admin_user),
     tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTournament:
     tournament = await crud.update_general_tournament_info(
         session=session,
@@ -108,9 +108,9 @@ async def update_general_tournament_info(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_tournament(
+    admin: TableUser = Depends(get_current_admin_user),
     tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_tournament(
         session=session,
@@ -124,10 +124,10 @@ async def delete_tournament(
     response_model=ResponseTournament,
 )
 async def add_team_in_tournament(
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(get_team_by_name),
     tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTournament:
     tournament = await tournament_management.add_team_in_tournament(
         team=team,
@@ -143,10 +143,10 @@ async def add_team_in_tournament(
     response_model=ResponseTournament,
 )
 async def delete_team_from_tournament(
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(get_team_by_name),
     tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTournament:
     tournament = await tournament_management.delete_team_from_tournament(
         team=team,

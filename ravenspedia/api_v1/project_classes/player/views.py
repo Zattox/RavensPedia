@@ -78,8 +78,8 @@ async def get_player(
 )
 async def create_player(
     player_in: PlayerCreate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     player = await crud.create_player(
         session=session,
@@ -96,9 +96,9 @@ async def create_player(
 )
 async def update_general_player_info(
     player_update: PlayerGeneralInfoUpdate,
+    admin: TableUser = Depends(get_current_admin_user),
     player: TablePlayer = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ):
     new_player = await crud.update_general_player_info(
         session=session,
@@ -114,8 +114,8 @@ async def update_general_player_info(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_player(
+    admin: TableUser = Depends(get_current_admin_user),
     player: TablePlayer = Depends(dependencies.get_player_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_player(session=session, player=player)

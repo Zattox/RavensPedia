@@ -58,8 +58,8 @@ async def get_news_by_id(
 )
 async def create_news(
     news_in: NewsCreate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     news = await crud.create_news(
         session=session,
@@ -76,8 +76,8 @@ async def create_news(
 async def update_general_news_info(
     news_id: int,
     news_update: NewsGeneralInfoUpdate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     news = await crud.get_news_by_id(
         news_id=news_id,
@@ -97,8 +97,8 @@ async def update_general_news_info(
 )
 async def delete_player(
     news_id: int,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     news = await crud.get_news_by_id(
         news_id=news_id,

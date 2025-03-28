@@ -69,8 +69,8 @@ async def delete_match_stats(
 async def add_manual_stats(
     match_id: int,
     stats_input: MatchStatsInput,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
     match = await add_manual_match_stats(session, stats_input, match_id)
     return table_to_response_form(match)
@@ -83,9 +83,9 @@ async def add_manual_stats(
 )
 async def add_pick_ban_info_in_match(
     info: MapPickBanInfo,
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.add_pick_ban_info_in_match(
         session=session,
@@ -101,9 +101,9 @@ async def add_pick_ban_info_in_match(
     response_model=ResponseMatch,
 )
 async def delete_last_pick_ban_info_from_match(
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.delete_last_pick_ban_info_from_match(
         session=session,
@@ -120,9 +120,9 @@ async def delete_last_pick_ban_info_from_match(
 )
 async def add_map_result_info_in_match(
     info: MapResultInfo,
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.add_map_result_info_in_match(
         session=session,
@@ -138,9 +138,9 @@ async def add_map_result_info_in_match(
     response_model=ResponseMatch,
 )
 async def delete_last_map_result_info_from_match(
+    admin: TableUser = Depends(get_current_admin_user),
     match: TableMatch = Depends(get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseMatch:
     match = await match_info.delete_last_map_result_info_from_match(
         session=session,

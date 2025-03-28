@@ -126,8 +126,8 @@ async def get_in_progress_tournaments(
     status_code=status.HTTP_200_OK,
 )
 async def auto_update_matches_statuses(
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     return await schedule_updater.auto_update_matches_statuses(session)
 
@@ -137,8 +137,8 @@ async def auto_update_matches_statuses(
     status_code=status.HTTP_200_OK,
 )
 async def auto_update_tournaments_statuses(
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     return await schedule_updater.auto_update_tournaments_statuses(session)
 
@@ -150,8 +150,8 @@ async def auto_update_tournaments_statuses(
 async def manual_update_match_status(
     match_id: int,
     new_status: MatchStatus,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     result = await schedule_updater.manual_update_match_status(
         match_id, new_status, session
@@ -166,8 +166,8 @@ async def manual_update_match_status(
 async def manual_update_tournament_status(
     tournament_id: int,
     new_status: TournamentStatus,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     result = await schedule_updater.manual_update_tournament_status(
         tournament_id, new_status, session

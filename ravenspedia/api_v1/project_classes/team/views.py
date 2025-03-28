@@ -68,8 +68,8 @@ async def get_team(
 )
 async def create_team(
     team_in: TeamCreate,
-    session: AsyncSession = Depends(db_helper.session_dependency),
     admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
     team = await crud.create_team(
         session=session,
@@ -86,9 +86,9 @@ async def create_team(
 )
 async def update_general_team_info(
     team_update: TeamGeneralInfoUpdate,
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(dependencies.get_team_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await crud.update_general_team_info(
         session=session,
@@ -104,9 +104,9 @@ async def update_general_team_info(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_team(
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(dependencies.get_team_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> None:
     await crud.delete_team(session=session, team=team)
 
@@ -117,10 +117,10 @@ async def delete_team(
     response_model=ResponseTeam,
 )
 async def add_player_in_team(
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(dependencies.get_team_by_name),
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await team_management.add_player_in_team(
         team=team,
@@ -136,10 +136,10 @@ async def add_player_in_team(
     response_model=ResponseTeam,
 )
 async def delete_player_from_team(
+    admin: TableUser = Depends(get_current_admin_user),
     team: TableTeam = Depends(dependencies.get_team_by_name),
     player: TablePlayer = Depends(get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
-    admin: TableUser = Depends(get_current_admin_user),
 ) -> ResponseTeam:
     team = await team_management.delete_player_from_team(
         team=team,
