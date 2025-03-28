@@ -78,7 +78,9 @@ async def test_init_matches(
 async def test_auto_update_matches_statuses(
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post("/schedules/matches/update_statuses/")
+    response = await authorized_admin_client.patch(
+        "/schedules/matches/update_statuses/"
+    )
     assert response.status_code == 200
 
     matches = await authorized_admin_client.get("/matches/")
@@ -92,7 +94,7 @@ async def test_auto_update_matches_statuses(
 async def test_auto_update_tournaments_statuses(
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post(
+    response = await authorized_admin_client.patch(
         "/schedules/tournaments/update_statuses/"
     )
     assert response.status_code == 200
@@ -151,7 +153,9 @@ async def test_manual_update_tournament_status(
 async def test_get_last_completed_matches_with_data(
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post("/schedules/matches/update_statuses/")
+    response = await authorized_admin_client.patch(
+        "/schedules/matches/update_statuses/"
+    )
     assert response.status_code == 200
 
     response = await authorized_admin_client.get(
@@ -168,7 +172,9 @@ async def test_get_last_completed_matches_with_data(
 async def test_get_upcoming_matches_with_data(
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post("/schedules/matches/update_statuses/")
+    response = await authorized_admin_client.patch(
+        "/schedules/matches/update_statuses/"
+    )
     assert response.status_code == 200
 
     response = await authorized_admin_client.get(
@@ -185,7 +191,9 @@ async def test_get_upcoming_matches_with_data(
 async def test_get_in_progress_matches_with_data(
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post("/schedules/matches/update_statuses/")
+    response = await authorized_admin_client.patch(
+        "/schedules/matches/update_statuses/"
+    )
     assert response.status_code == 200
 
     response = await authorized_admin_client.get("/schedules/matches/get_in_progress/")
@@ -201,7 +209,7 @@ async def test_get_last_completed_tournaments_with_data(
     client: AsyncClient,
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post(
+    response = await authorized_admin_client.patch(
         "/schedules/tournaments/update_statuses/"
     )
     assert response.status_code == 200
@@ -221,7 +229,7 @@ async def test_get_upcoming_tournaments_with_data(
     client: AsyncClient,
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post(
+    response = await authorized_admin_client.patch(
         "/schedules/tournaments/update_statuses/"
     )
     assert response.status_code == 200
@@ -241,7 +249,7 @@ async def test_get_in_progress_tournaments_with_data(
     client: AsyncClient,
     authorized_admin_client: AsyncClient,
 ):
-    response = await authorized_admin_client.post(
+    response = await authorized_admin_client.patch(
         "/schedules/tournaments/update_statuses/"
     )
     assert response.status_code == 200

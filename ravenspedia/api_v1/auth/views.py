@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import db_helper, TableUser
@@ -129,7 +128,7 @@ async def get_me(
     return {"email": user_data.email}
 
 
-@router.get("/change_user_role/")
+@router.patch("/change_user_role/")
 async def change_user_role(
     user_email: str,
     new_role: str,

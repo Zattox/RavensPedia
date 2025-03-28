@@ -61,7 +61,7 @@ async def delete_match_stats(
     return table_to_response_form(match=match)
 
 
-@router.post(
+@router.patch(
     "/{match_id}/add_stats_manual/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,

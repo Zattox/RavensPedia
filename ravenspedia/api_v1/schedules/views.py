@@ -121,7 +121,7 @@ async def get_in_progress_tournaments(
     return result
 
 
-@router.post(
+@router.patch(
     "/matches/update_statuses/",
     status_code=status.HTTP_200_OK,
 )
@@ -132,7 +132,7 @@ async def auto_update_matches_statuses(
     return await schedule_updater.auto_update_matches_statuses(session)
 
 
-@router.post(
+@router.patch(
     "/tournaments/update_statuses/",
     status_code=status.HTTP_200_OK,
 )

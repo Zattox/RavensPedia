@@ -158,7 +158,7 @@ async def test_change_user_role_success(
     user_info = await authorized_client.get("/auth/me/")
     user_email = user_info.json()["email"]
 
-    response = await authorized_super_admin_client.get(
+    response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
         params={"user_email": user_email, "new_role": "admin"},
     )
@@ -178,7 +178,7 @@ async def test_change_role_invalid_role(
     user_info = await authorized_client.get("/auth/me/")
     user_email = user_info.json()["email"]
 
-    response = await authorized_super_admin_client.get(
+    response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
         params={"user_email": user_email, "new_role": "super_admin"},
     )
@@ -195,7 +195,7 @@ async def test_change_own_role_fails(
     user_info = await authorized_super_admin_client.get("/auth/me/")
     user_email = user_info.json()["email"]
 
-    response = await authorized_super_admin_client.get(
+    response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
         params={"user_email": user_email, "new_role": "admin"},
     )
@@ -212,7 +212,7 @@ async def test_non_super_admin_cannot_change_roles(
     user_info = await authorized_client.get("/auth/me/")
     user_email = user_info.json()["email"]
 
-    response = await authorized_admin_client.get(
+    response = await authorized_admin_client.patch(
         "/auth/change_user_role/",
         params={"user_email": user_email, "new_role": "admin"},
     )
@@ -224,7 +224,7 @@ async def test_non_super_admin_cannot_change_roles(
 async def test_change_nonexistent_user(
     authorized_super_admin_client: AsyncClient,
 ):
-    response = await authorized_super_admin_client.get(
+    response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
         params={"user_email": "nonexistent@example.com", "new_role": "admin"},
     )
