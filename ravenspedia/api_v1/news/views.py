@@ -13,6 +13,7 @@ def table_to_response_form(
     news: TableNews,
 ) -> ResponseNews:
     result = ResponseNews(
+        id=news.id,
         title=news.title,
         content=news.content,
         created_at=news.created_at,

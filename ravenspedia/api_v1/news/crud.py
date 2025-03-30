@@ -11,12 +11,14 @@ from ravenspedia.core import db_helper, TableNews
 
 async def get_news(
     session: AsyncSession,
-    skip: int = 0,
-    limit: int = 10,
 ) -> list[TableNews]:
-    statement = select(TableNews).order_by(TableNews.created_at.desc())
+    statement = (
+        select(TableNews)
+        .order_by(TableNews.created_at.desc())
+    )
     news = await session.scalars(statement)
-    return list(news)[skip:limit]
+
+    return list(news)
 
 
 async def get_news_by_id(

@@ -27,6 +27,7 @@ class NewsGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Match
 class ResponseNews(NewsBase):
+    id: int
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models
