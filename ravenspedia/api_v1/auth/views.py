@@ -8,9 +8,9 @@ from .schemas import UserCreate, UserAuth, AuthOutput
 router = APIRouter(tags=["Auth"])
 
 COOKIE_OPTIONS = {
-    "httponly": True,
+    "httponly": False,
     "secure": True,
-    "samesite": "Strict",
+    "samesite": "None",
 }
 
 

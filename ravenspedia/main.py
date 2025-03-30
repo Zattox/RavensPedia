@@ -9,7 +9,6 @@ from ravenspedia.api_v1 import router as router_v1
 from ravenspedia.api_v1.auth.crud import delete_revoked_tokens
 from ravenspedia.core import db_helper
 
-
 async def scheduled_delete_revoked_tokens():
     async with db_helper.session_factory() as session:
         await delete_revoked_tokens(session)
@@ -38,21 +37,31 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:5173/",
-    "http://localhost:5174/",
-    "http://127.0.0.1:5173/",
-    "http://127.0.0.1:5174/",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "https://localhost:5173",
+    "https://localhost:5174",
+    "https://127.0.0.1:5173",
+    "https://127.0.0.1:5174",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS", "PATCH", "DELETE"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin"],
 )
 app.include_router(router=router_v1)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True, port=8001)
+    uvicorn.run(
+        "main:app",
+        reload=True,
+        port=8001,
+        ssl_keyfile="./certs/key.pem",
+        ssl_certfile="./certs/cert.pem",
+    )
