@@ -125,7 +125,10 @@ async def refresh(
 async def get_me(
     user_data: TableUser = Depends(dependencies.get_current_user),
 ) -> dict:
-    return {"email": user_data.email}
+    return {
+        "email": user_data.email,
+        "role": user_data.role.value,
+    }
 
 
 @router.patch("/change_user_role/")

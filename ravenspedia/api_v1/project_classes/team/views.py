@@ -45,17 +45,17 @@ async def get_teams(
 
 # A view for getting a team by its id from the database
 @router.get(
-    "/{team_id}/",
+    "/{team_name}/",
     response_model=ResponseTeam,
     status_code=status.HTTP_200_OK,
 )
 async def get_team(
-    team_id: int,
+    team_name: str,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
     team = await crud.get_team(
         session=session,
-        team_id=team_id,
+        team_name=team_name,
     )
     return table_to_response_form(team=team)
 
@@ -80,14 +80,14 @@ async def create_team(
 
 # A view for partial or full update a team in the database
 @router.patch(
-    "/{team_id}/",
+    "/{team_name}/",
     response_model=ResponseTeam,
     status_code=status.HTTP_200_OK,
 )
 async def update_general_team_info(
     team_update: TeamGeneralInfoUpdate,
     admin: TableUser = Depends(get_current_admin_user),
-    team: TableTeam = Depends(dependencies.get_team_by_id),
+    team: TableTeam = Depends(dependencies.get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTeam:
     team = await crud.update_general_team_info(
@@ -100,12 +100,12 @@ async def update_general_team_info(
 
 # A view for delete a team from the database
 @router.delete(
-    "/{team_id}/",
+    "/{team_name}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_team(
     admin: TableUser = Depends(get_current_admin_user),
-    team: TableTeam = Depends(dependencies.get_team_by_id),
+    team: TableTeam = Depends(dependencies.get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_team(session=session, team=team)

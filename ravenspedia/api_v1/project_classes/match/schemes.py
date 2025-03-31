@@ -43,6 +43,7 @@ class MatchGeneralInfoUpdate(BaseModel):
 
 # The main class for work with a Match
 class ResponseMatch(MatchBase):
+    id: int
     status: MatchStatus
 
     class Config:

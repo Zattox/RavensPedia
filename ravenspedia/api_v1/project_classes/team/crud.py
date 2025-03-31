@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from ravenspedia.core import TableTeam
 from ravenspedia.core.project_models.table_match_info import MapName
 from ravenspedia.core.project_models.table_team_stats import TableTeamMapStats
-from .dependencies import get_team_by_id
+from .dependencies import get_team_by_name
 from .schemes import TeamCreate, TeamGeneralInfoUpdate
 from ..team_stats.crud import delete_team_map_stats
 
@@ -30,10 +30,10 @@ async def get_teams(session: AsyncSession) -> list[TableTeam]:
 # A function for getting a Team by its id from the database
 async def get_team(
     session: AsyncSession,
-    team_id: int,
+    team_name: str,
 ) -> TableTeam | None:
-    team = await get_team_by_id(
-        team_id=team_id,
+    team = await get_team_by_name(
+        team_name=team_name,
         session=session,
     )
     return team

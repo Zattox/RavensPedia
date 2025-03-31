@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, Path
@@ -12,10 +13,7 @@ from ravenspedia.core import db_helper, TableNews
 async def get_news(
     session: AsyncSession,
 ) -> list[TableNews]:
-    statement = (
-        select(TableNews)
-        .order_by(TableNews.created_at.desc())
-    )
+    statement = select(TableNews).order_by(TableNews.created_at.desc())
     news = await session.scalars(statement)
 
     return list(news)

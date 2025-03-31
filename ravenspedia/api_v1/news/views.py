@@ -96,7 +96,7 @@ async def update_general_news_info(
     "/{news_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_player(
+async def delete_news(
     news_id: int,
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),

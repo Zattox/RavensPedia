@@ -15,7 +15,6 @@ class NewsBase(BaseModel):
 class NewsCreate(BaseModel):
     title: str
     content: str
-    created_at: datetime
     author: str
 
 
