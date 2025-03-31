@@ -16,14 +16,10 @@ class PlayerStatsInput(BaseModel):
     assists: int = Field(..., alias="Assists")  # Number of assists per match
     deaths: int = Field(..., alias="Deaths")  # Number of deaths per match
     adr: float = Field(..., alias="ADR")  # Average damage per round
-    headshots_percentage: int = Field(
-        ..., alias="Headshots %"
-    )  # The percentage of kills per head
+    headshots_percentage: int = Field(..., alias="Headshots %")  # The percentage of kills per head
 
-
-class MatchStatsInput(BaseModel):
-    best_of: int
-    stats: List[PlayerStatsInput]
+class MatchStatsInput(PlayerStatsInput):
+    pass
 
 
 class MapPickBanInfo(BaseModel):

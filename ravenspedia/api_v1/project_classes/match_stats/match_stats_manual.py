@@ -12,83 +12,59 @@ from ravenspedia.core.project_models.table_match import MatchStatus
 async def add_manual_match_stats(
     session: AsyncSession,
     stats_input: MatchStatsInput,
-    match_id: int,
+    match: TableMatch,
 ) -> TableMatch:
-    result = await session.execute(
-        select(TableMatch)
-        .where(TableMatch.id == match_id)
-        .options(
-            selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
-            selectinload(TableMatch.teams),
-            selectinload(TableMatch.tournament),
+    if match.status != MatchStatus.COMPLETED:
+        match = await manual_update_match_status(
+            match.id,
+            MatchStatus.COMPLETED,
+            session,
         )
-    )
-    match = result.scalars().first()
 
-    if not match:
+    player_result = await session.execute(
+        select(TablePlayer).where(TablePlayer.nickname == stats_input.nickname)
+    )
+    player = player_result.scalars().first()
+
+    if not player:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Match with id {match_id} not found",
+            detail=f"Player with nickname {stats_input.nickname} not found",
         )
 
-    stats_result = await session.execute(
-        select(TableMatchStats).where(TableMatchStats.match_id == match_id)
+    stats_data = {
+        "nickname": stats_input.nickname,
+        "round_of_match": stats_input.round_of_match,
+        "match_id": match.id,
+        "map": stats_input.map,
+        "Result": stats_input.result,
+        "Kills": stats_input.kills,
+        "Assists": stats_input.assists,
+        "Deaths": stats_input.deaths,
+        "ADR": stats_input.adr,
+        "Headshots %": stats_input.headshots_percentage,
+    }
+
+    round_player_stats = TableMatchStats(
+        player=player,
+        match=match,
+        match_stats=stats_data,
     )
-    if stats_result.scalars().first():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Statistics have already been added to the match {match.id}",
-        )
-
-    if stats_input.best_of != match.best_of:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"The best_of field differs from the specified one. Needed {match.best_of}, but passed {stats_input.best_of}",
-        )
-
-    match = await manual_update_match_status(
-        match.id,
-        MatchStatus.COMPLETED,
-        session,
-    )
-
-    nicknames = [p.nickname for p in stats_input.stats]
-    players_result = await session.execute(
-        select(TablePlayer).where(TablePlayer.nickname.in_(nicknames))
-    )
-    players = {p.nickname: p for p in players_result.scalars().all()}
-
-    missing_players = [
-        p.nickname for p in stats_input.stats if p.nickname not in players
-    ]
-    if missing_players:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Players not found: {', '.join(missing_players)}",
-        )
-
-    for player_stats in stats_input.stats:
-        stats_data = {
-            "nickname": player_stats.nickname,
-            "round_of_match": player_stats.round_of_match,
-            "match_id": match_id,
-            "map": player_stats.map,
-            "Result": player_stats.result,
-            "Kills": player_stats.kills,
-            "Assists": player_stats.assists,
-            "Deaths": player_stats.deaths,
-            "ADR": player_stats.adr,
-            "Headshots %": player_stats.headshots_percentage,
-        }
-
-        round_player_stats = TableMatchStats(
-            player=players[player_stats.nickname],
-            match=match,
-            match_stats=stats_data,
-        )
-        session.add(round_player_stats)
+    session.add(round_player_stats)
 
     await session.flush()
     await session.commit()
 
+    return match
+
+async def delete_last_statistic_from_match(
+    session: AsyncSession,
+    match: TableMatch,
+) -> TableMatch:
+    if not match.stats:
+        return match
+
+    match.stats.pop()
+    await session.commit()
+    await session.refresh(match)
     return match

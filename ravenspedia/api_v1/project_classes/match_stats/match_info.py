@@ -51,10 +51,7 @@ async def delete_last_pick_ban_info_from_match(
     match: TableMatch,
 ) -> TableMatch:
     if not match.veto:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No pick/ban entries exist to delete.",
-        )
+        return match
 
     match.veto.pop()
     await session.commit()
@@ -178,10 +175,7 @@ async def delete_last_map_result_info_from_match(
     match: TableMatch,
 ) -> TableMatch:
     if not match.result:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No map result entries exist to delete.",
-        )
+        return match
 
     match.result.pop()
     await session.commit()

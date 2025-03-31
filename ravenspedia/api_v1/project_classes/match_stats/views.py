@@ -13,6 +13,7 @@ from ravenspedia.api_v1.project_classes.match_stats import (
 )
 from ravenspedia.api_v1.project_classes.match_stats.match_stats_manual import (
     add_manual_match_stats,
+delete_last_statistic_from_match,
 )
 from ravenspedia.api_v1.project_classes.match_stats.schemes import (
     MatchStatsInput,
@@ -67,13 +68,29 @@ async def delete_match_stats(
     response_model=ResponseMatch,
 )
 async def add_manual_stats(
-    match_id: int,
     stats_input: MatchStatsInput,
+    match: TableMatch = Depends(get_match_by_id),
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
-    match = await add_manual_match_stats(session, stats_input, match_id)
+    match = await add_manual_match_stats(session, stats_input, match)
     return table_to_response_form(match)
+
+@router.delete(
+    "/{match_id}/delete_last_stat_from_match/",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseMatch,
+)
+async def delete_last_stat_from_match(
+    admin: TableUser = Depends(get_current_admin_user),
+    match: TableMatch = Depends(get_match_by_id),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> ResponseMatch:
+    match = await delete_last_statistic_from_match(
+        session=session,
+        match=match,
+    )
+    return table_to_response_form(match=match)
 
 
 @info_router.patch(
