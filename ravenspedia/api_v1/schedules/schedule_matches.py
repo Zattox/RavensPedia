@@ -8,9 +8,8 @@ from ravenspedia.core import TableMatch, TableMatchStats
 from ravenspedia.core.project_models.table_match import MatchStatus
 
 
-async def get_last_x_completed_matches(
+async def get_completed_matches(
     session: AsyncSession,
-    num_matches: int,
 ) -> list[TableMatch]:
     stmt = (
         select(TableMatch)
@@ -23,7 +22,6 @@ async def get_last_x_completed_matches(
         )
         .filter(TableMatch.status == MatchStatus.COMPLETED)
         .order_by(TableMatch.date.desc())
-        .limit(num_matches)
     )
     response = await session.execute(stmt)
     matches = response.scalars().all()
@@ -32,7 +30,6 @@ async def get_last_x_completed_matches(
 
 async def get_upcoming_matches(
     session: AsyncSession,
-    num_matches: int,
 ) -> list[TableMatch]:
     stmt = (
         select(TableMatch)
@@ -46,7 +43,6 @@ async def get_upcoming_matches(
         .filter(TableMatch.status == MatchStatus.SCHEDULED)
         .filter(TableMatch.date >= datetime.now())
         .order_by(TableMatch.date.asc())
-        .limit(num_matches)
     )
 
     response = await session.execute(stmt)

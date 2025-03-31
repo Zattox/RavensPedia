@@ -29,13 +29,9 @@ router = APIRouter(tags=["Schedules"])
     status_code=status.HTTP_200_OK,
 )
 async def get_last_completed_matches(
-    num_matches: int = 50,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseMatch]:
-    matches = await schedule_matches.get_last_x_completed_matches(
-        session=session,
-        num_matches=num_matches,
-    )
+    matches = await schedule_matches.get_completed_matches(session=session)
     result = [match_response_form(match) for match in matches]
     return result
 
@@ -46,12 +42,10 @@ async def get_last_completed_matches(
     status_code=status.HTTP_200_OK,
 )
 async def get_upcoming_scheduled_matches(
-    num_matches: int = 50,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseMatch]:
     matches = await schedule_matches.get_upcoming_matches(
         session=session,
-        num_matches=num_matches,
     )
     result = [match_response_form(match) for match in matches]
     return result
