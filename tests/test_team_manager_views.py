@@ -88,13 +88,13 @@ async def test_add_players_in_team(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_player_team_connection(client: AsyncClient):
     response = await client.get(
-        "/players/1/",
+        "/players/Zattox/",
     )
     assert response.status_code == 200
     assert response.json()["team"] == "BlackRavens"
 
     response = await client.get(
-        "/players/2/",
+        "/players/g666/",
     )
     assert response.status_code == 200
     assert response.json()["team"] == "BlackRavens"
@@ -159,14 +159,14 @@ async def test_delete_team_with_players(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete("/teams/RedRavens/")
     assert response.status_code == 204
 
-    response = await authorized_admin_client.get("/players/5/")
+    response = await authorized_admin_client.get("/players/MacanFan/")
     assert response.status_code == 200
     assert response.json()["team"] is None
 
 
 @pytest.mark.asyncio
 async def test_delete_player_with_team(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.delete("/players/2/")
+    response = await authorized_admin_client.delete("/players/g666/")
     assert response.status_code == 204
 
     response = await authorized_admin_client.get("/teams/BlackRavens/")

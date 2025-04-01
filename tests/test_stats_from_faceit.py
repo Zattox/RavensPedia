@@ -163,7 +163,7 @@ async def test_add_stats_bo1_from_faceit(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_player_stats_connection_after_bo1(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/Zatt0x/")
     data = response.json()
 
     assert response.status_code == 200
@@ -217,7 +217,7 @@ async def test_add_stats_bo2_from_faceit(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_player_stats_connection_after_bo2(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/Zatt0x/")
     data = response.json()
 
     assert response.status_code == 200
@@ -275,7 +275,7 @@ async def test_add_stats_bo3_from_faceit(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_player_stats_connection_after_bo3(client: AsyncClient):
-    response = await client.get("/players/1/")
+    response = await client.get("/players/Zatt0x/")
     data = response.json()
 
     assert response.status_code == 200
@@ -309,7 +309,7 @@ async def test_delete_stats_from_match(authorized_admin_client: AsyncClient):
     assert response.status_code == 200
     assert response.json()["stats"] == []
 
-    response = await authorized_admin_client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/Zatt0x/")
     assert response.status_code == 200
     assert len(response.json()["stats"]) == 3
 
@@ -319,14 +319,14 @@ async def test_delete_match_with_stats(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete("/matches/2/")
     assert response.status_code == 204
 
-    response = await authorized_admin_client.get("/players/1/")
+    response = await authorized_admin_client.get("/players/Zatt0x/")
     assert response.status_code == 200
     assert len(response.json()["stats"]) == 1
 
 
 @pytest.mark.asyncio
 async def test_delete_player_with_stats(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.delete("/players/1/")
+    response = await authorized_admin_client.delete("/players/Zatt0x/")
     assert response.status_code == 204
 
     response = await authorized_admin_client.get("/matches/1/")

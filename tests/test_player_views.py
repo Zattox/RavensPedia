@@ -51,10 +51,9 @@ async def test_create_player_with_full_info(authorized_admin_client: AsyncClient
         "tournaments": [],
         "stats": [],
     }
-    # Проверяем все поля, кроме faceit_elo
     for key, value in expected_data.items():
         assert response_json[key] == value
-    # Отдельные проверки для faceit_elo
+
     assert "faceit_elo" in response_json
     assert response_json["faceit_elo"] is not None
     assert isinstance(response_json["faceit_elo"], int)
@@ -62,7 +61,7 @@ async def test_create_player_with_full_info(authorized_admin_client: AsyncClient
 
 @pytest.mark.asyncio
 async def test_read_player_with_full_info(client: AsyncClient):
-    response = await client.get("/players/1/")
+    response = await client.get("/players/Zattox/")
     assert response.status_code == 200
     response_json = response.json()
     expected_data = {
@@ -112,7 +111,7 @@ async def test_create_player_with_partial_info(authorized_admin_client: AsyncCli
 
 @pytest.mark.asyncio
 async def test_read_player_with_partial_info(client: AsyncClient):
-    response = await client.get("/players/2/")
+    response = await client.get("/players/g666/")
     assert response.status_code == 200
     response_json = response.json()
     expected_data = {
@@ -135,7 +134,7 @@ async def test_read_player_with_partial_info(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_empty_update_player(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.patch("/players/1/", json={})
+    response = await authorized_admin_client.patch("/players/Zattox/", json={})
     assert response.status_code == 200
     response_json = response.json()
     expected_data = {
@@ -159,7 +158,7 @@ async def test_empty_update_player(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_update_player_names(authorized_admin_client: AsyncClient):
     data = {"name": "Slava", "surname": "Shohin"}
-    response = await authorized_admin_client.patch("/players/2/", json=data)
+    response = await authorized_admin_client.patch("/players/g666/", json=data)
     assert response.status_code == 200
     response_json = response.json()
     expected_data = {
@@ -183,7 +182,7 @@ async def test_update_player_names(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_update_player_nickname(authorized_admin_client: AsyncClient):
     data = {"nickname": "G666"}
-    response = await authorized_admin_client.patch("/players/2/", json=data)
+    response = await authorized_admin_client.patch("/players/g666/", json=data)
     assert response.status_code == 200
     response_json = response.json()
     expected_data = {
@@ -244,13 +243,13 @@ async def test_get_players(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_delete_player(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.delete("/players/2/")
+    response = await authorized_admin_client.delete("/players/G666/")
     assert response.status_code == 204
 
 
 @pytest.mark.asyncio
 async def test_delete_not_exist_player(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.delete("/players/2/")
+    response = await authorized_admin_client.delete("/players/G666/")
     assert response.status_code == 404
 
 

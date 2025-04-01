@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TablePlayer
 from ravenspedia.core.config import faceit_settings
-from .dependencies import get_player_by_id
+from .dependencies import get_player_by_id, get_player_by_nickname
 from .schemes import PlayerCreate, PlayerGeneralInfoUpdate
 
 
@@ -29,11 +29,11 @@ async def get_players(session: AsyncSession) -> list[TablePlayer]:
 # A function for getting a Player by its id from the database
 async def get_player(
     session: AsyncSession,
-    player_id: int,
+    player_nickname: str,
 ) -> TablePlayer | None:
-    player = await get_player_by_id(
+    player = await get_player_by_nickname(
         session=session,
-        player_id=player_id,
+        player_nickname=player_nickname,
     )
     return player
 

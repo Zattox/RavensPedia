@@ -167,25 +167,25 @@ async def test_tournament_team_connection(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_tournament_player_connection(client: AsyncClient):
     response = await client.get(
-        "/players/1/",
+        "/players/Zattox/",
     )
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
     response = await client.get(
-        "/players/2/",
+        "/players/g666/",
     )
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
     response = await client.get(
-        "/players/3/",
+        "/players/w1lroom-/",
     )
     assert response.status_code == 200
     assert response.json()["tournaments"] == []
 
     response = await client.get(
-        "/players/4/",
+        "/players/Excelleence/",
     )
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
@@ -270,11 +270,11 @@ async def test_delete_tournament_with_team(authorized_admin_client: AsyncClient)
     assert response.status_code == 200
     assert response.json()["tournaments"] == []
 
-    response = await authorized_admin_client.get(f"/players/1/")
+    response = await authorized_admin_client.get(f"/players/Zattox/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await authorized_admin_client.get(f"/players/2/")
+    response = await authorized_admin_client.get(f"/players/g666/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
