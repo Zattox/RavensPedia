@@ -85,6 +85,8 @@ async def test_create_tournament_with_full_info(authorized_admin_client: AsyncCl
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -103,6 +105,8 @@ async def test_read_tournament_with_full_info(client: AsyncClient):
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -132,6 +136,8 @@ async def test_create_tournament_with_partial_info(
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -151,6 +157,8 @@ async def test_read_tournament_with_partial_info(client: AsyncClient):
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -171,6 +179,8 @@ async def test_empty_update_tournament(authorized_admin_client: AsyncClient):
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -196,6 +206,8 @@ async def test_update_tournament_names(authorized_admin_client: AsyncClient):
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -220,6 +232,8 @@ async def test_update_tournament_nickname(authorized_admin_client: AsyncClient):
         "teams": [],
         "players": [],
         "status": TournamentStatus.SCHEDULED.value,
+        "start_date": "2025-02-02T00:00:00",
+        "end_date": "2025-02-12T00:00:00",
     }
 
 
@@ -240,6 +254,8 @@ async def test_get_tournaments(client: AsyncClient):
             "teams": [],
             "players": [],
             "status": TournamentStatus.SCHEDULED.value,
+            "start_date": "2025-02-02T00:00:00",
+            "end_date": "2025-02-12T00:00:00",
         },
         {
             "max_count_of_teams": 2,
@@ -250,6 +266,8 @@ async def test_get_tournaments(client: AsyncClient):
             "teams": [],
             "players": [],
             "status": TournamentStatus.SCHEDULED.value,
+            "start_date": "2025-02-02T00:00:00",
+            "end_date": "2025-02-12T00:00:00",
         },
     ]
 

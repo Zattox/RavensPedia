@@ -21,6 +21,8 @@ def table_to_response_form(
         prize=tournament.prize,
         max_count_of_teams=tournament.max_count_of_teams,
         status=tournament.status,
+        start_date=tournament.start_date,
+        end_date=tournament.end_date,
     )
 
     if not is_create:

@@ -10,12 +10,13 @@ from ravenspedia.core.project_models.table_tournament import TournamentStatus
 class TournamentBase(BaseModel):
     max_count_of_teams: int
     name: str  # The tournament name
+    start_date: Union[datetime | None] = None
+    end_date: Union[datetime | None] = None
     prize: Union[str | None] = None  # The prize of tournament
     description: Union[str | None] = None  # The description of the tournament
     matches_id: List[int] = []  # The IDs of the matches the tournament participated in
     teams: List[str] = []  # The IDs of the teams the tournament participated in
     players: List[str] = []
-
 
 class TournamentCreate(BaseModel):
     max_count_of_teams: int
