@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import TableTournament
-from .dependencies import get_tournament_by_id
+from .dependencies import get_tournament_by_id, get_tournament_by_name
 from .schemes import TournamentCreate, TournamentGeneralInfoUpdate
 
 
@@ -27,10 +27,10 @@ async def get_tournaments(session: AsyncSession) -> list[TableTournament]:
 # A function for getting a Tournament by its id from the database
 async def get_tournament(
     session: AsyncSession,
-    tournament_id: int,
+    tournament_name: str,
 ) -> TableTournament | None:
-    tournament: TableTournament = await get_tournament_by_id(
-        tournament_id=tournament_id,
+    tournament: TableTournament = await get_tournament_by_name(
+        tournament_name=tournament_name,
         session=session,
     )
     return tournament

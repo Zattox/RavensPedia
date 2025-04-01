@@ -51,17 +51,17 @@ async def get_tournaments(
 
 # A view for getting a tournament by its id from the database
 @router.get(
-    "/{tournament_id}/",
+    "/{tournament_name}/",
     response_model=ResponseTournament,
     status_code=status.HTTP_200_OK,
 )
 async def get_tournament(
-    tournament_id: int,
+    tournament_name: str,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
     tournament = await crud.get_tournament(
         session=session,
-        tournament_id=tournament_id,
+        tournament_name=tournament_name,
     )
     return table_to_response_form(tournament=tournament)
 
@@ -86,14 +86,14 @@ async def create_tournament(
 
 # A view for partial or full update a tournament in the database
 @router.patch(
-    "/{tournament_id}/",
+    "/{tournament_name}/",
     response_model=ResponseTournament,
     status_code=status.HTTP_200_OK,
 )
 async def update_general_tournament_info(
     tournament_update: TournamentGeneralInfoUpdate,
     admin: TableUser = Depends(get_current_admin_user),
-    tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
+    tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseTournament:
     tournament = await crud.update_general_tournament_info(
@@ -106,12 +106,12 @@ async def update_general_tournament_info(
 
 # A view for delete a tournament from the database
 @router.delete(
-    "/{tournament_id}/",
+    "/{tournament_name}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_tournament(
     admin: TableUser = Depends(get_current_admin_user),
-    tournament: TableTournament = Depends(dependencies.get_tournament_by_id),
+    tournament: TableTournament = Depends(dependencies.get_tournament_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_tournament(

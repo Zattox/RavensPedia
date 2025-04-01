@@ -93,7 +93,7 @@ async def test_create_tournament_with_full_info(authorized_admin_client: AsyncCl
 @pytest.mark.asyncio
 async def test_read_tournament_with_full_info(client: AsyncClient):
     response = await client.get(
-        f"/tournaments/1/",
+        f"/tournaments/Final MSCL/",
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -144,7 +144,7 @@ async def test_create_tournament_with_partial_info(
 @pytest.mark.asyncio
 async def test_read_tournament_with_partial_info(client: AsyncClient):
     response = await client.get(
-        f"/tournaments/2/",
+        f"/tournaments/MSCL+/",
     )
 
     assert response.status_code == 200
@@ -165,7 +165,7 @@ async def test_read_tournament_with_partial_info(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_empty_update_tournament(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.patch(
-        f"/tournaments/1/",
+        f"/tournaments/Final MSCL/",
         json={},
     )
 
@@ -192,7 +192,7 @@ async def test_update_tournament_names(authorized_admin_client: AsyncClient):
     }
 
     response = await authorized_admin_client.patch(
-        f"/tournaments/2/",
+        f"/tournaments/MSCL+/",
         json=data,
     )
 
@@ -218,7 +218,7 @@ async def test_update_tournament_nickname(authorized_admin_client: AsyncClient):
     }
 
     response = await authorized_admin_client.patch(
-        f"/tournaments/2/",
+        f"/tournaments/MSCL+/",
         json=data,
     )
 
@@ -275,7 +275,7 @@ async def test_get_tournaments(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_delete_tournament(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete(
-        f"/tournaments/2/",
+        f"/tournaments/Showmatches/",
     )
     assert response.status_code == 204
 
@@ -283,7 +283,7 @@ async def test_delete_tournament(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_delete_not_exist_tournament(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete(
-        f"/tournaments/2/",
+        f"/tournaments/Showmatches/",
     )
     assert response.status_code == 404
 

@@ -133,6 +133,7 @@ async def test_manual_update_tournament_status(
 ):
     data = {
         "tournament_id": 1,
+        "name": "Past Tournament",
         "new_status": "COMPLETED",
     }
 
@@ -142,7 +143,7 @@ async def test_manual_update_tournament_status(
     assert response.status_code == 200
 
     tournament = await authorized_admin_client.get(
-        f"/tournaments/{data["tournament_id"]}/"
+        f"/tournaments/{data["name"]}/"
     )
     result = tournament.json()
 
