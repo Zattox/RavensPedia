@@ -160,7 +160,10 @@ async def test_change_user_role_success(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        params={"user_email": user_email, "new_role": "admin"},
+        json={
+            "user_email": user_email,
+            "new_role": "admin",
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -180,7 +183,10 @@ async def test_change_role_invalid_role(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        params={"user_email": user_email, "new_role": "super_admin"},
+        json={
+            "user_email": user_email,
+            "new_role": "super_admin",
+        },
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -197,7 +203,10 @@ async def test_change_own_role_fails(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        params={"user_email": user_email, "new_role": "admin"},
+        json={
+            "user_email": user_email,
+            "new_role": "admin",
+        },
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -214,7 +223,10 @@ async def test_non_super_admin_cannot_change_roles(
 
     response = await authorized_admin_client.patch(
         "/auth/change_user_role/",
-        params={"user_email": user_email, "new_role": "admin"},
+        json={
+            "user_email": user_email,
+            "new_role": "admin",
+        },
     )
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -226,7 +238,10 @@ async def test_change_nonexistent_user(
 ):
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        params={"user_email": "nonexistent@example.com", "new_role": "admin"},
+        json={
+            "user_email": "nonexistent@example.com",
+            "new_role": "admin",
+        },
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
