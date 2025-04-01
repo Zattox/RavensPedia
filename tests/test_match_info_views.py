@@ -534,14 +534,4 @@ async def test_delete_last_map_result_info_empty(authorized_admin_client: AsyncC
         response = await authorized_admin_client.delete(
             f"/matches/stats/2/delete_last_map_result_info_from_match/",
         )
-        if response.status_code == 200:
-            continue
-        assert response.status_code == 400
-        assert response.json() == {"detail": "No map result entries exist to delete."}
-        break
-    else:
-        response = await authorized_admin_client.delete(
-            f"/matches/stats/2/delete_last_map_result_info_from_match/",
-        )
-        assert response.status_code == 400
-        assert response.json() == {"detail": "No map result entries exist to delete."}
+        assert response.status_code == 200

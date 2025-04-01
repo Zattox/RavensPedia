@@ -70,6 +70,7 @@ async def test_create_team_with_full_info(authorized_admin_client: AsyncClient):
 
     assert response.status_code == 201
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": data["max_number_of_players"],
         "name": data["name"],
         "description": data["description"],
@@ -82,11 +83,12 @@ async def test_create_team_with_full_info(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_read_team_with_full_info(client: AsyncClient):
     response = await client.get(
-        f"/teams/1/",
+        f"/teams/Black Ravens/",
     )
 
     assert response.status_code == 200
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": 5,
         "name": "Black Ravens",
         "description": "First team of HSE",
@@ -110,6 +112,7 @@ async def test_create_team_with_partial_info(authorized_admin_client: AsyncClien
 
     assert response.status_code == 201
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": data["max_number_of_players"],
         "name": data["name"],
         "description": None,
@@ -122,11 +125,12 @@ async def test_create_team_with_partial_info(authorized_admin_client: AsyncClien
 @pytest.mark.asyncio
 async def test_read_team_with_partial_info(client: AsyncClient):
     response = await client.get(
-        f"/teams/2/",
+        f"/teams/Red Ravens/",
     )
 
     assert response.status_code == 200
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": 5,
         "name": "Red Ravens",
         "description": None,
@@ -139,12 +143,13 @@ async def test_read_team_with_partial_info(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_empty_update_team(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.patch(
-        f"/teams/1/",
+        f"/teams/Black Ravens/",
         json={},
     )
 
     assert response.status_code == 200
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": 5,
         "name": "Black Ravens",
         "description": "First team of HSE",
@@ -157,12 +162,13 @@ async def test_empty_update_team(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_update_team_description(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.patch(
-        f"/teams/2/",
+        f"/teams/Red Ravens/",
         json={"description": "Second team of HSE"},
     )
 
     assert response.status_code == 200
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": 5,
         "name": "Red Ravens",
         "description": "Second team of HSE",
@@ -175,12 +181,13 @@ async def test_update_team_description(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_update_team_name(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.patch(
-        f"/teams/2/",
+        f"/teams/Red Ravens/",
         json={"name": "White Ravens"},
     )
 
     assert response.status_code == 200
     assert response.json() == {
+        "average_faceit_elo": None,
         "max_number_of_players": 5,
         "name": "White Ravens",
         "description": "Second team of HSE",
@@ -199,6 +206,7 @@ async def test_get_teams(client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == [
         {
+            "average_faceit_elo": None,
             "max_number_of_players": 5,
             "name": "Black Ravens",
             "description": "First team of HSE",
@@ -207,6 +215,7 @@ async def test_get_teams(client: AsyncClient):
             "tournaments": [],
         },
         {
+            "average_faceit_elo": None,
             "max_number_of_players": 5,
             "name": "White Ravens",
             "description": "Second team of HSE",
@@ -220,7 +229,7 @@ async def test_get_teams(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_delete_team(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete(
-        f"/teams/2/",
+        f"/teams/White Ravens/",
     )
     assert response.status_code == 204
 
@@ -228,7 +237,7 @@ async def test_delete_team(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_delete_not_exist_team(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete(
-        f"/teams/2/",
+        f"/teams/White Ravens/",
     )
     assert response.status_code == 404
 

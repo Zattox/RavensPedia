@@ -118,13 +118,13 @@ async def test_team_match_connection(client: AsyncClient):
     assert response.json()["teams"] == ["Red Ravens", "White Ravens"]
 
     response = await client.get(
-        "/teams/1/",
+        "/teams/Black Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["matches_id"] == [1]
 
     response = await client.get(
-        "/teams/2/",
+        "/teams/Red Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["matches_id"] == [1, 2]
@@ -142,7 +142,7 @@ async def test_add_team_in_full_match(authorized_admin_client: AsyncClient):
     }
 
     response = await authorized_admin_client.get(
-        "/teams/3/",
+        "/teams/White Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["matches_id"] == [2]
@@ -160,7 +160,7 @@ async def test_add_exists_team_in_match(authorized_admin_client: AsyncClient):
     }
 
     response = await authorized_admin_client.get(
-        "/teams/2/",
+        "/teams/Red Ravens/",
     )
     assert response.status_code == 200
     assert response.json()["matches_id"] == [1, 2]
@@ -183,18 +183,18 @@ async def test_delete_match_with_teams(authorized_admin_client: AsyncClient):
     response = await authorized_admin_client.delete("/matches/1/")
     assert response.status_code == 204
 
-    response = await authorized_admin_client.get("/teams/1/")
+    response = await authorized_admin_client.get("/teams/Black Ravens/")
     assert response.status_code == 200
     assert response.json()["matches_id"] == []
 
-    response = await authorized_admin_client.get("/teams/2/")
+    response = await authorized_admin_client.get("/teams/Red Ravens/")
     assert response.status_code == 200
     assert response.json()["matches_id"] == [2]
 
 
 @pytest.mark.asyncio
 async def test_delete_team_with_matches(authorized_admin_client: AsyncClient):
-    response = await authorized_admin_client.delete("/teams/2/")
+    response = await authorized_admin_client.delete("/teams/Red Ravens/")
     assert response.status_code == 204
 
     response = await authorized_admin_client.get("/matches/2/")

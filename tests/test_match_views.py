@@ -137,6 +137,7 @@ async def test_create_match_with_full_info(authorized_admin_client: AsyncClient)
     assert response.status_code == 201
     assert response.json() == {
         "best_of": 1,
+        "id": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -160,6 +161,7 @@ async def test_read_match_with_full_info(client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == {
         "best_of": 1,
+        "id": 1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -192,6 +194,7 @@ async def test_create_match_with_partial_info(authorized_admin_client: AsyncClie
     assert response.status_code == 201
     assert response.json() == {
         "best_of": 1,
+        "id":2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -215,6 +218,7 @@ async def test_read_match_with_partial_info(client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == {
         "best_of": 1,
+        "id":2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -239,6 +243,7 @@ async def test_empty_update_match(authorized_admin_client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == {
         "best_of": 1,
+        "id":1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -263,6 +268,7 @@ async def test_update_match_description(authorized_admin_client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == {
         "best_of": 1,
+        "id":2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -291,6 +297,7 @@ async def test_update_match_tournament(authorized_admin_client: AsyncClient):
     assert response.status_code == 200
     assert response.json() == {
         "best_of": 1,
+        "id":2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "teams": [],
@@ -315,6 +322,7 @@ async def test_get_matches(client: AsyncClient):
     assert response.json() == [
         {
             "best_of": 1,
+            "id":1,
             "max_number_of_teams": 2,
             "max_number_of_players": 10,
             "teams": [],
@@ -329,6 +337,7 @@ async def test_get_matches(client: AsyncClient):
         },
         {
             "best_of": 1,
+            "id": 2,
             "max_number_of_teams": 2,
             "max_number_of_players": 10,
             "teams": [],

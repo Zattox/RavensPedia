@@ -128,6 +128,7 @@ async def test_add_stats_bo1_from_faceit(authorized_admin_client: AsyncClient):
     assert response.status_code == 200
     expected_response = {
         "best_of": 1,
+        "id":1,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "MSCL+",
@@ -181,6 +182,7 @@ async def test_add_stats_bo2_from_faceit(authorized_admin_client: AsyncClient):
 
     expected_response = {
         "best_of": 2,
+        "id":2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "MSCL+",
@@ -238,6 +240,7 @@ async def test_add_stats_bo3_from_faceit(authorized_admin_client: AsyncClient):
 
     expected_response = {
         "best_of": 3,
+        "id": 3,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
