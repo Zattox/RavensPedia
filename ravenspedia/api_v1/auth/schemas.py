@@ -26,6 +26,9 @@ class UserAuth(BaseModel):
         description="Password, from 5 to 50 characters",
     )
 
+class ChangeUserRoleRequest(BaseModel):
+    user_email: str
+    new_role: str
 
 # The main class for work with a User
 class User(UserBase):

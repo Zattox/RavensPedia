@@ -9,7 +9,7 @@ from ravenspedia.api_v1.auth.utils import validate_password
 from ravenspedia.core import TableUser, TableToken
 from . import utils
 from .helpers import create_refresh_token, create_access_token
-from .schemas import UserCreate, AuthOutput
+from .schemas import UserCreate, AuthOutput, ChangeUserRoleRequest
 
 
 async def save_tokens_to_db(
@@ -206,11 +206,12 @@ async def delete_revoked_tokens(session: AsyncSession) -> None:
 
 
 async def change_user_role(
-    user_email: str,
-    new_role: str,
+    request: ChangeUserRoleRequest,
     super_admin: TableUser,
     session: AsyncSession,
 ) -> dict:
+    new_role = request.new_role
+    user_email = request.user_email
     valid_roles = ["user", "admin"]
     if new_role not in valid_roles:
         raise HTTPException(

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import db_helper, TableUser
 from . import crud, dependencies
-from .schemas import UserCreate, UserAuth, AuthOutput
+from .schemas import UserCreate, UserAuth, AuthOutput, ChangeUserRoleRequest
 
 router = APIRouter(tags=["Auth"])
 
@@ -133,14 +133,12 @@ async def get_me(
 
 @router.patch("/change_user_role/")
 async def change_user_role(
-    user_email: str,
-    new_role: str,
+    request: ChangeUserRoleRequest,
     super_admin: TableUser = Depends(dependencies.get_current_super_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     return await crud.change_user_role(
-        user_email,
-        new_role,
+        request,
         super_admin,
         session,
     )
