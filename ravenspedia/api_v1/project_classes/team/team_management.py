@@ -1,9 +1,28 @@
+from unittest.mock import patch
+
 from fastapi import HTTPException, status
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from watchfiles import awatch
 
 from ravenspedia.core import TableTeam, TablePlayer, PlayerTournamentAssociation
 
+
+async def calculate_team_faceit_elo(
+    team: TableTeam,
+    session: AsyncSession,
+) -> None:
+    sum_elo: int = 0
+    players_with_elo: int = 0
+    for player in team.players:
+        if player.faceit_elo is not None:
+            sum_elo = sum_elo + player.faceit_elo
+            players_with_elo = players_with_elo + 1
+    if sum_elo == 0 or players_with_elo == 0:
+        setattr(team, "average_faceit_elo", None)
+    else:
+        setattr(team, "average_faceit_elo", sum_elo / players_with_elo)
+    await session.commit()
 
 async def add_player_in_team(
     session: AsyncSession,
@@ -31,6 +50,8 @@ async def add_player_in_team(
     team.players.append(player)
     await session.commit()
 
+    await calculate_team_faceit_elo(team, session)
+
     return team
 
 
@@ -57,7 +78,8 @@ async def delete_player_from_team(
             ),
         )
     )
-
     await session.commit()
+
+    await calculate_team_faceit_elo(team, session)
 
     return team

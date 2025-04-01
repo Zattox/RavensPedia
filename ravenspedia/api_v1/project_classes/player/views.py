@@ -17,6 +17,7 @@ def table_to_response_form(
     result = ResponsePlayer(
         steam_id=player.steam_id,
         faceit_id=player.faceit_id,
+        faceit_elo=player.faceit_elo,
         nickname=player.nickname,
         name=player.name,
         surname=player.surname,
@@ -87,6 +88,16 @@ async def create_player(
     )
     return table_to_response_form(player, is_create=True)
 
+@router.patch(
+    "/update_faceit_elo/",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def update_faceit_elo(
+    admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> None:
+    await crud.update_faceit_elo(session=session)
+
 
 # A view for partial or full update a player in the database
 @router.patch(
@@ -119,3 +130,5 @@ async def delete_player(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_player(session=session, player=player)
+
+

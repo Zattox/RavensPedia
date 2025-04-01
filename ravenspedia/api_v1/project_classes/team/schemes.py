@@ -8,6 +8,7 @@ class TeamBase(BaseModel):
     max_number_of_players: int
     name: str  # The team name
     description: Union[str | None] = None  # The description of the team
+    average_faceit_elo: Union[float | None] = None
     players: List[str] = []  # IDs of the main team members
     matches_id: List[int] = []  # The IDs of the matches the team participated in
     tournaments: List[str] = []  # The IDs of the tournaments the team participated in

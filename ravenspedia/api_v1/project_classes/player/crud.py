@@ -38,9 +38,9 @@ async def get_player(
     return player
 
 
-async def find_player_faceit_id(
+async def find_player_faceit_profile(
     steam_id: str,
-) -> str | None:
+) -> dict:
     headers = {
         "Accept": "application/json",
         "Authorization": f"Bearer {faceit_settings.api_key}",
@@ -56,9 +56,15 @@ async def find_player_faceit_id(
     )
 
     if response.status_code == status.HTTP_200_OK:
-        return response.json()["player_id"]
+        return {
+            "player_id": response.json()["player_id"],
+            "faceit_elo": response.json()["games"]["cs2"]["faceit_elo"],
+        }
     else:
-        return None
+        return {
+            "player_id": None,
+            "faceit_elo": None,
+        }
 
 
 # A function for create a Player in the database
@@ -68,8 +74,9 @@ async def create_player(
 ) -> TablePlayer:
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
-    faceit_id = await find_player_faceit_id(player_in.steam_id)
-    player.faceit_id = faceit_id
+    faceit_profile = await find_player_faceit_profile(player_in.steam_id)
+    player.faceit_id = faceit_profile["player_id"]
+    player.faceit_elo = faceit_profile["faceit_elo"]
 
     try:
         session.add(player)
@@ -92,7 +99,9 @@ async def update_general_player_info(
 ) -> TablePlayer:
     for class_field, value in player_update.model_dump(exclude_unset=True).items():
         if class_field == "steam_id":
-            setattr(player, "faceit_id", find_player_faceit_id(value))
+            faceit_profile = await find_player_faceit_profile(value)
+            setattr(player, "faceit_id", faceit_profile["faceit_id"])
+            setattr(player, "faceit_elo", faceit_profile["faceit_elo"])
         setattr(player, class_field, value)
     await session.commit()  # Make changes to the database
     return player
@@ -105,3 +114,22 @@ async def delete_player(
 ) -> None:
     await session.delete(player)
     await session.commit()  # Make changes to the database
+
+
+async def update_faceit_elo(
+    session: AsyncSession,
+) -> None:
+    statement = (
+        select(TablePlayer)
+        .options(
+            selectinload(TablePlayer.stats),
+            selectinload(TablePlayer.tournaments),
+            selectinload(TablePlayer.team),
+        )
+        .order_by(TablePlayer.id)
+    )
+    players = await session.scalars(statement)
+    for player in players:
+        faceit_profile = await find_player_faceit_profile(steam_id=player.steam_id)
+        setattr(player, "faceit_elo", faceit_profile["faceit_elo"])
+    await session.commit()

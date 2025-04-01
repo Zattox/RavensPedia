@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import String
+from sqlalchemy import String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ravenspedia.core import Base
@@ -19,6 +19,7 @@ class TableTeam(Base):
     name: Mapped[str] = mapped_column(String(15), unique=True)
     # The description of the team
     description: Mapped[str | None] = mapped_column(String(255))
+    average_faceit_elo: Mapped[float | None]
 
     # IDs of the main team members
     players: Mapped[list["TablePlayer"]] = relationship(

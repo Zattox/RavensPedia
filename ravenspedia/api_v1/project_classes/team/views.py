@@ -19,6 +19,7 @@ def table_to_response_form(
         name=team.name,
         description=team.description,
         max_number_of_players=team.max_number_of_players,
+        average_faceit_elo=team.average_faceit_elo,
     )
 
     if not is_create:
@@ -76,6 +77,17 @@ async def create_team(
         team_in=team_in,
     )
     return table_to_response_form(team=team, is_create=True)
+
+
+@router.patch(
+    "/update_team_faceit_elo/",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def update_faceit_elo(
+    admin: TableUser = Depends(get_current_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> None:
+    await crud.update_team_faceit_elo(session=session)
 
 
 # A view for partial or full update a team in the database

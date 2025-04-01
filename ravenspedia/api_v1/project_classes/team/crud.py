@@ -9,6 +9,7 @@ from ravenspedia.core.project_models.table_match_info import MapName
 from ravenspedia.core.project_models.table_team_stats import TableTeamMapStats
 from .dependencies import get_team_by_name
 from .schemes import TeamCreate, TeamGeneralInfoUpdate
+from .team_management import calculate_team_faceit_elo
 from ..team_stats.crud import delete_team_map_stats
 
 
@@ -103,3 +104,21 @@ async def update_general_team_info(
     await session.commit()  # Make changes to the database
 
     return team
+
+
+async def update_team_faceit_elo(
+    session: AsyncSession,
+) -> None:
+    stmt = (
+        select(TableTeam)
+        .options(
+            selectinload(TableTeam.players),
+            selectinload(TableTeam.matches),
+            selectinload(TableTeam.tournaments),
+        )
+        .order_by(TableTeam.id)
+    )
+    teams = await session.scalars(stmt)
+    for team in teams:
+        await calculate_team_faceit_elo(team, session)
+    await session.commit()

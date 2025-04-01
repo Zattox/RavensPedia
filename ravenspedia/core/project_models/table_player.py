@@ -26,6 +26,7 @@ class TablePlayer(Base):
     surname: Mapped[str | None] = mapped_column(String(30))
 
     faceit_id: Mapped[str | None] = mapped_column(unique=True)
+    faceit_elo: Mapped[int | None]
 
     # The ID of the player's current team
     team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
