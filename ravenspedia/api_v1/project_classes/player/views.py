@@ -48,7 +48,7 @@ def table_to_response_form(
 )
 async def get_players(
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
+) -> list[ResponsePlayer]:
     players = await crud.get_players(session=session)
     result = [table_to_response_form(player) for player in players]
     return result
@@ -81,7 +81,7 @@ async def create_player(
     player_in: PlayerCreate,
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
+) -> ResponsePlayer:
     player = await crud.create_player(
         session=session,
         player_in=player_in,
@@ -110,7 +110,7 @@ async def update_general_player_info(
     admin: TableUser = Depends(get_current_admin_user),
     player: TablePlayer = Depends(dependencies.get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
-):
+) -> ResponsePlayer:
     new_player = await crud.update_general_player_info(
         session=session,
         player=player,
