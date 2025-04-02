@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -5,6 +7,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import TableTournament
+from ravenspedia.core.project_models.table_tournament import TournamentStatus
 from .dependencies import get_tournament_by_id, get_tournament_by_name
 from .schemes import TournamentCreate, TournamentGeneralInfoUpdate
 
@@ -41,8 +44,18 @@ async def create_tournament(
     session: AsyncSession,
     tournament_in: TournamentCreate,
 ) -> TableTournament:
+    current_time = datetime.now()
+    if tournament_in.end_date < current_time:
+        tournament_status = TournamentStatus.COMPLETED
+    elif tournament_in.start_date > current_time:
+        tournament_status = TournamentStatus.SCHEDULED
+    else:
+        tournament_status = TournamentStatus.IN_PROGRESS
     # Turning it into a Tournament class without Mapped fields
-    tournament: TableTournament = TableTournament(**tournament_in.model_dump())
+    tournament: TableTournament = TableTournament(
+        **tournament_in.model_dump(),
+        status=tournament_status,
+    )
 
     try:
         session.add(tournament)
