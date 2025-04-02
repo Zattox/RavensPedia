@@ -3,9 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.api_v1.auth.dependencies import get_current_admin_user
 from ravenspedia.api_v1.project_classes import ResponseMatch, ResponseTournament
+from ravenspedia.api_v1.project_classes.match.dependencies import get_match_by_id
 from ravenspedia.api_v1.project_classes.match.views import (
     table_to_response_form as match_response_form,
 )
+from ravenspedia.api_v1.project_classes.tournament.dependencies import get_tournament_by_name
 from ravenspedia.api_v1.project_classes.tournament.views import (
     table_to_response_form as tournament_response_form,
 )
@@ -15,9 +17,9 @@ from ravenspedia.api_v1.schedules import (
     schedule_updater,
 )
 from ravenspedia.core import db_helper, TableUser
-from ravenspedia.core.project_models.table_match import MatchStatus
+from ravenspedia.core.project_models.table_match import MatchStatus, TableMatch
 from ravenspedia.core.project_models.table_tournament import (
-    TournamentStatus,
+    TournamentStatus, TableTournament,
 )
 
 router = APIRouter(tags=["Schedules"])
@@ -138,30 +140,32 @@ async def auto_update_tournaments_statuses(
     status_code=status.HTTP_200_OK,
 )
 async def manual_update_match_status(
-    match_id: int,
     new_status: MatchStatus,
+    match: TableMatch = Depends(get_match_by_id),
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     result = await schedule_updater.manual_update_match_status(
-        match_id, new_status, session
+        match,
+        new_status,
+        session,
     )
-    return {"message": f"Match {match_id} status updated to {new_status.value}"}
+    return {"message": f"Match {match.id} status updated to {new_status.value}"}
 
 
 @router.patch(
-    "/tournaments/{tournament_id}/update_status/",
+    "/tournaments/{tournament_name}/update_status/",
     status_code=status.HTTP_200_OK,
 )
 async def manual_update_tournament_status(
-    tournament_id: int,
     new_status: TournamentStatus,
+    tournament: TableTournament = Depends(get_tournament_by_name),
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
     result = await schedule_updater.manual_update_tournament_status(
-        tournament_id, new_status, session
+        tournament, new_status, session,
     )
     return {
-        "message": f"Tournament {tournament_id} status updated to {new_status.value}"
+        "message": f"Tournament {tournament.name} status updated to {new_status.value}"
     }

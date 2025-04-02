@@ -10,17 +10,10 @@ from ravenspedia.core.project_models.table_tournament import TournamentStatus
 
 
 async def manual_update_match_status(
-    match_id: int,
+    match: TableMatch,
     new_status: MatchStatus,
     session: AsyncSession,
 ) -> TableMatch:
-    match = await session.get(TableMatch, match_id)
-    if not match:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Match {match_id} not found",
-        )
-
     setattr(match, "status", new_status)
     await session.commit()
 
@@ -28,17 +21,10 @@ async def manual_update_match_status(
 
 
 async def manual_update_tournament_status(
-    tournament_id: int,
+    tournament: TableTournament,
     new_status: TournamentStatus,
     session: AsyncSession,
 ) -> TableTournament:
-    tournament = await session.get(TableTournament, tournament_id)
-    if not tournament:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Tournament {tournament_id} not found",
-        )
-
     setattr(tournament, "status", new_status)
     await session.commit()
 
