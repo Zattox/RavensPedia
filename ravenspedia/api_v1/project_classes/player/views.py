@@ -40,6 +40,18 @@ def table_to_response_form(
     return result
 
 
+@router.get(
+    "/get_faceit_profile/",
+    status_code=status.HTTP_200_OK,
+)
+async def get_faceit_profile(
+    player: TablePlayer = Depends(dependencies.get_player_by_nickname),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> dict:
+    response = await crud.get_faceit_profile(player=player)
+    return response
+
+
 # A view to get all the players from the database
 @router.get(
     "/",
@@ -88,6 +100,7 @@ async def create_player(
     )
     return table_to_response_form(player, is_create=True)
 
+
 @router.patch(
     "/update_faceit_elo/",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -130,5 +143,3 @@ async def delete_player(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_player(session=session, player=player)
-
-

@@ -133,3 +133,25 @@ async def update_faceit_elo(
         faceit_profile = await find_player_faceit_profile(steam_id=player.steam_id)
         setattr(player, "faceit_elo", faceit_profile["faceit_elo"])
     await session.commit()
+
+
+async def get_faceit_profile(
+    player: TablePlayer,
+) -> dict:
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {faceit_settings.api_key}",
+    }
+    params = {
+        "game": "cs2",
+        "game_player_id": player.steam_id,
+    }
+    response = requests.get(
+        f"{faceit_settings.base_url}/players",
+        headers=headers,
+        params=params,
+    )
+
+    if response.status_code == status.HTTP_200_OK:
+        return response.json()
+    return {"error": "Profile not found", "status_code": response.status_code}
