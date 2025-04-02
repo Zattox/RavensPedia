@@ -10,6 +10,7 @@ from ravenspedia.api_v1.project_classes.match.dependencies import (
     find_steam_id_by_faceit_id,
 )
 from ravenspedia.api_v1.project_classes.match.schemes import MatchGeneralInfoUpdate
+from ravenspedia.api_v1.project_classes.match_stats.helpers import sync_player_tournaments
 from ravenspedia.api_v1.project_classes.player.crud import create_player
 from ravenspedia.api_v1.project_classes.player.schemes import PlayerCreate
 from ravenspedia.api_v1.schedules.schedule_updater import manual_update_match_status
@@ -118,6 +119,7 @@ async def add_match_stats_from_faceit(
                     match_stats=player_stats.model_dump(by_alias=True),
                 )
                 session.add(round_player_stats)
+                await sync_player_tournaments(session, player)
 
     await session.flush()
     await session.commit()

@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ravenspedia.api_v1.project_classes.match_stats.helpers import sync_player_tournaments
 from ravenspedia.core import TableMatch, TableTeam, TableMatchStats
 
 
@@ -26,6 +27,8 @@ async def add_team_in_match(
     match.teams.append(team)
     if not match.tournament in team.tournaments:
         team.tournaments.append(match.tournament)
+    for player in team.players:
+        await sync_player_tournaments(session, player)
 
     await session.commit()
 
@@ -45,6 +48,9 @@ async def delete_team_from_match(
         )
 
     match.teams.remove(team)
+
+    for player in team.players:
+        await sync_player_tournaments(session, player)
 
     await session.commit()
 

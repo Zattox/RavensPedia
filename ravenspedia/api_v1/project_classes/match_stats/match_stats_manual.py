@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from ravenspedia.api_v1.project_classes.match_stats.helpers import sync_player_tournaments
 from ravenspedia.api_v1.project_classes.match_stats.schemes import MatchStatsInput
 from ravenspedia.api_v1.schedules.schedule_updater import manual_update_match_status
 from ravenspedia.core import TableMatch, TablePlayer, TableMatchStats
@@ -51,6 +52,7 @@ async def add_manual_match_stats(
         match_stats=stats_data,
     )
     session.add(round_player_stats)
+    await sync_player_tournaments(session, player)
 
     await session.flush()
     await session.commit()

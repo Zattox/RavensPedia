@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
 from .dependencies import get_match_by_id
 from .schemes import MatchCreate, MatchGeneralInfoUpdate
+from ..match_stats.helpers import sync_player_tournaments
 from ..tournament.dependencies import get_tournament_by_name
 
 
@@ -60,11 +61,17 @@ async def create_match(
     return match
 
 
-# A function for delete a Match from the database
 async def delete_match(
     session: AsyncSession,
     match: TableMatch,
 ) -> None:
+    players = {stat.player for stat in match.stats}
+    for team in match.teams:
+        players.update(team.players)
+
+    for player in players:
+        await sync_player_tournaments(session, player)
+
     await session.delete(match)
     await session.commit()  # Make changes to the database
 
