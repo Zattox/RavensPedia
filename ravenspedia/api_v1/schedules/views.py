@@ -67,17 +67,15 @@ async def get_in_progress_matches(
 
 
 @router.get(
-    "/tournaments/get_last_completed/",
+    "/tournaments/get_completed/",
     response_model=list[ResponseTournament],
     status_code=status.HTTP_200_OK,
 )
-async def get_last_completed_tournaments(
-    num_tournaments: int = 10,
+async def get_completed_tournaments(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseTournament]:
     tournaments = await schedule_tournaments.get_last_x_completed_tournaments(
         session=session,
-        num_tournaments=num_tournaments,
     )
     result = [tournament_response_form(tournament) for tournament in tournaments]
     return result
@@ -89,12 +87,10 @@ async def get_last_completed_tournaments(
     status_code=status.HTTP_200_OK,
 )
 async def get_upcoming_scheduled_tournaments(
-    num_tournaments: int = 10,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponseTournament]:
     tournaments = await schedule_tournaments.get_upcoming_tournaments(
         session=session,
-        num_tournaments=num_tournaments,
     )
     result = [tournament_response_form(tournament) for tournament in tournaments]
     return result

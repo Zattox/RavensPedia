@@ -10,7 +10,6 @@ from ravenspedia.core.project_models.table_tournament import TournamentStatus
 
 async def get_last_x_completed_tournaments(
     session: AsyncSession,
-    num_tournaments: int,
 ) -> list[TableTournament]:
     stmt = (
         select(TableTournament)
@@ -21,7 +20,6 @@ async def get_last_x_completed_tournaments(
         )
         .filter(TableTournament.status == TournamentStatus.COMPLETED)
         .order_by(TableTournament.end_date.desc())
-        .limit(num_tournaments)
     )
     response = await session.execute(stmt)
     tournaments = response.scalars().all()
@@ -31,7 +29,6 @@ async def get_last_x_completed_tournaments(
 
 async def get_upcoming_tournaments(
     session: AsyncSession,
-    num_tournaments: int,
 ) -> list[TableTournament]:
     stmt = (
         select(TableTournament)
@@ -43,7 +40,6 @@ async def get_upcoming_tournaments(
         .filter(TableTournament.status == TournamentStatus.SCHEDULED)
         .filter(TableTournament.start_date >= datetime.now())
         .order_by(TableTournament.end_date.asc())
-        .limit(num_tournaments)
     )
 
     response = await session.execute(stmt)
