@@ -1,8 +1,11 @@
+from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableMatch, TableTournament, TableMatchStats
+from ravenspedia.core.project_models.table_tournament import TournamentStatus
 from .dependencies import get_match_by_id
 from .schemes import MatchCreate, MatchGeneralInfoUpdate
 from ..match_stats.helpers import sync_player_tournaments
@@ -44,6 +47,19 @@ async def create_match(
         tournament_name=match_in.tournament,
         session=session,
     )
+
+    if not (tournament_of_match.start_date <= match_in.date <= tournament_of_match.end_date):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Match date must be between tournament dates: "
+                   f"{tournament_of_match.start_date} - {tournament_of_match.end_date}"
+        )
+
+    if tournament_of_match.status == TournamentStatus.COMPLETED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot add match to completed tournament"
+        )
 
     match = TableMatch(
         best_of=match_in.best_of,
