@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import TableTournament
+from ravenspedia.core import TableTournament, TableTournamentResult
 from ravenspedia.core.project_models.table_tournament import TournamentStatus
 
 
@@ -17,6 +17,7 @@ async def get_last_x_completed_tournaments(
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
+            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
         )
         .filter(TableTournament.status == TournamentStatus.COMPLETED)
         .order_by(TableTournament.end_date.desc())
@@ -36,6 +37,7 @@ async def get_upcoming_tournaments(
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
+            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
         )
         .filter(TableTournament.status == TournamentStatus.SCHEDULED)
         .filter(TableTournament.start_date >= datetime.now())
@@ -58,6 +60,7 @@ async def get_in_progress_tournaments(
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
+            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
         )
         .filter(TableTournament.status == TournamentStatus.IN_PROGRESS)
         .filter(TableTournament.start_date <= current_time)
