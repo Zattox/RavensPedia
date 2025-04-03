@@ -12,6 +12,7 @@ class TeamBase(BaseModel):
     players: List[str] = []  # IDs of the main team members
     matches_id: List[int] = []  # The IDs of the matches the team participated in
     tournaments: List[str] = []  # The IDs of the tournaments the team participated in
+    tournament_results: List[dict] = []
 
 
 class TeamCreate(BaseModel):

@@ -26,6 +26,7 @@ def table_to_response_form(
         result.players = [player.nickname for player in team.players]
         result.matches_id = [match.id for match in team.matches]
         result.tournaments = [tournament.name for tournament in team.tournaments]
+        result.tournament_results=[{"place":result.place, "tournament_name": result.tournament.name} for result in team.tournament_results]
 
     return result
 

@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import db_helper, TableTeam, TableMatch
+from ravenspedia.core import db_helper, TableTeam, TableMatch, TableTournamentResult
 
 
 # A function for get a Team from the database by id
@@ -21,6 +21,8 @@ async def get_team_by_id(
             selectinload(TableTeam.matches),
             selectinload(TableTeam.tournaments),
             selectinload(TableTeam.map_stats),
+            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.team),
+            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.tournament),
         ),
     )
 
@@ -50,6 +52,8 @@ async def get_team_by_name(
             selectinload(TableTeam.matches).selectinload(TableMatch.result),
             selectinload(TableTeam.tournaments),
             selectinload(TableTeam.map_stats),
+            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.team),
+            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.tournament),
         ),
     )
 

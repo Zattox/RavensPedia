@@ -1,10 +1,14 @@
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Optional
 
 from pydantic import BaseModel
 
 from ravenspedia.core.project_models.table_tournament import TournamentStatus
 
+class TournamentResult(BaseModel):
+    place: int
+    team: Optional[str] = None
+    prize: str
 
 # The base class for the Tournament (without id)
 class TournamentBase(BaseModel):
@@ -17,6 +21,7 @@ class TournamentBase(BaseModel):
     matches_id: List[int] = []  # The IDs of the matches the tournament participated in
     teams: List[str] = []  # The IDs of the teams the tournament participated in
     players: List[str] = []
+    results: List[TournamentResult] = []
 
 class TournamentCreate(BaseModel):
     max_count_of_teams: int

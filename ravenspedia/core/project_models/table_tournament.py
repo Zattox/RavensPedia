@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .table_match import TableMatch
     from .table_team import TableTeam
     from .table_player import TablePlayer
+    from .table_tournament_results import TableTournamentResult
 
 
 class TournamentStatus(Enum):
@@ -44,6 +45,11 @@ class TableTournament(Base):
         secondary="player_tournament_association",
         back_populates="tournaments",
         cascade="save-update, merge",
+    )
+
+    results: Mapped[list["TableTournamentResult"]] = relationship(
+        back_populates="tournament",
+        cascade="all, delete-orphan",
     )
 
     status: Mapped[TournamentStatus] = mapped_column(

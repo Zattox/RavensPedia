@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, Path
 
-from ravenspedia.core import db_helper, TableTournament
+from ravenspedia.core import db_helper, TableTournament, TableTournamentResult
 
 
 # A function for get a Tournament from the database by id
@@ -20,6 +20,7 @@ async def get_tournament_by_id(
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
+            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
         ),
     )
     # If such an id does not exist, then throw an exception.
@@ -43,6 +44,7 @@ async def get_tournament_by_name(
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
+            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
         ),
     )
 

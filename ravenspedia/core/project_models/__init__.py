@@ -8,6 +8,7 @@ __all__ = (
     "TableMapResultInfo",
     "TableMapPickBanInfo",
     "TableTeamMapStats",
+    "TableTournamentResult",
 )
 
 from .table_match import TableMatch
@@ -18,3 +19,4 @@ from .table_player import TablePlayer
 from .table_team import TableTeam
 from .table_team_stats import TableTeamMapStats
 from .table_tournament import TableTournament
+from .table_tournament_results import TableTournamentResult

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .table_tournament import TableTournament
     from .table_match import TableMatch
     from .table_team_stats import TableTeamMapStats
-
+    from .table_tournament_results import TableTournamentResult
 
 class TableTeam(Base):
     max_number_of_players: Mapped[int]
@@ -38,6 +38,11 @@ class TableTeam(Base):
     tournaments: Mapped[list["TableTournament"]] = relationship(
         secondary="team_tournament_association",
         back_populates="teams",
+        cascade="save-update, merge",
+    )
+
+    tournament_results: Mapped[list["TableTournamentResult"]] = relationship(
+        back_populates="team",
         cascade="save-update, merge",
     )
 
