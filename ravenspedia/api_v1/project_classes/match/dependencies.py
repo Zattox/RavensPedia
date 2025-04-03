@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import db_helper, TableMatch, TableMatchStats, TableTeam
+from ravenspedia.core import db_helper, TableMatch, TableMatchStats, TableTeam, TableTournament
 from ravenspedia.core.config import faceit_settings
 
 
@@ -21,7 +21,7 @@ async def get_match_by_id(
         .options(
             selectinload(TableMatch.stats).selectinload(TableMatchStats.player),
             selectinload(TableMatch.teams).selectinload(TableTeam.players),
-            selectinload(TableMatch.tournament),
+            selectinload(TableMatch.tournament).selectinload(TableTournament.teams),
             selectinload(TableMatch.veto),
             selectinload(TableMatch.result),
         ),

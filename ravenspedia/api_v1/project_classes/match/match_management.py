@@ -24,6 +24,12 @@ async def add_team_in_match(
             detail=f"The maximum number of teams will participate in the match",
         )
 
+    if (team not in match.tournament.teams) and (len(match.tournament.teams) == match.tournament.max_count_of_teams):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"The maximum number of teams will participate in the tournament",
+        )
+
     match.teams.append(team)
     if not match.tournament in team.tournaments:
         team.tournaments.append(match.tournament)
