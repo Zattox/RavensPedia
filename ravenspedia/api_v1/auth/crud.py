@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 from pydantic import EmailStr
@@ -182,6 +183,13 @@ async def update_tokens(
             detail="Token revoked",
         )
 
+    expire_time = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    if expire_time < datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token expired",
+        )
+
     user = await session.scalar(
         select(TableUser).where(TableUser.id == token_in_db.subject_id)
     )
@@ -191,13 +199,34 @@ async def update_tokens(
             detail="User not found",
         )
 
-    new_tokens: AuthOutput = await create_tokens_for_user(
-        user=user,
-        session=session,
+    old_tokens = await session.scalars(
+        select(TableToken).where(
+            TableToken.subject_id == user.id,
+            TableToken.device_id == device_id,
+        )
+    )
+    for token in old_tokens:
+        setattr(token, "revoked", True)
+    await session.commit()
+
+    new_access_token = create_access_token(user=user, device_id=device_id)
+
+    decoded_access_token = utils.decode_jwt(new_access_token)
+    new_access_token_db = TableToken(
+        jti=decoded_access_token["jti"],
+        subject_id=user.id,
         device_id=device_id,
+        expired_time=decoded_access_token["exp"],
+        revoked=False,
     )
 
-    return new_tokens
+    session.add(new_access_token_db)
+    await session.commit()
+
+    return AuthOutput(
+        access_token=new_access_token,
+        refresh_token=refresh_token,
+    )
 
 
 async def delete_revoked_tokens(session: AsyncSession) -> None:

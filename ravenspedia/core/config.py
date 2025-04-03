@@ -23,7 +23,7 @@ class AuthJWT(BaseModel):
     public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
     algorithm: str = "RS256"
     access_token_expire_minutes: int = 15
-    refresh_token_expire_days: int = 30
+    refresh_token_expire_days: int = 14
     TOKEN_TYPE_FIELD: str = "token_type"
     ACCESS_TOKEN_TYPE: str = "access"
     REFRESH_TOKEN_TYPE: str = "refresh"

@@ -109,12 +109,7 @@ async def refresh(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens.access_token,  # Use dot notation here
-        **COOKIE_OPTIONS,
-    )
-    response.set_cookie(
-        key="user_refresh_token",
-        value=tokens.refresh_token,  # Use dot notation here
+        value=tokens.access_token,
         **COOKIE_OPTIONS,
     )
 
