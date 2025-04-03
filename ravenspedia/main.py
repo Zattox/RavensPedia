@@ -6,30 +6,27 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ravenspedia.api_v1 import router as router_v1
-from ravenspedia.api_v1.auth.crud import delete_revoked_tokens
+from ravenspedia.api_v1.auth.crud import mark_expired_and_delete_revoked_tokens
 from ravenspedia.core import db_helper
 
-async def scheduled_delete_revoked_tokens():
+async def scheduled_mark_expired_and_delete_revoked_tokens():
     async with db_helper.session_factory() as session:
-        await delete_revoked_tokens(session)
+        await mark_expired_and_delete_revoked_tokens(session)
 
-
-def run_scheduled_delete():
-    asyncio.run(scheduled_delete_revoked_tokens())
-
+def run_scheduled_task():
+    asyncio.run(scheduled_mark_expired_and_delete_revoked_tokens())
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler = BackgroundScheduler()
     scheduler.add_job(
-        run_scheduled_delete,  # используем синхронную обертку
+        run_scheduled_task,
         "interval",
         minutes=1,
     )
     scheduler.start()
     yield
     scheduler.shutdown()
-
 
 app = FastAPI(
     title="Ravens Pedia API",
@@ -55,7 +52,6 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization", "Accept", "Origin"],
 )
 app.include_router(router=router_v1)
-
 
 if __name__ == "__main__":
     uvicorn.run(

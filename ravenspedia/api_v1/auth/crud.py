@@ -207,7 +207,6 @@ async def update_tokens(
     )
     for token in old_tokens:
         setattr(token, "revoked", True)
-    await session.commit()
 
     new_access_token = create_access_token(user=user, device_id=device_id)
 
@@ -217,7 +216,6 @@ async def update_tokens(
         subject_id=user.id,
         device_id=device_id,
         expired_time=decoded_access_token["exp"],
-        revoked=False,
     )
 
     session.add(new_access_token_db)
@@ -232,6 +230,22 @@ async def update_tokens(
 async def delete_revoked_tokens(session: AsyncSession) -> None:
     await session.execute(delete(TableToken).where(TableToken.revoked == True))
     await session.commit()
+
+async def mark_expired_and_delete_revoked_tokens(session: AsyncSession) -> None:
+    current_time = datetime.now(timezone.utc)
+
+    expired_tokens = await session.scalars(
+        select(TableToken).where(
+            TableToken.expired_time < current_time,
+            TableToken.revoked == False
+        )
+    )
+
+    for token in expired_tokens:
+        setattr(token, "revoked", True)
+
+    await session.commit()
+    await delete_revoked_tokens(session)
 
 
 async def change_user_role(
