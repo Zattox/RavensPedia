@@ -18,18 +18,24 @@ COPY . .
 
 RUN poetry install
 
+# Создание сертификатов (оптимизированная версия)
 RUN mkdir -p ravenspedia/certs && \
     cd ravenspedia/certs && \
     openssl genrsa -out jwt-private.pem 2048 && \
-    openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem && \
-    openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365 \
+    openssl rsa -in jwt-private.pem -pubout -out jwt-public.pem && \
+    openssl req -x509 -newkey rsa:4096 -nodes -days 365 \
+        -keyout key.pem -out cert.pem \
         -subj "/C=RU/ST=Moscow-State/L=Moscow/O=HSE/OU=CourseProject/CN=90.156.158.26" && \
     chmod 600 *.pem && \
-    cd .. && cd ..
+    echo "=== Проверка сертификатов ===" && \
+    ls -la && \
+    openssl x509 -in cert.pem -text -noout && \
+    openssl rsa -in key.pem -check -noout && \
+    cd /app
 
 RUN echo '#!/bin/sh\n\
-cd /app\n\
 poetry run python ravenspedia/main.py\n\
 ' > /start.sh && chmod +x /start.sh
 
+# Запуск приложения
 CMD ["/start.sh"]
