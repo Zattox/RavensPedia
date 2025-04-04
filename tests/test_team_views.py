@@ -77,6 +77,7 @@ async def test_create_team_with_full_info(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -95,6 +96,7 @@ async def test_read_team_with_full_info(client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -119,6 +121,7 @@ async def test_create_team_with_partial_info(authorized_admin_client: AsyncClien
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -137,6 +140,7 @@ async def test_read_team_with_partial_info(client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -156,6 +160,7 @@ async def test_empty_update_team(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -175,6 +180,7 @@ async def test_update_team_description(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -194,6 +200,7 @@ async def test_update_team_name(authorized_admin_client: AsyncClient):
         "matches_id": [],
         "players": [],
         "tournaments": [],
+        "tournament_results": [],
     }
 
 
@@ -213,6 +220,7 @@ async def test_get_teams(client: AsyncClient):
             "matches_id": [],
             "players": [],
             "tournaments": [],
+            "tournament_results": [],
         },
         {
             "average_faceit_elo": None,
@@ -222,6 +230,7 @@ async def test_get_teams(client: AsyncClient):
             "matches_id": [],
             "players": [],
             "tournaments": [],
+            "tournament_results": [],
         },
     ]
 
