@@ -9,22 +9,22 @@ async def test_init_tournaments_for_matches(
     authorized_admin_client: AsyncClient,
 ):
     tournament1 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 8,
         "name": "Past Tournament",
-        "start_date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"),
+        "start_date": (datetime.now() - timedelta(days=4)).strftime("%Y-%m-%d"),
         "end_date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
     }
     tournament2 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 8,
         "name": "Current Tournament",
-        "start_date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
-        "end_date": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "start_date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"),
+        "end_date": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d"),
     }
     tournament3 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 8,
         "name": "Future Tournament",
         "start_date": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
-        "end_date": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d"),
+        "end_date": (datetime.now() + timedelta(days=4)).strftime("%Y-%m-%d"),
     }
 
     response1 = await authorized_admin_client.post("/tournaments/", json=tournament1)
@@ -44,7 +44,7 @@ async def test_init_matches(
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Past Tournament",
-        "date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
+        "date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"),
         "description": "Completed match",
         "best_of": 1,
     }
@@ -60,7 +60,7 @@ async def test_init_matches(
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Future Tournament",
-        "date": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "date": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d"),
         "description": "Upcoming match",
         "best_of": 1,
     }
@@ -138,7 +138,7 @@ async def test_manual_update_tournament_status(
     }
 
     response = await authorized_admin_client.patch(
-        f"/schedules/tournaments/{data["tournament_id"]}/update_status/?new_status={data["new_status"]}"
+        f"/schedules/tournaments/{data["name"]}/update_status/?new_status={data["new_status"]}"
     )
     assert response.status_code == 200
 
@@ -160,7 +160,7 @@ async def test_get_last_completed_matches_with_data(
     assert response.status_code == 200
 
     response = await authorized_admin_client.get(
-        "/schedules/matches/get_last_completed/?num_matches=1"
+        "/schedules/matches/get_last_completed/"
     )
     assert response.status_code == 200
 
@@ -179,7 +179,7 @@ async def test_get_upcoming_matches_with_data(
     assert response.status_code == 200
 
     response = await authorized_admin_client.get(
-        "/schedules/matches/get_upcoming_scheduled/?num_matches=1"
+        "/schedules/matches/get_upcoming_scheduled/"
     )
     assert response.status_code == 200
 
@@ -216,7 +216,7 @@ async def test_get_last_completed_tournaments_with_data(
     assert response.status_code == 200
 
     response = await client.get(
-        "/schedules/tournaments/get_last_completed/?num_tournaments=1"
+        "/schedules/tournaments/get_completed/"
     )
     assert response.status_code == 200
 
@@ -236,7 +236,7 @@ async def test_get_upcoming_tournaments_with_data(
     assert response.status_code == 200
 
     response = await client.get(
-        "/schedules/tournaments/get_upcoming_scheduled/?num_tournaments=1"
+        "/schedules/tournaments/get_upcoming_scheduled/"
     )
     assert response.status_code == 200
 

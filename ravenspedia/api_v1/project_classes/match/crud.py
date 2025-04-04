@@ -55,12 +55,6 @@ async def create_match(
                    f"{tournament_of_match.start_date} - {tournament_of_match.end_date}"
         )
 
-    if tournament_of_match.status == TournamentStatus.COMPLETED:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot add match to completed tournament"
-        )
-
     match = TableMatch(
         best_of=match_in.best_of,
         tournament_id=tournament_of_match.id,
