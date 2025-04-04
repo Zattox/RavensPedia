@@ -8,8 +8,8 @@ RUN curl -sSL https://install.python-poetry.org | python3 - \
 
 COPY poetry.lock pyproject.toml ./
 
-RUN poetry install --no-root
+RUN poetry install
 
 COPY . .
 
-CMD ["python", "./ravenspedia/main.py"]
+CMD ["poetry", "run", "python", "./ravenspedia/main.py"]
