@@ -19,6 +19,7 @@ RUN mkdir -p ravenspedia/certs && \
     cd ravenspedia/certs && \
     openssl genrsa -out jwt-private.pem 2048 && \
     openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem && \
+    openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365 && \
     chmod 600 *.pem && \
     cd .. && cd ..
 

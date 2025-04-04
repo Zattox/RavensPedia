@@ -58,7 +58,6 @@ app.include_router(router=router_v1)
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        reload=True,
         port=8001,
         ssl_keyfile="./certs/key.pem",
         ssl_certfile="./certs/cert.pem",
