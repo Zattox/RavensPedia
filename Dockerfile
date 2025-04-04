@@ -1,11 +1,14 @@
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y curl openssl
+RUN apt-get update && apt-get install -y curl openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV POETRY_HOME="/opt/poetry"
 ENV POETRY_VIRTUALENVS_CREATE=false
 RUN curl -sSL https://install.python-poetry.org | python3 - \
  && ln -s $POETRY_HOME/bin/poetry /usr/local/bin/poetry
+
+WORKDIR /app
 
 COPY pyproject.toml poetry.lock README.md ./
 
