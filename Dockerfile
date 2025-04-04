@@ -15,17 +15,12 @@ COPY . .
 
 RUN poetry install
 
-RUN echo '#!/bin/bash\n\
-mkdir -p ravenspedia/certs && \n\
-cd ravenspedia/certs && \n\
-openssl genrsa -out jwt-private.pem 2048 && \n\
-openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem && \n\
-openssl req -new -x509 -key jwt-private.pem -out cert.pem -days 365 -subj "/CN=localhost" && \n\
-openssl genrsa -out key.pem 2048 && \n\
-chmod 600 *.pem && \n\
-cd /app && \n\
-poetry run python ravenspedia/main.py\n\
-' > /app/start.sh && \
-chmod +x /app/start.sh
+RUN mkdir -p ravenspedia/certs && \
+    cd ravenspedia/certs && \
+    openssl genrsa -out jwt-private.pem 2048 && \
+    openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem && \
+    chmod 600 *.pem && \
+    cd .. && cd ..
 
-CMD ["/bin/bash", "/app/start.sh"]
+# Запуск приложения
+CMD ["poetry", "run", "python", "ravenspedia/main.py"]
