@@ -30,5 +30,4 @@ RUN mkdir -p ravenspedia/certs && \
         -subj "/C=RU/ST=Moscow-State/L=Moscow/O=HSE/OU=CourseProject/CN=90.156.158.26" && \
     chmod 600 *.pem
 
-# Для отладки - временный CMD
-CMD ["tail", "-f", "/dev/null"]
+CMD ["poetry", "run", "python", "ravenspedia/main.py"]
