@@ -4,6 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["Zattox <vladcsgoogurechik@mail.ru>"]
 license = "CyberRavens"
+readme = "README.md"
+packages = [{include = "ravenspedia"}]
 
 [tool.poetry.dependencies]
 python = ">3.12"
