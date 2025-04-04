@@ -27,4 +27,9 @@ RUN mkdir -p ravenspedia/certs && \
     chmod 600 *.pem && \
     cd .. && cd ..
 
-CMD ["poetry", "run", "python", "ravenspedia/main.py"]
+RUN echo '#!/bin/sh\n\
+cd /app\n\
+poetry run python ravenspedia/main.py\n\
+' > /start.sh && chmod +x /start.sh
+
+CMD ["/start.sh"]
