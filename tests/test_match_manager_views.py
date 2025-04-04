@@ -5,18 +5,18 @@ from httpx import AsyncClient
 @pytest.mark.asyncio
 async def test_init_tournaments_for_matches(authorized_admin_client: AsyncClient):
     tournament1 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 3,
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
-        "start_date": "2025-02-02",
-        "end_date": "2025-02-12",
+        "start_date": "2045-02-02",
+        "end_date": "2045-02-12",
     }
     tournament2 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 3,
         "name": "MSCL+",
-        "start_date": "2025-02-02",
-        "end_date": "2025-02-12",
+        "start_date": "2045-02-02",
+        "end_date": "2045-02-12",
     }
 
     response1 = await authorized_admin_client.post("/tournaments/", json=tournament1)
@@ -32,7 +32,7 @@ async def test_init_matches(authorized_admin_client: AsyncClient):
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
-        "date": "2025-01-12",
+        "date": "2045-02-10",
         "description": "Test match",
         "best_of": 1,
     }
@@ -41,7 +41,7 @@ async def test_init_matches(authorized_admin_client: AsyncClient):
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
-        "date": "2025-02-12",
+        "date": "2045-02-10",
     }
 
     response1 = await authorized_admin_client.post("/matches/", json=match1)
