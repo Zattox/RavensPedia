@@ -59,6 +59,4 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         port=8000,
-        ssl_keyfile="ravenspedia/certs/key.pem",
-        ssl_certfile="ravenspedia/certs/cert.pem",
     )
