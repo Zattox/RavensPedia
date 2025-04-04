@@ -9,14 +9,14 @@ async def test_init_tournaments_for_matches(authorized_admin_client: AsyncClient
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
-        "start_date": "2025-02-02",
-        "end_date": "2025-02-12",
+        "start_date": "2045-02-02",
+        "end_date": "2045-02-12",
     }
     tournament2 = {
         "max_count_of_teams": 2,
         "name": "MSCL+",
-        "start_date": "2025-02-02",
-        "end_date": "2025-02-12",
+        "start_date": "2045-02-02",
+        "end_date": "2045-02-12",
     }
 
     response1 = await authorized_admin_client.post("/tournaments/", json=tournament1)
@@ -54,7 +54,7 @@ async def test_create_match_without_tournament(authorized_admin_client: AsyncCli
     data = {
         "max_number_of_teams": 0,
         "max_number_of_players": 0,
-        "date": "2025-01-12",
+        "date": "2045-02-12",
         "description": "Test match",
         "best_of": 1,
     }
@@ -87,7 +87,7 @@ async def test_create_match_without_date(authorized_admin_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_create_match_without_max_number(authorized_admin_client: AsyncClient):
     data = {
-        "date": "2025-01-12",
+        "date": "2045-02-12",
         "description": "Test match",
         "best_of": 1,
     }
@@ -106,7 +106,7 @@ async def test_create_match_without_best_of(authorized_admin_client: AsyncClient
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
-        "date": "2025-01-12",
+        "date": "2045-02-12",
         "description": "Test match",
     }
 
@@ -124,7 +124,7 @@ async def test_create_match_with_full_info(authorized_admin_client: AsyncClient)
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
-        "date": "2025-01-12",
+        "date": "2045-02-12",
         "description": "Test match",
         "best_of": 1,
     }
@@ -144,7 +144,7 @@ async def test_create_match_with_full_info(authorized_admin_client: AsyncClient)
         "players": [],
         "description": "Test match",
         "tournament": "Final MSCL",
-        "date": "2025-01-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -168,7 +168,7 @@ async def test_read_match_with_full_info(client: AsyncClient):
         "players": [],
         "description": "Test match",
         "tournament": "Final MSCL",
-        "date": "2025-01-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -183,7 +183,7 @@ async def test_create_match_with_partial_info(authorized_admin_client: AsyncClie
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Final MSCL",
-        "date": "2025-02-12",
+        "date": "2045-02-12",
     }
 
     response = await authorized_admin_client.post(
@@ -201,7 +201,7 @@ async def test_create_match_with_partial_info(authorized_admin_client: AsyncClie
         "players": [],
         "description": None,
         "tournament": "Final MSCL",
-        "date": "2025-02-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -225,7 +225,7 @@ async def test_read_match_with_partial_info(client: AsyncClient):
         "players": [],
         "description": None,
         "tournament": "Final MSCL",
-        "date": "2025-02-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -250,7 +250,7 @@ async def test_empty_update_match(authorized_admin_client: AsyncClient):
         "players": [],
         "description": "Test match",
         "tournament": "Final MSCL",
-        "date": "2025-01-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -275,7 +275,7 @@ async def test_update_match_description(authorized_admin_client: AsyncClient):
         "players": [],
         "description": "Second match of HSE",
         "tournament": "Final MSCL",
-        "date": "2025-02-12T00:00:00",
+        "date": "2045-02-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -290,7 +290,7 @@ async def test_update_match_tournament(authorized_admin_client: AsyncClient):
         json={
             "description": "Fun match",
             "tournament": "MSCL+",
-            "date": "2025-03-12",
+            "date": "2045-03-12",
         },
     )
 
@@ -304,7 +304,7 @@ async def test_update_match_tournament(authorized_admin_client: AsyncClient):
         "players": [],
         "description": "Fun match",
         "tournament": "MSCL+",
-        "date": "2025-03-12T00:00:00",
+        "date": "2045-03-12T00:00:00",
         "stats": [],
         "status": "SCHEDULED",
         "veto": [],
@@ -329,7 +329,7 @@ async def test_get_matches(client: AsyncClient):
             "players": [],
             "description": "Test match",
             "tournament": "Final MSCL",
-            "date": "2025-01-12T00:00:00",
+            "date": "2045-02-12T00:00:00",
             "stats": [],
             "status": "SCHEDULED",
             "veto": [],
@@ -344,7 +344,7 @@ async def test_get_matches(client: AsyncClient):
             "players": [],
             "description": "Fun match",
             "tournament": "MSCL+",
-            "date": "2025-03-12T00:00:00",
+            "date": "2045-03-12T00:00:00",
             "stats": [],
             "status": "SCHEDULED",
             "veto": [],
@@ -378,7 +378,7 @@ async def test_create_match_with_not_existing_tournament(
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "ESL Pro League",
-        "date": "2025-02-12",
+        "date": "2045-02-12",
     }
 
     response = await authorized_admin_client.post(
