@@ -113,6 +113,12 @@ async def refresh(
         **COOKIE_OPTIONS,
     )
 
+    response.set_cookie(
+        key="user_refresh_token",
+        value=tokens.refresh_token,
+        **COOKIE_OPTIONS,
+    )
+
     return tokens
 
 
