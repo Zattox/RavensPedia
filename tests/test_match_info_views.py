@@ -7,8 +7,8 @@ async def test_init_data_for_pick_ban_tests(authorized_admin_client: AsyncClient
     tournament = {
         "max_count_of_teams": 2,
         "name": "Test Tournament",
-        "start_date": "2025-02-02",
-        "end_date": "2025-02-12",
+        "start_date": "2045-02-02",
+        "end_date": "2045-02-12",
     }
     response = await authorized_admin_client.post("/tournaments/", json=tournament)
     assert response.status_code == 201
@@ -18,14 +18,14 @@ async def test_init_data_for_pick_ban_tests(authorized_admin_client: AsyncClient
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Test Tournament",
-        "date": "2025-02-03",
+        "date": "2045-02-03",
     }
     match2 = {
         "best_of": 2,
         "max_number_of_teams": 2,
         "max_number_of_players": 10,
         "tournament": "Test Tournament",
-        "date": "2025-02-03",
+        "date": "2045-02-03",
     }
     response = await authorized_admin_client.post("/matches/", json=match1)
     assert response.status_code == 201

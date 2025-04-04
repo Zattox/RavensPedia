@@ -3,7 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ravenspedia.core import db_helper, TableTournament, TableTeam, TableUser
 from . import crud, dependencies, tournament_management
-from .schemes import ResponseTournament, TournamentCreate, TournamentGeneralInfoUpdate, TournamentResult
+from .schemes import (
+    ResponseTournament,
+    TournamentCreate,
+    TournamentGeneralInfoUpdate,
+    TournamentResult,
+)
 from ..team.dependencies import get_team_by_name
 from ...auth.dependencies import get_current_admin_user
 
@@ -15,15 +20,6 @@ def table_to_response_form(
     tournament: TableTournament,
     is_create: bool = False,
 ) -> ResponseTournament:
-    tournament_results = [
-        TournamentResult(
-            place=result.place,
-            team=result.team.name if result.team else None,
-            prize=result.prize,
-        )
-        for result in sorted(tournament.results, key=lambda x: x.place)
-    ]
-
     result = ResponseTournament(
         name=tournament.name,
         description=tournament.description,
@@ -32,13 +28,20 @@ def table_to_response_form(
         status=tournament.status,
         start_date=tournament.start_date,
         end_date=tournament.end_date,
-        results=tournament_results,
     )
 
     if not is_create:
         result.matches_id = [match.id for match in tournament.matches]
         result.teams = [team.name for team in tournament.teams]
         result.players = [player.nickname for player in tournament.players]
+        result.results = [
+            TournamentResult(
+                place=result.place,
+                team=result.team.name if result.team else None,
+                prize=result.prize,
+            )
+            for result in sorted(tournament.results, key=lambda x: x.place)
+        ]
 
     return result
 
@@ -167,6 +170,7 @@ async def delete_team_from_tournament(
     )
     return table_to_response_form(tournament=tournament)
 
+
 @manager_tournament_router.patch(
     "/{tournament_name}/add_result/",
     status_code=status.HTTP_200_OK,
@@ -185,6 +189,7 @@ async def add_result_to_tournament(
     )
     return table_to_response_form(tournament)
 
+
 @manager_tournament_router.delete(
     "/{tournament_name}/delete_last_result/",
     status_code=status.HTTP_200_OK,
@@ -200,6 +205,7 @@ async def delete_last_result_from_tournament(
         tournament=tournament,
     )
     return table_to_response_form(tournament)
+
 
 @manager_tournament_router.patch(
     "/{tournament_name}/assign_team_to_result/",
@@ -220,6 +226,7 @@ async def assign_team_to_result(
         team=team,
     )
     return table_to_response_form(tournament)
+
 
 @manager_tournament_router.delete(
     "/{tournament_name}/remove_team_from_result/",
