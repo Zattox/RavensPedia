@@ -9,17 +9,17 @@ from ravenspedia.core.project_models.table_match import MatchStatus
 @pytest.mark.asyncio
 async def test_init_tournaments(authorized_admin_client: AsyncClient):
     tournament1 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 8,
         "name": "MSCL+",
-        "start_date": "2025-02-02",
+        "start_date": "2023-02-02",
         "end_date": "2025-02-12",
     }
     tournament2 = {
-        "max_count_of_teams": 2,
+        "max_count_of_teams": 8,
         "name": "Final MSCL",
         "prize": "200000 rub",
         "description": "Final Moscow Cybersport League",
-        "start_date": "2025-02-02",
+        "start_date": "2023-02-02",
         "end_date": "2025-02-12",
     }
 

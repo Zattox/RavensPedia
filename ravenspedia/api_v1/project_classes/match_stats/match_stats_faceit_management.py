@@ -84,7 +84,7 @@ async def add_match_stats_from_faceit(
     )
 
     response = await manual_update_match_status(
-        match.id,
+        match,
         MatchStatus.COMPLETED,
         session,
     )
