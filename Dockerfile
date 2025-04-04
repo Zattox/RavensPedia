@@ -21,13 +21,4 @@ COPY . .
 
 RUN poetry install
 
-RUN mkdir -p ravenspedia/certs && \
-    cd ravenspedia/certs && \
-    openssl genrsa -out jwt-private.pem 2048 && \
-    openssl rsa -in jwt-private.pem -pubout -out jwt-public.pem && \
-    openssl req -x509 -newkey rsa:4096 -nodes -days 365 \
-        -keyout key.pem -out cert.pem \
-        -subj "/C=RU/ST=Moscow-State/L=Moscow/O=HSE/OU=CourseProject/CN=90.156.158.26" && \
-    chmod 600 *.pem
-
 CMD ["poetry", "run", "python", "ravenspedia/main.py"]
