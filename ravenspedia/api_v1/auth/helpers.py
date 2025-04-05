@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 
 from ravenspedia.api_v1.auth.utils import encode_jwt
 from ravenspedia.core import TableUser
@@ -37,13 +37,23 @@ def create_access_token(user: TableUser, device_id: str) -> str:
     )
 
 
-def create_refresh_token(user: TableUser, device_id: str) -> str:
+def create_refresh_token(
+    user: TableUser,
+    device_id: str,
+    refresh_expire_time: datetime | None,
+) -> str:
     jwt_payload = {
         "sub": str(user.id),
     }
+
+    expire_timedelta = timedelta(days=auth_settings.refresh_token_expire_days)
+    if refresh_expire_time is not None:
+        now = datetime.now(timezone.utc)
+        expire_timedelta = refresh_expire_time - now
+
     return create_jwt(
         token_type=auth_settings.REFRESH_TOKEN_TYPE,
         token_data=jwt_payload,
         device_id=device_id,
-        expire_timedelta=timedelta(days=auth_settings.refresh_token_expire_days),
+        expire_timedelta=expire_timedelta,
     )

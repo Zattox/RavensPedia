@@ -42,6 +42,7 @@ async def create_tokens_for_user(
     user: TableUser,
     session: AsyncSession,
     device_id: str = str(uuid.uuid4()),
+    refresh_expire_time: datetime | None = None,
 ) -> AuthOutput:
     old_tokens = await session.scalars(
         select(TableToken).where(
@@ -53,8 +54,15 @@ async def create_tokens_for_user(
         setattr(token, "revoked", True)
     await session.commit()
 
-    access_token = create_access_token(user=user, device_id=device_id)
-    refresh_token = create_refresh_token(user=user, device_id=device_id)
+    access_token = create_access_token(
+        user=user,
+        device_id=device_id,
+    )
+    refresh_token = create_refresh_token(
+        user=user,
+        device_id=device_id,
+        refresh_expire_time=refresh_expire_time,
+    )
 
     await save_tokens_to_db(
         user=user,
@@ -120,6 +128,7 @@ async def authenticate_user(
     tokens: AuthOutput = await create_tokens_for_user(
         user=user,
         session=session,
+        refresh_expire_time=None,
     )
 
     return tokens
@@ -183,13 +192,6 @@ async def update_tokens(
             detail="Token revoked",
         )
 
-    expire_time = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
-    if expire_time < datetime.now(timezone.utc):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token expired",
-        )
-
     user = await session.scalar(
         select(TableUser).where(TableUser.id == token_in_db.subject_id)
     )
@@ -199,53 +201,20 @@ async def update_tokens(
             detail="User not found",
         )
 
-    old_tokens = await session.scalars(
-        select(TableToken).where(
-            TableToken.subject_id == user.id,
-            TableToken.device_id == device_id,
-        )
-    )
-    for token in old_tokens:
-        setattr(token, "revoked", True)
-
-    new_access_token = create_access_token(user=user, device_id=device_id)
-
-    decoded_access_token = utils.decode_jwt(new_access_token)
-    new_access_token_db = TableToken(
-        jti=decoded_access_token["jti"],
-        subject_id=user.id,
+    refresh_expire_time = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    new_tokens: AuthOutput = await create_tokens_for_user(
+        user=user,
+        session=session,
         device_id=device_id,
-        expired_time=decoded_access_token["exp"],
+        refresh_expire_time=refresh_expire_time,
     )
 
-    session.add(new_access_token_db)
-    await session.commit()
-
-    return AuthOutput(
-        access_token=new_access_token,
-        refresh_token=refresh_token,
-    )
+    return new_tokens
 
 
 async def delete_revoked_tokens(session: AsyncSession) -> None:
     await session.execute(delete(TableToken).where(TableToken.revoked == True))
     await session.commit()
-
-async def mark_expired_and_delete_revoked_tokens(session: AsyncSession) -> None:
-    current_time = datetime.now(timezone.utc)
-
-    expired_tokens = await session.scalars(
-        select(TableToken).where(
-            TableToken.expired_time < current_time,
-            TableToken.revoked == False
-        )
-    )
-
-    for token in expired_tokens:
-        setattr(token, "revoked", True)
-
-    await session.commit()
-    await delete_revoked_tokens(session)
 
 
 async def change_user_role(

@@ -2,27 +2,28 @@ import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ravenspedia.api_v1 import router as router_v1
-from ravenspedia.api_v1.auth.crud import mark_expired_and_delete_revoked_tokens
+from ravenspedia.api_v1.auth.crud import delete_revoked_tokens
 from ravenspedia.core import db_helper
 
-async def scheduled_mark_expired_and_delete_revoked_tokens():
+async def scheduled_delete_revoked_tokens():
     async with db_helper.session_factory() as session:
-        await mark_expired_and_delete_revoked_tokens(session)
+        await delete_revoked_tokens(session)
 
-def run_scheduled_task():
-    asyncio.run(scheduled_mark_expired_and_delete_revoked_tokens())
+
+def run_scheduled_delete():
+    asyncio.run(scheduled_delete_revoked_tokens())
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler = BackgroundScheduler()
+    scheduler = AsyncIOScheduler()
     scheduler.add_job(
-        run_scheduled_task,
+        run_scheduled_delete,
         "interval",
-        minutes=1,
+        minutes=20,
     )
     scheduler.start()
     yield
