@@ -33,7 +33,6 @@ async def search_entities(
 
     team_stmt = select(TableTeam).where(
         func.UNICODE_LOWER(TableTeam.name).contains(query)
-        | func.UNICODE_LOWER(TableTeam.description).contains(query)
     )
     team_result = await session.execute(team_stmt)
     teams = team_result.scalars().all()
@@ -47,7 +46,6 @@ async def search_entities(
 
     tournament_stmt = select(TableTournament).where(
         func.UNICODE_LOWER(TableTournament.name).contains(query)
-        | func.UNICODE_LOWER(TableTournament.description).contains(query)
     )
     tournament_result = await session.execute(tournament_stmt)
     tournaments = tournament_result.scalars().all()
