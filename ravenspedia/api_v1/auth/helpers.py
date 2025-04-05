@@ -1,10 +1,11 @@
 from datetime import timedelta, datetime, timezone
 
-from ravenspedia.api_v1.auth.utils import encode_jwt
 from ravenspedia.core import TableUser
 from ravenspedia.core.config import auth_settings
+from ravenspedia.api_v1.auth.utils import encode_jwt
 
 
+# Generic function to create a JWT token with specified type, data, device ID, and expiration.
 def create_jwt(
     token_type: str,
     token_data: dict,
@@ -25,6 +26,7 @@ def create_jwt(
     )
 
 
+# Function to create an access token for a user.
 def create_access_token(user: TableUser, device_id: str) -> str:
     jwt_payload = {
         "sub": str(user.id),
@@ -37,6 +39,7 @@ def create_access_token(user: TableUser, device_id: str) -> str:
     )
 
 
+# Function to create a refresh token for a user, with an optional expiration time.
 def create_refresh_token(
     user: TableUser,
     device_id: str,

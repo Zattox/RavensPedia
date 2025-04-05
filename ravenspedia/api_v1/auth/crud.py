@@ -6,13 +6,14 @@ from pydantic import EmailStr
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.api_v1.auth.utils import validate_password
-from ravenspedia.core import TableUser, TableToken
 from . import utils
 from .helpers import create_refresh_token, create_access_token
 from .schemas import UserCreate, AuthOutput, ChangeUserRoleRequest
+from ravenspedia.api_v1.auth.utils import validate_password
+from ravenspedia.core import TableUser, TableToken
 
 
+# Function to save access and refresh tokens to the database.
 async def save_tokens_to_db(
     user: TableUser,
     access_token: str,
@@ -38,6 +39,7 @@ async def save_tokens_to_db(
     await session.commit()
 
 
+# Function to create new tokens for a user, revoking any old tokens for the same device.
 async def create_tokens_for_user(
     user: TableUser,
     session: AsyncSession,
@@ -78,6 +80,7 @@ async def create_tokens_for_user(
     )
 
 
+# Function to create a new user in the database.
 async def create_user(
     user_in: UserCreate,
     session: AsyncSession,
@@ -92,11 +95,12 @@ async def create_user(
         password=utils.get_hash_password(user_in.password),
     )
     session.add(user)
-    await session.commit()  # Make changes to the database
+    await session.commit()
 
     return user
 
 
+# Function to register a new user and return tokens.
 async def register_user(
     user_in: UserCreate,
     session: AsyncSession,
@@ -110,6 +114,7 @@ async def register_user(
     return tokens
 
 
+# Function to authenticate a user and return tokens if successful.
 async def authenticate_user(
     email: EmailStr,
     password: str,
@@ -134,6 +139,7 @@ async def authenticate_user(
     return tokens
 
 
+# Function to log out a user by revoking their tokens.
 async def logout(
     access_token: str,
     refresh_token: str,
@@ -153,19 +159,21 @@ async def logout(
             TableToken.jti.in_([access_payload["jti"], refresh_payload["jti"]])
         )
     )
+    tokens_to_revoke_list = list(tokens_to_revoke)
 
-    if not tokens_to_revoke:
+    if not tokens_to_revoke_list:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Tokens not found",
         )
 
-    for token in tokens_to_revoke:
+    for token in tokens_to_revoke_list:
         setattr(token, "revoked", True)
 
     await session.commit()
 
 
+# Function to update tokens using the refresh token.
 async def update_tokens(
     refresh_token: str,
     session: AsyncSession,
@@ -212,11 +220,13 @@ async def update_tokens(
     return new_tokens
 
 
+# Function to delete all revoked tokens from the database.
 async def delete_revoked_tokens(session: AsyncSession) -> None:
     await session.execute(delete(TableToken).where(TableToken.revoked == True))
     await session.commit()
 
 
+# Function to change a user's role, with checks for valid roles and permissions.
 async def change_user_role(
     request: ChangeUserRoleRequest,
     super_admin: TableUser,

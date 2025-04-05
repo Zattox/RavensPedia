@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import db_helper, TableUser
 from . import crud, dependencies
 from .schemas import UserCreate, UserAuth, AuthOutput, ChangeUserRoleRequest
+from ravenspedia.core import db_helper, TableUser
 
 router = APIRouter(tags=["Auth"])
 
@@ -14,6 +14,7 @@ COOKIE_OPTIONS = {
 }
 
 
+# Endpoint to register a new user.
 @router.post("/register/")
 async def register_user(
     user_in: UserCreate,
@@ -39,6 +40,7 @@ async def register_user(
     return tokens
 
 
+# Endpoint to log in a user.
 @router.post("/login/")
 async def login(
     user_in: UserAuth,
@@ -59,18 +61,19 @@ async def login(
 
     response.set_cookie(
         key="user_access_token",
-        value=tokens.access_token,  # Use dot notation here
+        value=tokens.access_token,
         **COOKIE_OPTIONS,
     )
     response.set_cookie(
         key="user_refresh_token",
-        value=tokens.refresh_token,  # Use dot notation here
+        value=tokens.refresh_token,
         **COOKIE_OPTIONS,
     )
 
     return tokens
 
 
+# Endpoint to log out a user.
 @router.post("/logout/")
 async def logout(
     response: Response,
@@ -96,6 +99,7 @@ async def logout(
     return {"message": "The user has successfully logged out"}
 
 
+# Endpoint to refresh tokens.
 @router.post("/refresh/")
 async def refresh(
     response: Response,
@@ -122,6 +126,7 @@ async def refresh(
     return tokens
 
 
+# Endpoint to get the current user's information.
 @router.get("/me/")
 async def get_me(
     user_data: TableUser = Depends(dependencies.get_current_user),
@@ -132,6 +137,7 @@ async def get_me(
     }
 
 
+# Endpoint to change a user's role, restricted to super admins.
 @router.patch("/change_user_role/")
 async def change_user_role(
     request: ChangeUserRoleRequest,
