@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from ravenspedia.core import db_helper
 from .crud import search_entities
 from .schemes import SearchResult
@@ -7,6 +8,7 @@ from .schemes import SearchResult
 router = APIRouter(tags=["Search"])
 
 
+# Define the search endpoint for GET requests
 @router.get(
     "/",
     response_model=SearchResult,
