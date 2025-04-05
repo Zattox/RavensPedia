@@ -63,7 +63,7 @@ async def test_refresh_token(authorized_client: AsyncClient):
 
     new_refresh = response.cookies.get("user_refresh_token")
     assert new_refresh is not None
-    assert new_refresh == original_refresh
+    assert new_refresh != original_refresh
 
 
 @pytest.mark.asyncio
