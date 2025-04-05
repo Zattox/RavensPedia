@@ -4,7 +4,7 @@ from typing import Union
 from pydantic import BaseModel
 
 
-# The base class for the Match (without id)
+# Base schema for news.
 class NewsBase(BaseModel):
     title: str
     content: str
@@ -12,21 +12,23 @@ class NewsBase(BaseModel):
     author: str
 
 
+# Schema for creating a new news entry, excluding created_at (set by server).
 class NewsCreate(BaseModel):
     title: str
     content: str
     author: str
 
 
+# Schema for updating news, allowing partial updates with optional fields.
 class NewsGeneralInfoUpdate(BaseModel):
-    title: Union[str | None] = None
-    content: Union[str | None] = None
-    author: Union[str | None] = None
+    title: Union[str, None] = None
+    content: Union[str, None] = None
+    author: Union[str, None] = None
 
 
-# The main class for work with a Match
+# Response schema for news, including ID for API responses.
 class ResponseNews(NewsBase):
-    id: int
+    id: int  # News id in the database.
 
     class Config:
-        from_attributes = True  # Enables compatibility with ORM models
+        from_attributes = True  # Enables compatibility with ORM models.
