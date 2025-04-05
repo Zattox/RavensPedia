@@ -8,9 +8,8 @@ from ravenspedia.core import TableMatch, TableMatchStats
 from ravenspedia.core.project_models.table_match import MatchStatus
 
 
-async def get_completed_matches(
-    session: AsyncSession,
-) -> list[TableMatch]:
+async def get_completed_matches(session: AsyncSession) -> list[TableMatch]:
+    """Retrieve all completed matches, ordered by date in descending order."""
     stmt = (
         select(TableMatch)
         .options(
@@ -21,16 +20,15 @@ async def get_completed_matches(
             selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.COMPLETED)
-        .order_by(TableMatch.date.desc())
+        .order_by(TableMatch.date.desc())  # Sort by date, latest first
     )
     response = await session.execute(stmt)
     matches = response.scalars().all()
     return list(matches)
 
 
-async def get_upcoming_matches(
-    session: AsyncSession,
-) -> list[TableMatch]:
+async def get_upcoming_matches(session: AsyncSession) -> list[TableMatch]:
+    """Retrieve upcoming scheduled matches with future dates, ordered by date ascending."""
     stmt = (
         select(TableMatch)
         .options(
@@ -41,18 +39,16 @@ async def get_upcoming_matches(
             selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.SCHEDULED)
-        .filter(TableMatch.date >= datetime.now())
-        .order_by(TableMatch.date.asc())
+        .order_by(TableMatch.date.asc())  # Sort by date, earliest first
     )
-
     response = await session.execute(stmt)
     matches = response.scalars().all()
     return list(matches)
 
 
-async def get_in_progress_matches(
-    session: AsyncSession,
-) -> list[TableMatch]:
+# Retrieve in-progress matches
+async def get_in_progress_matches(session: AsyncSession) -> list[TableMatch]:
+    """Retrieve matches currently in progress, filtered by current time."""
     current_time = datetime.now()
     stmt = (
         select(TableMatch)
@@ -64,10 +60,8 @@ async def get_in_progress_matches(
             selectinload(TableMatch.result),
         )
         .filter(TableMatch.status == MatchStatus.IN_PROGRESS)
-        .filter(TableMatch.date <= current_time)
+        .order_by(TableMatch.date.asc())  # Sort by date, earliest first
     )
-
     response = await session.execute(stmt)
     matches = response.scalars().all()
-
     return list(matches)

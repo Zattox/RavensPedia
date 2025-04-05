@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from fastapi import status, HTTPException
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,9 +13,9 @@ async def manual_update_match_status(
     new_status: MatchStatus,
     session: AsyncSession,
 ) -> TableMatch:
+    """Manually update the status of a given match and commit the change to the database."""
     setattr(match, "status", new_status)
     await session.commit()
-
     return match
 
 
@@ -25,23 +24,24 @@ async def manual_update_tournament_status(
     new_status: TournamentStatus,
     session: AsyncSession,
 ) -> TableTournament:
+    """Manually update the status of a given tournament and commit the change to the database."""
     setattr(tournament, "status", new_status)
     await session.commit()
-
     return tournament
 
 
-async def auto_update_matches_statuses(
-    session: AsyncSession,
-) -> dict:
+async def auto_update_matches_statuses(session: AsyncSession) -> dict:
+    """Automatically update match statuses based on their dates relative to the current time."""
     current_time = datetime.now()
 
+    # Update future matches to SCHEDULED
     await session.execute(
         update(TableMatch)
         .where(TableMatch.date > current_time)
         .values(status=MatchStatus.SCHEDULED)
     )
 
+    # Update past or current scheduled matches to IN_PROGRESS
     await session.execute(
         update(TableMatch)
         .where(
@@ -55,17 +55,18 @@ async def auto_update_matches_statuses(
     return {"message": "Matches statuses updated successfully"}
 
 
-async def auto_update_tournaments_statuses(
-    session: AsyncSession,
-) -> dict:
+async def auto_update_tournaments_statuses(session: AsyncSession) -> dict:
+    """Automatically update tournament statuses based on their start and end dates."""
     current_time = datetime.now()
 
+    # Update past tournaments to COMPLETED
     await session.execute(
         update(TableTournament)
         .where(TableTournament.end_date <= current_time)
         .values(status=TournamentStatus.COMPLETED)
     )
 
+    # Update current tournaments to IN_PROGRESS
     await session.execute(
         update(TableTournament)
         .where(
@@ -75,6 +76,7 @@ async def auto_update_tournaments_statuses(
         .values(status=TournamentStatus.IN_PROGRESS)
     )
 
+    # Update future tournaments to SCHEDULED
     await session.execute(
         update(TableTournament)
         .where(TableTournament.start_date > current_time)

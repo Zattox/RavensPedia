@@ -19,6 +19,8 @@ __all__ = (
     "TableMapPickBanInfo",
     "TableTeamMapStats",
     "TableTournamentResult",
+    "MatchStatus",
+    "TournamentStatus",
 )
 
 from .associations_models import (
@@ -40,4 +42,6 @@ from .project_models import (
     TableMapPickBanInfo,
     TableTeamMapStats,
     TableTournamentResult,
+    MatchStatus,
+    TournamentStatus,
 )
