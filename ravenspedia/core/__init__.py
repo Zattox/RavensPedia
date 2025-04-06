@@ -21,6 +21,15 @@ __all__ = (
     "TableTournamentResult",
     "MatchStatus",
     "TournamentStatus",
+    "RoundInfo",
+    "RoundStats",
+    "TeamInfo",
+    "TeamStats",
+    "PlayerStats",
+    "PlayerInfo",
+    "GeneralPlayerStats",
+    "MapStatus",
+    "MapName",
 )
 
 from .associations_models import (
@@ -31,6 +40,15 @@ from .associations_models import (
 from .auth_models import TableUser, TableToken
 from .base import Base
 from .db_helper import db_helper, DatabaseHelper, test_db_helper
+from .faceit_models import (
+    PlayerStats,
+    PlayerInfo,
+    RoundInfo,
+    RoundStats,
+    TeamInfo,
+    TeamStats,
+    GeneralPlayerStats,
+)
 from .project_models import (
     TableTeam,
     TableMatch,
@@ -44,4 +62,6 @@ from .project_models import (
     TableTournamentResult,
     MatchStatus,
     TournamentStatus,
+    MapStatus,
+    MapName,
 )
