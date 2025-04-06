@@ -15,14 +15,12 @@ router = APIRouter(tags=["Team Stats"])
 def table_to_response_form(
     map_stats: TableTeamMapStats,
 ) -> ResponseTeamMapStats:
-    result = ResponseTeamMapStats(
+    return ResponseTeamMapStats(
         map=map_stats.map,
         matches_won=map_stats.matches_won,
         matches_played=map_stats.matches_played,
         win_rate=map_stats.win_rate,
     )
-
-    return result
 
 
 @router.get(

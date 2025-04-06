@@ -21,7 +21,6 @@ manager_match_router = APIRouter(tags=["Matches Manager"])
 # Convert a TableMatch object to a ResponseMatch schema for API responses.
 def table_to_response_form(
     match: TableMatch,
-    is_create: bool = False,
 ) -> ResponseMatch:
     result = ResponseMatch(
         id=match.id,
@@ -37,13 +36,12 @@ def table_to_response_form(
         result=[],
     )
 
-    if not is_create:
-        # Populate additional fields if the match is not being created
-        result.teams = [team.name for team in match.teams]
-        result.players = list({elem.player.nickname for elem in match.stats})
-        result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
-        result.veto = [elem for elem in match.veto]
-        result.result = [elem for elem in match.result]
+    # Populate additional fields if the match is not being created
+    result.teams = [team.name for team in match.teams]
+    result.players = list({elem.player.nickname for elem in match.stats})
+    result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
+    result.veto = [elem for elem in match.veto]
+    result.result = [elem for elem in match.result]
 
     return result
 
@@ -94,7 +92,7 @@ async def create_match(
         session=session,
         match_in=match_in,
     )
-    return table_to_response_form(match=match, is_create=True)
+    return table_to_response_form(match=match)
 
 
 # Update general information of a match (admin only).

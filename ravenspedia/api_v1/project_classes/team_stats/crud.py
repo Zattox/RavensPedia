@@ -75,5 +75,3 @@ async def delete_team_map_stats(
     await session.commit()
 
     return team
-
-    pass

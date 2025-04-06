@@ -3,12 +3,12 @@ from datetime import datetime
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TableTournament, TableTournamentResult
 from ravenspedia.core.project_models.table_tournament import TournamentStatus
-from .dependencies import get_tournament_by_id, get_tournament_by_name
+from .dependencies import get_tournament_by_name
 from .schemes import TournamentCreate, TournamentGeneralInfoUpdate
 
 
@@ -20,7 +20,9 @@ async def get_tournaments(session: AsyncSession) -> list[TableTournament]:
             selectinload(TableTournament.players),
             selectinload(TableTournament.teams),
             selectinload(TableTournament.matches),
-            selectinload(TableTournament.results).selectinload(TableTournamentResult.team),
+            selectinload(TableTournament.results).selectinload(
+                TableTournamentResult.team
+            ),
         )
         .order_by(TableTournament.id)
     )
@@ -68,6 +70,10 @@ async def create_tournament(
             detail=f"Tournament {tournament_in.name} already exists",
         )
 
+    await session.refresh(
+        tournament,
+        attribute_names=["players", "teams", "matches", "results"],
+    )
     return tournament
 
 

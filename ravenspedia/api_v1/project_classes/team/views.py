@@ -13,7 +13,6 @@ manager_team_router = APIRouter(tags=["Teams Manager"])
 
 def table_to_response_form(
     team: TableTeam,
-    is_create: bool = False,
 ) -> ResponseTeam:
     result = ResponseTeam(
         name=team.name,
@@ -22,11 +21,13 @@ def table_to_response_form(
         average_faceit_elo=team.average_faceit_elo,
     )
 
-    if not is_create:
-        result.players = [player.nickname for player in team.players]
-        result.matches_id = [match.id for match in team.matches]
-        result.tournaments = [tournament.name for tournament in team.tournaments]
-        result.tournament_results=[{"place":result.place, "tournament_name": result.tournament.name} for result in team.tournament_results]
+    result.players = [player.nickname for player in team.players]
+    result.matches_id = [match.id for match in team.matches]
+    result.tournaments = [tournament.name for tournament in team.tournaments]
+    result.tournament_results = [
+        {"place": result.place, "tournament_name": result.tournament.name}
+        for result in team.tournament_results
+    ]
 
     return result
 
@@ -77,7 +78,7 @@ async def create_team(
         session=session,
         team_in=team_in,
     )
-    return table_to_response_form(team=team, is_create=True)
+    return table_to_response_form(team=team)
 
 
 @router.patch(

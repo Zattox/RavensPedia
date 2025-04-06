@@ -84,6 +84,10 @@ async def create_match(
 
     session.add(match)
     await session.commit()
+    await session.refresh(
+        match,
+        attribute_names=["stats", "teams", "tournament", "veto", "result"],
+    )
     return match
 
 

@@ -12,7 +12,6 @@ router = APIRouter(tags=["Players"])
 
 def table_to_response_form(
     player: TablePlayer,
-    is_create: bool = False,
 ) -> ResponsePlayer:
     result = ResponsePlayer(
         steam_id=player.steam_id,
@@ -24,18 +23,17 @@ def table_to_response_form(
         stats=[],
     )
 
-    if not is_create:
-        result.matches = [
-            {
-                "match_id": elem.match_stats["match_id"],
-                "round_of_match": elem.match_stats["round_of_match"],
-            }
-            for elem in player.stats
-        ]
-        result.tournaments = [tournament.name for tournament in player.tournaments]
-        if player.team is not None:
-            result.team = player.team.name
-        result.stats = [PlayerStats(**elem.match_stats) for elem in player.stats]
+    result.matches = [
+        {
+            "match_id": elem.match_stats["match_id"],
+            "round_of_match": elem.match_stats["round_of_match"],
+        }
+        for elem in player.stats
+    ]
+    result.tournaments = [tournament.name for tournament in player.tournaments]
+    if player.team is not None:
+        result.team = player.team.name
+    result.stats = [PlayerStats(**elem.match_stats) for elem in player.stats]
 
     return result
 
@@ -98,7 +96,7 @@ async def create_player(
         session=session,
         player_in=player_in,
     )
-    return table_to_response_form(player, is_create=True)
+    return table_to_response_form(player)
 
 
 @router.patch(

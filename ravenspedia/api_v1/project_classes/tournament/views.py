@@ -18,7 +18,6 @@ manager_tournament_router = APIRouter(tags=["Tournaments Manager"])
 
 def table_to_response_form(
     tournament: TableTournament,
-    is_create: bool = False,
 ) -> ResponseTournament:
     result = ResponseTournament(
         name=tournament.name,
@@ -30,18 +29,17 @@ def table_to_response_form(
         end_date=tournament.end_date,
     )
 
-    if not is_create:
-        result.matches_id = [match.id for match in tournament.matches]
-        result.teams = [team.name for team in tournament.teams]
-        result.players = [player.nickname for player in tournament.players]
-        result.results = [
-            TournamentResult(
-                place=result.place,
-                team=result.team.name if result.team else None,
-                prize=result.prize,
-            )
-            for result in sorted(tournament.results, key=lambda x: x.place)
-        ]
+    result.matches_id = [match.id for match in tournament.matches]
+    result.teams = [team.name for team in tournament.teams]
+    result.players = [player.nickname for player in tournament.players]
+    result.results = [
+        TournamentResult(
+            place=result.place,
+            team=result.team.name if result.team else None,
+            prize=result.prize,
+        )
+        for result in sorted(tournament.results, key=lambda x: x.place)
+    ]
 
     return result
 
@@ -94,7 +92,7 @@ async def create_tournament(
         session=session,
         tournament_in=tournament_in,
     )
-    return table_to_response_form(tournament=tournament, is_create=True)
+    return table_to_response_form(tournament=tournament)
 
 
 # A view for partial or full update a tournament in the database

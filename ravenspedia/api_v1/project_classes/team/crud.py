@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import TableTeam, TableTournamentResult, TableTournament
+from ravenspedia.core import TableTeam, TableTournamentResult
 from ravenspedia.core.project_models.table_match_info import MapName
 from ravenspedia.core.project_models.table_team_stats import TableTeamMapStats
 from .dependencies import get_team_by_name
@@ -21,8 +21,12 @@ async def get_teams(session: AsyncSession) -> list[TableTeam]:
             selectinload(TableTeam.players),
             selectinload(TableTeam.matches),
             selectinload(TableTeam.tournaments),
-            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.team),
-            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.tournament),
+            selectinload(TableTeam.tournament_results).selectinload(
+                TableTournamentResult.team
+            ),
+            selectinload(TableTeam.tournament_results).selectinload(
+                TableTournamentResult.tournament
+            ),
         )
         .order_by(TableTeam.id)
     )
@@ -66,7 +70,10 @@ async def create_team(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Team {team_in.name} already exists",
         )
-
+    await session.refresh(
+        team,
+        attribute_names=["players", "matches", "tournaments", "tournament_results"],
+    )
     return team
 
 
@@ -117,7 +124,9 @@ async def update_team_faceit_elo(
             selectinload(TableTeam.players),
             selectinload(TableTeam.matches),
             selectinload(TableTeam.tournaments),
-            selectinload(TableTeam.tournament_results).selectinload(TableTournamentResult.team),
+            selectinload(TableTeam.tournament_results).selectinload(
+                TableTournamentResult.team
+            ),
         )
         .order_by(TableTeam.id)
     )
