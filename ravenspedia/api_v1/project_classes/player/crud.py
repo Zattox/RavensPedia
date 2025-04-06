@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from ravenspedia.core import TablePlayer
 from ravenspedia.core.config import faceit_settings
-from .dependencies import get_player_by_id, get_player_by_nickname
+from .dependencies import get_player_by_nickname
 from .schemes import PlayerCreate, PlayerGeneralInfoUpdate
 
 
@@ -88,6 +88,7 @@ async def create_player(
             detail=f"A player with such data already exists",
         )
 
+    await session.refresh(player, attribute_names=["tournaments", "stats", "team"])
     return player
 
 

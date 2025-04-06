@@ -20,144 +20,143 @@ class PlayerStats(BaseModel):
     )  # The percentage of kills per head
 
     # -----------------Additional Stats----------------- #
-
-    mvps: Union[int | None] = Field(
-        ..., alias="MVPs"
+    mvps: Union[int, None] = Field(
+        None, alias="MVPs"
     )  # Number of awards for the "Most Valuable Player" per match
-    damage: Union[int | None] = Field(
-        ..., alias="Damage"
+    damage: Union[int, None] = Field(
+        None, alias="Damage"
     )  # Total amount of damage done per match
-    headshots: Union[int | None] = Field(
-        ..., alias="Headshots"
+    headshots: Union[int, None] = Field(
+        None, alias="Headshots"
     )  # Number of headshots per match
 
-    kd: Union[float | None] = Field(
-        ..., alias="K/D Ratio"
+    kd: Union[float, None] = Field(
+        None, alias="K/D Ratio"
     )  # Kills divided by deaths (K/D)
-    kpr: Union[float | None] = Field(
-        ..., alias="K/R Ratio"
+    kpr: Union[float, None] = Field(
+        None, alias="K/R Ratio"
     )  # Kills divided by rounds (KPR)
 
     # --------------------Multikills-------------------- #
-    double: Union[int | None] = Field(
-        ..., alias="Double Kills"
+    double: Union[int, None] = Field(
+        None, alias="Double Kills"
     )  # The number of rounds where exactly 2 kills were made
-    triple: Union[int | None] = Field(
-        ..., alias="Triple Kills"
+    triple: Union[int, None] = Field(
+        None, alias="Triple Kills"
     )  # The number of rounds where exactly 3 kills were made
-    quadro: Union[int | None] = Field(
-        ..., alias="Quadro Kills"
+    quadro: Union[int, None] = Field(
+        None, alias="Quadro Kills"
     )  # The number of rounds where exactly 4 kills were made
-    penta: Union[int | None] = Field(
-        ..., alias="Penta Kills"
+    penta: Union[int, None] = Field(
+        None, alias="Penta Kills"
     )  # The number of rounds where exactly 5 kills were made
 
     # ----------------------Clutch---------------------- #
-    clutch_kills: Union[int | None] = Field(
-        ..., alias="Clutch Kills"
+    clutch_kills: Union[int, None] = Field(
+        None, alias="Clutch Kills"
     )  # The number of clutch kills
-    count_1v1: Union[int | None] = Field(
-        ..., alias="1v1Count"
+    count_1v1: Union[int, None] = Field(
+        None, alias="1v1Count"
     )  # Number of clutch situations 1vs1
-    count_1v2: Union[int | None] = Field(
-        ..., alias="1v2Count"
+    count_1v2: Union[int, None] = Field(
+        None, alias="1v2Count"
     )  # Number of clutch situations 1vs2
-    wins_1v1: Union[int | None] = Field(
-        ..., alias="1v1Wins"
+    wins_1v1: Union[int, None] = Field(
+        None, alias="1v1Wins"
     )  # Number of wins in a 1vs1 clutch situation
-    wins_1v2: Union[int | None] = Field(
-        ..., alias="1v2Wins"
+    wins_1v2: Union[int, None] = Field(
+        None, alias="1v2Wins"
     )  # Number of wins in a 1vs2 clutch situation
-    match_1v1_win_rate: Union[float | None] = Field(
-        ..., alias="Match 1v1 Win Rate"
+    match_1v1_win_rate: Union[float, None] = Field(
+        None, alias="Match 1v1 Win Rate"
     )  # Win rate in 1vs1
-    match_1v2_win_rate: Union[float | None] = Field(
-        ..., alias="Match 1v2 Win Rate"
+    match_1v2_win_rate: Union[float, None] = Field(
+        None, alias="Match 1v2 Win Rate"
     )  # Win rate in 1vs2
 
     # ---------------------Entries--------------------- #
-    first_kills: Union[int | None] = Field(
-        ..., alias="First Kills"
+    first_kills: Union[int, None] = Field(
+        None, alias="First Kills"
     )  # The number of first kill
-    entry_count: Union[int | None] = Field(
-        ..., alias="Entry Count"
+    entry_count: Union[int, None] = Field(
+        None, alias="Entry Count"
     )  # The number of first duels
-    entry_wins: Union[int | None] = Field(
-        ..., alias="Entry Wins"
+    entry_wins: Union[int, None] = Field(
+        None, alias="Entry Wins"
     )  # The number of wins in the first duels
-    match_entry_rate: Union[float | None] = Field(
-        ..., alias="Match Entry Rate"
+    match_entry_rate: Union[float, None] = Field(
+        None, alias="Match Entry Rate"
     )  # The number of participants in the first duels
-    match_entry_success_rate: Union[float | None] = Field(
-        ..., alias="Match Entry Success Rate"
+    match_entry_success_rate: Union[float, None] = Field(
+        None, alias="Match Entry Success Rate"
     )  # Win rate in the first duels
 
     # ----------------------Sniper---------------------- #
-    sniper_kills: Union[int | None] = Field(
-        ..., alias="Sniper Kills"
+    sniper_kills: Union[int, None] = Field(
+        None, alias="Sniper Kills"
     )  # Number of sniper kills
-    sniper_kill_rate_per_round: Union[float | None] = Field(
-        ..., alias="Sniper Kill Rate per Round"
+    sniper_kill_rate_per_round: Union[float, None] = Field(
+        None, alias="Sniper Kill Rate per Round"
     )  # Number of sniper kills per round
-    sniper_kill_rate_per_match: Union[float | None] = Field(
-        ..., alias="Sniper Kill Rate per Match"
+    sniper_kill_rate_per_match: Union[float, None] = Field(
+        None, alias="Sniper Kill Rate per Match"
     )  # ???
 
     # ------------------Special Kills------------------ #
-    pistol_kills: Union[float | None] = Field(
-        ..., alias="Pistol Kills"
+    pistol_kills: Union[float, None] = Field(
+        None, alias="Pistol Kills"
     )  # Number of pistol kills
-    knife_kills: Union[int | None] = Field(
-        ..., alias="Knife Kills"
+    knife_kills: Union[int, None] = Field(
+        None, alias="Knife Kills"
     )  # Number of knife kills
-    zeus_kills: Union[float | None] = Field(
-        ..., alias="Zeus Kills"
+    zeus_kills: Union[float, None] = Field(
+        None, alias="Zeus Kills"
     )  # Number of zeus kills
 
     # ---------------------Utility--------------------- #
-    utility_count: Union[int | None] = Field(
-        ..., alias="Utility Count"
+    utility_count: Union[int, None] = Field(
+        None, alias="Utility Count"
     )  # Number of utility
-    utility_successes: Union[int | None] = Field(
-        ..., alias="Utility Successes"
+    utility_successes: Union[int, None] = Field(
+        None, alias="Utility Successes"
     )  # Number of helpful utility
-    utility_enemies: Union[int | None] = Field(..., alias="Utility Enemies")  # ???
-    utility_damage: Union[int | None] = Field(
-        ..., alias="Utility Damage"
+    utility_enemies: Union[int, None] = Field(None, alias="Utility Enemies")  # ???
+    utility_damage: Union[int, None] = Field(
+        None, alias="Utility Damage"
     )  # Utility damage per match
 
     # --------------Average Utility Stats-------------- #
-    utility_usage_per_round: Union[float | None] = Field(
-        ..., alias="Utility Usage per Round"
+    utility_usage_per_round: Union[float, None] = Field(
+        None, alias="Utility Usage per Round"
     )
-    utility_damage_success_rate_per_match: Union[float | None] = Field(
-        ..., alias="Utility Damage Success Rate per Match"
+    utility_damage_success_rate_per_match: Union[float, None] = Field(
+        None, alias="Utility Damage Success Rate per Match"
     )
-    utility_successes_rate_per_match: Union[float | None] = Field(
-        ..., alias="Utility Success Rate per Match"
+    utility_successes_rate_per_match: Union[float, None] = Field(
+        None, alias="Utility Success Rate per Match"
     )
-    utility_damage_per_round_in_a_match: Union[float | None] = Field(
-        ..., alias="Utility Damage per Round in a Match"
+    utility_damage_per_round_in_a_match: Union[float, None] = Field(
+        None, alias="Utility Damage per Round in a Match"
     )
 
     # ----------------------Flash---------------------- #
-    flash_count: Union[int | None] = Field(..., alias="Flash Count")  # Number of flash
-    enemies_flashed: Union[int | None] = Field(
-        ..., alias="Enemies Flashed"
+    flash_count: Union[int, None] = Field(None, alias="Flash Count")  # Number of flash
+    enemies_flashed: Union[int, None] = Field(
+        None, alias="Enemies Flashed"
     )  # The number of enemies blinded by the flash
-    flash_successes: Union[int | None] = Field(
-        ..., alias="Flash Successes"
+    flash_successes: Union[int, None] = Field(
+        None, alias="Flash Successes"
     )  # Number of helpful flash
 
     # ---------------Average Flash Stats--------------- #
-    flashes_per_round_in_a_match: Union[float | None] = Field(
-        ..., alias="Flashes per Round in a Match"
+    flashes_per_round_in_a_match: Union[float, None] = Field(
+        None, alias="Flashes per Round in a Match"
     )
-    enemies_flashed_per_round_in_a_match: Union[float | None] = Field(
-        ..., alias="Enemies Flashed per Round in a Match"
+    enemies_flashed_per_round_in_a_match: Union[float, None] = Field(
+        None, alias="Enemies Flashed per Round in a Match"
     )
-    flash_success_rate_per_match: Union[float | None] = Field(
-        ..., alias="Flash Success Rate per Match"
+    flash_success_rate_per_match: Union[float, None] = Field(
+        None, alias="Flash Success Rate per Match"
     )
 
 
