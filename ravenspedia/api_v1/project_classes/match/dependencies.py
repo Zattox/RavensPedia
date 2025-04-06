@@ -6,15 +6,23 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import db_helper, TableMatch, TableMatchStats, TableTeam, TableTournament
+from ravenspedia.core import (
+    db_helper,
+    TableMatch,
+    TableMatchStats,
+    TableTeam,
+    TableTournament,
+)
 from ravenspedia.core.config import faceit_settings
 
 
-# A function for get a match from the database by id
 async def get_match_by_id(
     match_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> TableMatch:
+    """
+    Retrieve a match from the database by its ID, with related data.
+    """
     match = await session.scalar(
         select(TableMatch)
         .where(TableMatch.id == match_id)
@@ -27,7 +35,7 @@ async def get_match_by_id(
         ),
     )
 
-    # If such an id does not exist, then throw an exception.
+    # Raise an exception if the match is not found
     if match is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -38,6 +46,9 @@ async def get_match_by_id(
 
 
 async def find_steam_id_by_faceit_id(faceit_id: str) -> str:
+    """
+    Retrieve a player's Steam ID using their Faceit ID via the Faceit API.
+    """
     headers = {
         "Accept": "application/json",
         "Authorization": f"Bearer {faceit_settings.api_key}",

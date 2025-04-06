@@ -1,18 +1,24 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import db_helper, TableMatch, TableTeam, TableUser
-from ravenspedia.core.faceit_models.general_player_stats import GeneralPlayerStats
+from ravenspedia.core import (
+    db_helper,
+    TableMatch,
+    TableTeam,
+    TableUser,
+    GeneralPlayerStats,
+)
 from . import crud, dependencies, match_management
 from .dependencies import get_match_by_id
 from .schemes import ResponseMatch, MatchCreate, MatchGeneralInfoUpdate
-from ..team.dependencies import get_team_by_name
+from ..team import get_team_by_name
 from ...auth.dependencies import get_current_admin_user
 
 router = APIRouter(tags=["Matches"])
 manager_match_router = APIRouter(tags=["Matches Manager"])
 
 
+# Convert a TableMatch object to a ResponseMatch schema for API responses.
 def table_to_response_form(
     match: TableMatch,
     is_create: bool = False,
@@ -32,6 +38,7 @@ def table_to_response_form(
     )
 
     if not is_create:
+        # Populate additional fields if the match is not being created
         result.teams = [team.name for team in match.teams]
         result.players = list({elem.player.nickname for elem in match.stats})
         result.stats = [GeneralPlayerStats(**elem.match_stats) for elem in match.stats]
@@ -41,7 +48,7 @@ def table_to_response_form(
     return result
 
 
-# A view to get all the matches from the database
+# Retrieve all matches from the database.
 @router.get(
     "/",
     response_model=list[ResponseMatch],
@@ -55,7 +62,7 @@ async def get_matches(
     return result
 
 
-# A view for getting a match by its id from the database
+# Retrieve a specific match by its ID.
 @router.get(
     "/{match_id}/",
     response_model=ResponseMatch,
@@ -72,7 +79,7 @@ async def get_match(
     return table_to_response_form(match=match)
 
 
-# A view for create a match in the database
+# Create a new match in the database (admin only).
 @router.post(
     "/",
     response_model=ResponseMatch,
@@ -80,7 +87,7 @@ async def get_match(
 )
 async def create_match(
     match_in: MatchCreate,
-    admin: TableUser = Depends(get_current_admin_user),
+    admin: TableUser = Depends(get_current_admin_user),  # Ensure user is admin
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
     match = await crud.create_match(
@@ -90,7 +97,7 @@ async def create_match(
     return table_to_response_form(match=match, is_create=True)
 
 
-# A view for partial or full update a match in the database
+# Update general information of a match (admin only).
 @router.patch(
     "/{match_id}/",
     response_model=ResponseMatch,
@@ -98,7 +105,7 @@ async def create_match(
 )
 async def update_general_match_info(
     match_update: MatchGeneralInfoUpdate,
-    admin: TableUser = Depends(get_current_admin_user),
+    admin: TableUser = Depends(get_current_admin_user),  # Ensure user is admin
     match: TableMatch = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponseMatch:
@@ -110,13 +117,13 @@ async def update_general_match_info(
     return table_to_response_form(match=match)
 
 
-# A view for delete a match from the database
+# Delete a match from the database (admin only).
 @router.delete(
     "/{match_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_match(
-    admin: TableUser = Depends(get_current_admin_user),
+    admin: TableUser = Depends(get_current_admin_user),  # Ensure user is admin
     match: TableMatch = Depends(dependencies.get_match_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
@@ -126,13 +133,14 @@ async def delete_match(
     )
 
 
+# Add a team to a match (admin only).
 @manager_match_router.patch(
     "/{match_id}/add_team/{team_name}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
 async def add_team_in_match(
-    admin: TableUser = Depends(get_current_admin_user),
+    admin: TableUser = Depends(get_current_admin_user),  # Ensure user is admin
     match: TableMatch = Depends(get_match_by_id),
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),
@@ -145,13 +153,14 @@ async def add_team_in_match(
     return table_to_response_form(match=match)
 
 
+# Remove a team from a match (admin only).
 @manager_match_router.delete(
     "/{match_id}/delete_team/{team_name}/",
     status_code=status.HTTP_200_OK,
     response_model=ResponseMatch,
 )
 async def delete_team_from_match(
-    admin: TableUser = Depends(get_current_admin_user),
+    admin: TableUser = Depends(get_current_admin_user),  # Ensure user is admin
     match: TableMatch = Depends(get_match_by_id),
     team: TableTeam = Depends(get_team_by_name),
     session: AsyncSession = Depends(db_helper.session_dependency),

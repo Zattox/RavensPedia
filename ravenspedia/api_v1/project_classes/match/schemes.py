@@ -3,15 +3,11 @@ from typing import Union, List
 
 from pydantic import BaseModel
 
-from ravenspedia.api_v1.project_classes.match_stats.schemes import (
-    MapPickBanInfo,
-    MapResultInfo,
-)
-from ravenspedia.core.faceit_models import PlayerStats
-from ravenspedia.core.project_models.table_match import MatchStatus
+from ravenspedia.core import MatchStatus, PlayerStats
+from ..match_stats import MapPickBanInfo, MapResultInfo
 
 
-# The base class for the Match (without id)
+#  Base Pydantic model for a match, excluding the ID.
 class MatchBase(BaseModel):
     best_of: int
     max_number_of_teams: int
@@ -26,6 +22,7 @@ class MatchBase(BaseModel):
     result: List[MapResultInfo] = []
 
 
+# Pydantic model for creating a new match.
 class MatchCreate(BaseModel):
     best_of: int
     max_number_of_teams: int
@@ -35,16 +32,17 @@ class MatchCreate(BaseModel):
     description: Union[str | None] = None
 
 
+# Pydantic model for updating general match information.
 class MatchGeneralInfoUpdate(BaseModel):
     tournament: Union[str | None] = None
     date: Union[datetime | None] = None
     description: Union[str | None] = None
 
 
-# The main class for work with a Match
+# Pydantic model for match response data.
 class ResponseMatch(MatchBase):
     id: int
     status: MatchStatus
 
     class Config:
-        from_attributes = True  # Enables compatibility with ORM models
+        from_attributes = True  # Enables compatibility with ORM models.
