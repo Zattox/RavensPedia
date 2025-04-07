@@ -2,17 +2,25 @@ import requests
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import TablePlayer
-from ravenspedia.core.config import faceit_settings
 from .dependencies import get_player_by_nickname
 from .schemes import PlayerCreate, PlayerGeneralInfoUpdate
 
+from ravenspedia.core import TablePlayer
+from ravenspedia.core.config import faceit_settings
 
-# A function to get all the Players from the database
+headers = {
+    "Accept": "application/json",
+    "Authorization": f"Bearer {faceit_settings.api_key}",
+}
+
+
 async def get_players(session: AsyncSession) -> list[TablePlayer]:
+    """
+    Retrieve all players from the database.
+    """
     statement = (
         select(TablePlayer)
         .options(
@@ -22,15 +30,18 @@ async def get_players(session: AsyncSession) -> list[TablePlayer]:
         )
         .order_by(TablePlayer.id)
     )
+    
     players = await session.scalars(statement)
     return list(players)
 
 
-# A function for getting a Player by its id from the database
 async def get_player(
     session: AsyncSession,
     player_nickname: str,
 ) -> TablePlayer | None:
+    """
+    Retrieve a player by their nickname.
+    """
     player = await get_player_by_nickname(
         session=session,
         player_nickname=player_nickname,
@@ -41,10 +52,9 @@ async def get_player(
 async def find_player_faceit_profile(
     steam_id: str,
 ) -> dict:
-    headers = {
-        "Accept": "application/json",
-        "Authorization": f"Bearer {faceit_settings.api_key}",
-    }
+    """
+    Fetch a player's Faceit profile using their Steam ID.
+    """
     params = {
         "game": "cs2",
         "game_player_id": steam_id,
@@ -67,11 +77,13 @@ async def find_player_faceit_profile(
         }
 
 
-# A function for create a Player in the database
 async def create_player(
     session: AsyncSession,
     player_in: PlayerCreate,
 ) -> TablePlayer:
+    """
+    Create a new player in the database.
+    """
     # Turning it into a Player class without Mapped fields
     player: TablePlayer = TablePlayer(**player_in.model_dump())
     faceit_profile = await find_player_faceit_profile(player_in.steam_id)
@@ -80,7 +92,7 @@ async def create_player(
 
     try:
         session.add(player)
-        await session.commit()  # Make changes to the database
+        await session.commit()
     except IntegrityError:
         await session.rollback()
         raise HTTPException(
@@ -92,34 +104,42 @@ async def create_player(
     return player
 
 
-# A function for partial update a Player in the database
 async def update_general_player_info(
     session: AsyncSession,
     player: TablePlayer,
     player_update: PlayerGeneralInfoUpdate,
 ) -> TablePlayer:
+    """
+    Update a player's general information in the database.
+    """
     for class_field, value in player_update.model_dump(exclude_unset=True).items():
         if class_field == "steam_id":
             faceit_profile = await find_player_faceit_profile(value)
             setattr(player, "faceit_id", faceit_profile["faceit_id"])
             setattr(player, "faceit_elo", faceit_profile["faceit_elo"])
         setattr(player, class_field, value)
-    await session.commit()  # Make changes to the database
+
+    await session.commit()
     return player
 
 
-# A function for delete a Player from the database
 async def delete_player(
     session: AsyncSession,
     player: TablePlayer,
 ) -> None:
+    """
+    Delete a player from the database.
+    """
     await session.delete(player)
-    await session.commit()  # Make changes to the database
+    await session.commit()
 
 
 async def update_faceit_elo(
     session: AsyncSession,
 ) -> None:
+    """
+    Update the Faceit ELO for all players in the database.
+    """
     statement = (
         select(TablePlayer)
         .options(
@@ -129,20 +149,21 @@ async def update_faceit_elo(
         )
         .order_by(TablePlayer.id)
     )
+
     players = await session.scalars(statement)
     for player in players:
         faceit_profile = await find_player_faceit_profile(steam_id=player.steam_id)
         setattr(player, "faceit_elo", faceit_profile["faceit_elo"])
+
     await session.commit()
 
 
 async def get_faceit_profile(
     player: TablePlayer,
 ) -> dict:
-    headers = {
-        "Accept": "application/json",
-        "Authorization": f"Bearer {faceit_settings.api_key}",
-    }
+    """
+    Retrieve a player's Faceit profile using their Steam ID.
+    """
     params = {
         "game": "cs2",
         "game_player_id": player.steam_id,
@@ -155,4 +176,8 @@ async def get_faceit_profile(
 
     if response.status_code == status.HTTP_200_OK:
         return response.json()
-    return {"error": "Profile not found", "status_code": response.status_code}
+
+    return {
+        "error": "Profile not found",
+        "status_code": response.status_code,
+    }

@@ -5,8 +5,11 @@ from pydantic import BaseModel
 from ravenspedia.core.faceit_models import PlayerStats
 
 
-# The base class for the Player (without id)
 class PlayerBase(BaseModel):
+    """
+    Base Pydantic model for a player, defining common fields.
+    """
+
     steam_id: str
     nickname: str  # The player's game name
     name: Union[str | None] = None  # The player's real name
@@ -20,6 +23,10 @@ class PlayerBase(BaseModel):
 
 
 class PlayerCreate(BaseModel):
+    """
+    Pydantic model for creating a new player.
+    """
+
     steam_id: str
     nickname: str  # The player's game name
     name: Union[str | None] = None  # The player's real name
@@ -27,14 +34,20 @@ class PlayerCreate(BaseModel):
 
 
 class PlayerGeneralInfoUpdate(BaseModel):
+    """
+    Pydantic model for updating a player's general information.
+    """
+
     steam_id: Union[str | None] = None
     nickname: Union[str | None] = None  # The player's game name
     name: Union[str | None] = None  # The player's real name
     surname: Union[str | None] = None  # The player's real surname
 
 
-# The main class for work with a Player
 class ResponsePlayer(PlayerBase):
+    """
+    Pydantic model for the API response of a player, extending PlayerBase.
+    """
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

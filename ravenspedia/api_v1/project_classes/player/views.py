@@ -1,11 +1,10 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ravenspedia.core import db_helper, TablePlayer, TableUser
-from ravenspedia.core.faceit_models import PlayerStats
+from ravenspedia.api_v1.auth.dependencies import get_current_admin_user
+from ravenspedia.core import db_helper, TablePlayer, TableUser, PlayerStats
 from . import crud, dependencies
 from .schemes import ResponsePlayer, PlayerCreate, PlayerGeneralInfoUpdate
-from ...auth.dependencies import get_current_admin_user
 
 router = APIRouter(tags=["Players"])
 
@@ -13,6 +12,9 @@ router = APIRouter(tags=["Players"])
 def table_to_response_form(
     player: TablePlayer,
 ) -> ResponsePlayer:
+    """
+    Convert a TablePlayer object to a ResponsePlayer schema for API responses.
+    """
     result = ResponsePlayer(
         steam_id=player.steam_id,
         faceit_id=player.faceit_id,
@@ -30,27 +32,32 @@ def table_to_response_form(
         }
         for elem in player.stats
     ]
+
     result.tournaments = [tournament.name for tournament in player.tournaments]
+
     if player.team is not None:
         result.team = player.team.name
+
     result.stats = [PlayerStats(**elem.match_stats) for elem in player.stats]
 
     return result
 
 
 @router.get(
-    "/get_faceit_profile/",
+    "/{player_nickname}/get_faceit_profile/",  # Updated path to include player_nickname
     status_code=status.HTTP_200_OK,
 )
 async def get_faceit_profile(
     player: TablePlayer = Depends(dependencies.get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> dict:
+    """
+    Retrieve a player's Faceit profile using their steam_id.
+    """
     response = await crud.get_faceit_profile(player=player)
     return response
 
 
-# A view to get all the players from the database
 @router.get(
     "/",
     response_model=list[ResponsePlayer],
@@ -59,12 +66,14 @@ async def get_faceit_profile(
 async def get_players(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> list[ResponsePlayer]:
+    """
+    Retrieve all players from the database.
+    """
     players = await crud.get_players(session=session)
     result = [table_to_response_form(player) for player in players]
     return result
 
 
-# A view for getting a player by its id from the database
 @router.get(
     "/{player_nickname}/",
     response_model=ResponsePlayer,
@@ -74,6 +83,9 @@ async def get_player(
     player_nickname: str,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponsePlayer:
+    """
+    Retrieve a player by their nickname.
+    """
     player = await crud.get_player(
         player_nickname=player_nickname,
         session=session,
@@ -81,7 +93,6 @@ async def get_player(
     return table_to_response_form(player)
 
 
-# A view for create a player in the database
 @router.post(
     "/",
     response_model=ResponsePlayer,
@@ -92,6 +103,9 @@ async def create_player(
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponsePlayer:
+    """
+    Create a new player in the database (admin only).
+    """
     player = await crud.create_player(
         session=session,
         player_in=player_in,
@@ -107,10 +121,12 @@ async def update_faceit_elo(
     admin: TableUser = Depends(get_current_admin_user),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
+    """
+    Update the Faceit ELO for all players in the database (admin only).
+    """
     await crud.update_faceit_elo(session=session)
 
 
-# A view for partial or full update a player in the database
 @router.patch(
     "/{player_nickname}/",
     response_model=ResponsePlayer,
@@ -122,6 +138,9 @@ async def update_general_player_info(
     player: TablePlayer = Depends(dependencies.get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ResponsePlayer:
+    """
+    Update a player's general information (admin only).
+    """
     new_player = await crud.update_general_player_info(
         session=session,
         player=player,
@@ -130,7 +149,6 @@ async def update_general_player_info(
     return table_to_response_form(new_player)
 
 
-# A view for delete a player from the database
 @router.delete(
     "/{player_nickname}/",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -140,4 +158,7 @@ async def delete_player(
     player: TablePlayer = Depends(dependencies.get_player_by_nickname),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
+    """
+    Delete a player from the database (admin only).
+    """
     await crud.delete_player(session=session, player=player)

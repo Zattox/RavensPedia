@@ -8,11 +8,13 @@ from sqlalchemy.orm import selectinload
 from ravenspedia.core import db_helper, TablePlayer
 
 
-# A function for get a Tournament from the database by id
 async def get_player_by_id(
     player_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> TablePlayer:
+    """
+    Retrieve a player from the database by their ID.
+    """
     player = await session.scalar(
         select(TablePlayer)
         .where(TablePlayer.id == player_id)
@@ -33,11 +35,13 @@ async def get_player_by_id(
     return player
 
 
-# A function for get a Team from the database by id
 async def get_player_by_nickname(
     player_nickname: str | None,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> TablePlayer | None:
+    """
+    Retrieve a player from the database by their nickname.
+    """
     player = await session.scalar(
         select(TablePlayer)
         .where(TablePlayer.nickname == player_nickname)
