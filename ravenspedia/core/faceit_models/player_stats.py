@@ -100,7 +100,7 @@ class PlayerStats(BaseModel):
     )  # Number of sniper kills per round
     sniper_kill_rate_per_match: Union[float, None] = Field(
         None, alias="Sniper Kill Rate per Match"
-    )  # ???
+    )  # Sniper kill rate per match
 
     # ------------------Special Kills------------------ #
     pistol_kills: Union[float, None] = Field(
@@ -120,7 +120,9 @@ class PlayerStats(BaseModel):
     utility_successes: Union[int, None] = Field(
         None, alias="Utility Successes"
     )  # Number of helpful utility
-    utility_enemies: Union[int, None] = Field(None, alias="Utility Enemies")  # ???
+    utility_enemies: Union[int, None] = Field(
+        None, alias="Utility Enemies"
+    )  # Total enemies affected by utility
     utility_damage: Union[int, None] = Field(
         None, alias="Utility Damage"
     )  # Utility damage per match

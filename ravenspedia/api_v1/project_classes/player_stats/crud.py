@@ -19,6 +19,10 @@ async def get_player_stats(
     stats_filter: PlayerStatsFilter,
     session: AsyncSession,
 ) -> GeneralPlayerStats | DetailedPlayerStats:
+    """
+    Retrieve a player's statistics based on the provided filter.
+    """
+    # Build the query to fetch match stats for the player
     stmt = (
         select(TableMatchStats)
         .join(TableMatchStats.match)
@@ -28,6 +32,7 @@ async def get_player_stats(
         )
     )
 
+    # Apply filters if provided
     if stats_filter.start_date:
         stmt = stmt.where(TableMatch.date >= stats_filter.start_date)
     if stats_filter.end_date:
@@ -35,9 +40,11 @@ async def get_player_stats(
     if stats_filter.tournament_ids:
         stmt = stmt.where(TableMatch.tournament_id.in_(stats_filter.tournament_ids))
 
+    # Execute the query and fetch the stats
     stats_records = await session.scalars(stmt)
     stats_list = list(stats_records.all())
 
+    # Process the stats based on the detailed flag
     if stats_filter.detailed:
         return process_detailed_stats(player, stats_list)
     else:
@@ -48,18 +55,28 @@ def process_general_stats(
     player: TablePlayer,
     stats_list: List[TableMatchStats],
 ) -> GeneralPlayerStats:
+    """
+    Process a player's general statistics from a list of match stats.
+    """
+    # Initialize the result with the player's nickname and total matches
     result = GeneralPlayerStats(
         nickname=player.nickname,
         total_matches=len(stats_list),
     )
 
+    # Aggregate stats from each match
     for stat in stats_list:
         stats_data = stat.match_stats
         for stats_field, result_field in GENERAL_STATS_MAPPING.items():
             value = stats_data.get(stats_field, 0)
             current_value = getattr(result, result_field)
+            if value is None:
+                value = 0
+            if current_value is None:
+                current_value = 0
             setattr(result, result_field, current_value + value)
 
+    # Calculate averages and ratios if there are stats
     if stats_list:
         result.adr /= len(stats_list)
         result.kpr /= len(stats_list)
@@ -78,18 +95,28 @@ def process_detailed_stats(
     player: TablePlayer,
     stats_list: List[TableMatchStats],
 ) -> DetailedPlayerStats:
+    """
+    Process a player's detailed statistics from a list of match stats.
+    """
+    # Initialize the result with the player's nickname and total matches
     result = DetailedPlayerStats(
         nickname=player.nickname,
         total_matches=len(stats_list),
     )
 
+    # Aggregate stats from each match
     for stat in stats_list:
         stats_data = stat.match_stats
         for stats_field, result_field in DETAILED_STATS_MAPPING.items():
             value = stats_data.get(stats_field, 0)
             current_value = getattr(result, result_field)
+            if value is None:
+                value = 0
+            if current_value is None:
+                current_value = 0
             setattr(result, result_field, current_value + value)
 
+    # Calculate averages, ratios, and percentages if there are stats
     if stats_list:
         result.adr = (
             sum(stat.match_stats.get("ADR", 0) for stat in stats_list)

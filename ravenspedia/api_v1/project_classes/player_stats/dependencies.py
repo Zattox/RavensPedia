@@ -12,6 +12,9 @@ async def get_stats_filter(
     tournament_ids: Optional[List[int]] = Query(None),
     detailed: bool = False,
 ) -> PlayerStatsFilter:
+    """
+    Create a PlayerStatsFilter object from query parameters.
+    """
     return PlayerStatsFilter(
         start_date=start_date,
         end_date=end_date,

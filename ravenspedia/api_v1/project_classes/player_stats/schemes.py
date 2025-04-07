@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class PlayerStatsFilter(BaseModel):
+    """
+    Pydantic model for filtering player statistics.
+    """
+
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     tournament_ids: Optional[List[int]] = None
@@ -12,6 +16,10 @@ class PlayerStatsFilter(BaseModel):
 
 
 class GeneralPlayerStats(BaseModel):
+    """
+    Pydantic model for a player's general statistics.
+    """
+
     nickname: str
     total_matches: int = Field(0)
 
@@ -25,9 +33,10 @@ class GeneralPlayerStats(BaseModel):
 
     wins: int = Field(0, alias="Wins")
     win_rate: float = Field(0.0, alias="Wins %")
-    kd_ratio: float = Field(0.0, alias="KD Ratio")
+    kd_ratio: float = Field(0.0, alias="K/D Ratio")
 
 
+# Mapping of Faceit API stat fields to GeneralPlayerStats fields
 GENERAL_STATS_MAPPING = {
     "Result": "wins",
     "Kills": "kills",
@@ -40,6 +49,10 @@ GENERAL_STATS_MAPPING = {
 
 
 class DetailedPlayerStats(BaseModel):
+    """
+    Pydantic model for a player's detailed statistics, including additional metrics.
+    """
+
     nickname: str
     total_matches: int = Field(0)
 
@@ -122,6 +135,7 @@ class DetailedPlayerStats(BaseModel):
     flash_success_rate_per_match: float = Field(0, alias="Flash Success Rate per Match")
 
 
+# Mapping of Faceit API stat fields to DetailedPlayerStats fields
 DETAILED_STATS_MAPPING = {
     "Kills": "kills",
     "Assists": "assists",
