@@ -30,7 +30,7 @@ async def get_players(session: AsyncSession) -> list[TablePlayer]:
         )
         .order_by(TablePlayer.id)
     )
-    
+
     players = await session.scalars(statement)
     return list(players)
 

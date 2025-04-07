@@ -9,6 +9,7 @@ from ravenspedia.core.base import Base
 if TYPE_CHECKING:
     from ravenspedia.core import TablePlayer, TableMatch
 
+
 # Defines the MatchStats table for storing player statistics in matches
 class TableMatchStats(Base):
     __tablename__ = "player_stats"  # Name of the table in the database

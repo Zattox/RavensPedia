@@ -9,10 +9,13 @@ from ravenspedia.core.base import Base
 if TYPE_CHECKING:
     from .table_user import TableUser
 
+
 # Defines the Token table in the database for storing authentication tokens
 class TableToken(Base):
     # Name of the table in the database
-    __tablename__ = "tokens"  # Implicitly set by convention, explicitly noted for clarity
+    __tablename__ = (
+        "tokens"  # Implicitly set by convention, explicitly noted for clarity
+    )
 
     # JSON Web Token Identifier (JTI), must be unique and cannot be null
     jti: Mapped[str] = mapped_column(unique=True, nullable=False)

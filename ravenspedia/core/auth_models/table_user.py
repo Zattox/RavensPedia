@@ -11,10 +11,13 @@ from ravenspedia.core.base import Base
 if TYPE_CHECKING:
     from .table_token import TableToken
 
+
 # Defines the User table in the database for storing user authentication data
 class TableUser(Base):
     # Name of the table in the database
-    __tablename__ = "users"  # Implicitly set by convention, explicitly noted for clarity
+    __tablename__ = (
+        "users"  # Implicitly set by convention, explicitly noted for clarity
+    )
 
     # User's email address, must be unique and cannot be null
     email: Mapped[str] = mapped_column(unique=True, nullable=False)

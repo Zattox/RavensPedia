@@ -2,7 +2,13 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .schemes import MapPickBanInfo, MapResultInfo
-from ravenspedia.core import TableMatch, TableMapPickBanInfo, MapStatus, TableMapResultInfo
+from ravenspedia.core import (
+    TableMatch,
+    TableMapPickBanInfo,
+    MapStatus,
+    TableMapResultInfo,
+)
+
 
 async def add_pick_ban_info_in_match(
     session: AsyncSession,
@@ -44,6 +50,7 @@ async def add_pick_ban_info_in_match(
 
     return match
 
+
 async def delete_last_pick_ban_info_from_match(
     session: AsyncSession,
     match: TableMatch,
@@ -61,6 +68,7 @@ async def delete_last_pick_ban_info_from_match(
     await session.commit()
     await session.refresh(match)
     return match
+
 
 async def add_map_result_info_in_match(
     session: AsyncSession,
@@ -185,6 +193,7 @@ async def add_map_result_info_in_match(
     await session.commit()
     await session.refresh(match)
     return match
+
 
 async def delete_last_map_result_info_from_match(
     session: AsyncSession,
