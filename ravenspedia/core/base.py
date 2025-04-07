@@ -1,15 +1,17 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 
 
-# The base class for database tables
+# Defines the base class for all database tables using SQLAlchemy ORM
 class Base(DeclarativeBase):
-    # This class should not be created in the database
+    # Marks this class as abstract, meaning it won’t create a table in the database
     __abstract__ = True
 
-    # The table name is based on the class name
+    # Automatically generates the table name based on the class name
     @declared_attr.directive
     def __tablename__(self) -> str:
+        # Converts class name to lowercase, removes "table" prefix, and adds "s" suffix
+        # e.g., "TableUser" becomes "users"
         return f"{self.__name__.lower().replace('table','')}s"
 
-    # The unique id of the object in the database
-    id: Mapped[int] = mapped_column(primary_key=True)
+    # Defines a common primary key column 'id' for all tables
+    id: Mapped[int] = mapped_column(primary_key=True)  # Auto-incrementing integer ID
