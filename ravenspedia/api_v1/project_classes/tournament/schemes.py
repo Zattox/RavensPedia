@@ -3,27 +3,41 @@ from typing import Union, List, Optional
 
 from pydantic import BaseModel
 
-from ravenspedia.core.project_models.table_tournament import TournamentStatus
+from ravenspedia.core import TournamentStatus
+
 
 class TournamentResult(BaseModel):
+    """
+    Pydantic model representing a tournament result.
+    """
+
     place: int
     team: Optional[str] = None
     prize: str
 
-# The base class for the Tournament (without id)
+
 class TournamentBase(BaseModel):
+    """
+    Base Pydantic model for a tournament, excluding the ID.
+    """
+
     max_count_of_teams: int
-    name: str  # The tournament name
+    name: str
     start_date: Union[datetime | None] = None
     end_date: Union[datetime | None] = None
-    prize: Union[str | None] = None  # The prize of tournament
-    description: Union[str | None] = None  # The description of the tournament
-    matches_id: List[int] = []  # The IDs of the matches the tournament participated in
-    teams: List[str] = []  # The IDs of the teams the tournament participated in
+    prize: Union[str | None] = None
+    description: Union[str | None] = None
+    matches_id: List[int] = []
+    teams: List[str] = []
     players: List[str] = []
     results: List[TournamentResult] = []
 
+
 class TournamentCreate(BaseModel):
+    """
+    Pydantic model for creating a new tournament.
+    """
+
     max_count_of_teams: int
     name: str
     prize: Union[str | None] = None
@@ -33,6 +47,10 @@ class TournamentCreate(BaseModel):
 
 
 class TournamentGeneralInfoUpdate(BaseModel):
+    """
+    Pydantic model for updating a tournament's general information.
+    """
+
     name: Union[str | None] = None
     prize: Union[str | None] = None
     description: Union[str | None] = None
@@ -40,9 +58,13 @@ class TournamentGeneralInfoUpdate(BaseModel):
     end_date: Union[datetime | None] = None
 
 
-# The main class for work with a Tournament
 class ResponseTournament(TournamentBase):
+    """
+    Pydantic model for the response format of a tournament, including status.
+    """
+
     status: TournamentStatus
 
     class Config:
-        from_attributes = True  # Enables compatibility with ORM models
+
+        from_attributes = True  # Enable compatibility with ORM models

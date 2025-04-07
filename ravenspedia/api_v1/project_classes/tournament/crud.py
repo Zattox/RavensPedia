@@ -2,18 +2,19 @@ from datetime import datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from ravenspedia.core import TableTournament, TableTournamentResult
-from ravenspedia.core.project_models.table_tournament import TournamentStatus
 from .dependencies import get_tournament_by_name
 from .schemes import TournamentCreate, TournamentGeneralInfoUpdate
+from ravenspedia.core import TableTournament, TableTournamentResult, TournamentStatus
 
 
-# A function to get all the Tournaments from the database
 async def get_tournaments(session: AsyncSession) -> list[TableTournament]:
+    """
+    Retrieve all tournaments from the database with related data (players, teams, matches, results).
+    """
     stmt = (
         select(TableTournament)
         .options(
@@ -30,11 +31,13 @@ async def get_tournaments(session: AsyncSession) -> list[TableTournament]:
     return list(tournaments)
 
 
-# A function for getting a Tournament by its id from the database
 async def get_tournament(
     session: AsyncSession,
     tournament_name: str,
 ) -> TableTournament | None:
+    """
+    Retrieve a tournament by its name from the database.
+    """
     tournament: TableTournament = await get_tournament_by_name(
         tournament_name=tournament_name,
         session=session,
@@ -42,19 +45,24 @@ async def get_tournament(
     return tournament
 
 
-# A function for create a Tournament in the database
 async def create_tournament(
     session: AsyncSession,
     tournament_in: TournamentCreate,
 ) -> TableTournament:
+    """
+    Create a new tournament in the database with the provided data.
+    """
     current_time = datetime.now()
+
+    # Determine the tournament status based on start and end dates
     if tournament_in.end_date < current_time:
         tournament_status = TournamentStatus.COMPLETED
     elif tournament_in.start_date > current_time:
         tournament_status = TournamentStatus.SCHEDULED
     else:
         tournament_status = TournamentStatus.IN_PROGRESS
-    # Turning it into a Tournament class without Mapped fields
+
+    # Create a new tournament instance
     tournament: TableTournament = TableTournament(
         **tournament_in.model_dump(),
         status=tournament_status,
@@ -70,6 +78,7 @@ async def create_tournament(
             detail=f"Tournament {tournament_in.name} already exists",
         )
 
+    # Refresh the tournament with related data
     await session.refresh(
         tournament,
         attribute_names=["players", "teams", "matches", "results"],
@@ -77,24 +86,27 @@ async def create_tournament(
     return tournament
 
 
-# A function for delete a Tournament from the database
 async def delete_tournament(
     session: AsyncSession,
     tournament: TableTournament,
 ) -> None:
+    """
+    Delete a tournament from the database.
+    """
     await session.delete(tournament)
-    await session.commit()  # Make changes to the database
+    await session.commit()
 
 
-# A function for partial update a Tournament in the database
 async def update_general_tournament_info(
     session: AsyncSession,
     tournament: TableTournament,
     tournament_update: TournamentGeneralInfoUpdate,
 ) -> TableTournament:
-
+    """
+    Update a tournament's general information (e.g., name, prize, description).
+    """
     for class_field, value in tournament_update.model_dump(exclude_unset=True).items():
         setattr(tournament, class_field, value)
-    await session.commit()  # Make changes to the database
+    await session.commit()
 
     return tournament
