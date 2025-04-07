@@ -47,3 +47,33 @@ class User(UserBase):
 class AuthOutput(BaseModel):
     access_token: str
     refresh_token: str
+
+
+# Model for the request to change a user's password (self-service)
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(
+        ...,
+        min_length=5,
+        max_length=50,
+        description="Current password, from 5 to 50 characters",
+    )
+    new_password: str = Field(
+        ...,
+        min_length=5,
+        max_length=50,
+        description="New password, from 5 to 50 characters",
+    )
+
+
+# Model for the request to change a user's password by a super admin
+class AdminChangePasswordRequest(BaseModel):
+    user_email: str = Field(
+        ...,
+        description="Email of the user whose password will be changed",
+    )
+    new_password: str = Field(
+        ...,
+        min_length=5,
+        max_length=50,
+        description="New password, from 5 to 50 characters",
+    )

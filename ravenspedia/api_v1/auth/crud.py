@@ -260,3 +260,18 @@ async def change_user_role(
     await session.commit()
 
     return {"detail": f"User role changed to {new_role}"}
+
+
+# Function to update a user's password in the database
+async def update_user_password(
+    user: TableUser,
+    new_password: str,
+    session: AsyncSession,
+) -> None:
+    """
+    Update the user's password with a new hashed value.
+    """
+    new_hashed_password = utils.get_hash_password(new_password)
+    setattr(user, "password", new_hashed_password)
+
+    await session.commit()

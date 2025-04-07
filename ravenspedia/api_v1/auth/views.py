@@ -1,8 +1,16 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud, dependencies
-from .schemas import UserCreate, UserAuth, AuthOutput, ChangeUserRoleRequest
+from .schemas import (
+    UserCreate,
+    UserAuth,
+    AuthOutput,
+    ChangeUserRoleRequest,
+    ChangePasswordRequest,
+    AdminChangePasswordRequest,
+)
 from ravenspedia.core import db_helper, TableUser
 
 router = APIRouter(tags=["Auth"])
@@ -149,3 +157,78 @@ async def change_user_role(
         super_admin,
         session,
     )
+
+
+# Endpoint for a user to change their own password
+@router.patch("/change_password/")
+async def change_password(
+    request: ChangePasswordRequest,
+    current_user: TableUser = Depends(dependencies.get_current_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> dict:
+    """
+    This endpoint allows a logged-in user to update their own password by providing their current password
+    and a new password. The current password is validated before the change is applied. If successful,
+    the new password is hashed and stored in the database.
+    """
+
+    # Validate the current password
+    if not crud.validate_password(
+        password=request.current_password,
+        hashed_password=current_user.password,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect current password",
+        )
+
+    # Update the password
+    await crud.update_user_password(
+        user=current_user,
+        new_password=request.new_password,
+        session=session,
+    )
+
+    return {"message": "Password successfully changed"}
+
+
+# Endpoint for a super admin to change another user's password
+@router.patch("/admin/change_user_password/")
+async def admin_change_user_password(
+    request: AdminChangePasswordRequest,
+    super_admin: TableUser = Depends(dependencies.get_current_super_admin_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> dict:
+    """
+    This endpoint allows a super admin to update the password of any user by providing the user's email
+    and a new password. No validation of the current password is required. The new password is hashed
+    and stored in the database.
+    """
+
+    # Fetch the user by email
+    user: TableUser = await session.scalar(
+        select(TableUser).where(TableUser.email == request.user_email)
+    )
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    # Prevent super admin from changing their own password via this endpoint
+    if user.id == super_admin.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Super admin cannot change their own password using this endpoint",
+        )
+
+    # Update the password
+    await crud.update_user_password(
+        user=user,
+        new_password=request.new_password,
+        session=session,
+    )
+
+    return {
+        "message": f"Password for user {request.user_email} successfully changed by super admin"
+    }

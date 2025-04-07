@@ -55,10 +55,7 @@ async def test_register_invalid_password_length(client: AsyncClient):
     """
     response = await client.post(
         "/auth/register/",
-        json={
-            "email": "newuser@example.com",
-            "password": "123",
-        },  # Password shorter than 5 characters
+        json={"email": "newuser@example.com", "password": "123"},
     )
     assert response.status_code == 422
 
@@ -153,7 +150,6 @@ async def test_logout_tokens_not_in_db(
     """
     Test logout attempt when tokens are not found in the database.
     """
-    # Remove all tokens from the database
     await session.execute(delete(TableToken))
     await session.commit()
 
@@ -185,7 +181,6 @@ async def test_refresh_no_refresh_token(authorized_client: AsyncClient):
     """
     Test token refresh attempt without a refresh token.
     """
-    # Remove refresh_token
     authorized_client.cookies.clear()
 
     response = await authorized_client.post("/auth/refresh/")
@@ -237,24 +232,17 @@ async def test_refresh_tokens_expired_token(
     """
     Test token refresh with an expired refresh token.
     """
-    # Get the test user
     user = await session.scalar(
         select(TableUser).where(TableUser.email == "test_user@example.com")
     )
     device_id = str(uuid.uuid4())
-
-    # Create an expired refresh token
     expired_token = create_refresh_token(
         user=user,
         device_id=device_id,
-        refresh_expire_time=datetime.now(timezone.utc)
-        - timedelta(minutes=1),  # Expired token
+        refresh_expire_time=datetime.now(timezone.utc) - timedelta(minutes=1),
     )
-
-    # Decode the token without checking expiration to get the payload
     token_payload = decode_jwt(expired_token, verify_expiration=False)
 
-    # Manually insert the token into the database with an expired timestamp
     token_in_db = TableToken(
         jti=token_payload["jti"],
         subject_id=user.id,
@@ -265,7 +253,6 @@ async def test_refresh_tokens_expired_token(
     session.add(token_in_db)
     await session.commit()
 
-    # Set the expired token in the client cookies and attempt refresh
     authorized_client.cookies.set("user_refresh_token", expired_token)
     response = await authorized_client.post("/auth/refresh/")
     assert response.status_code == 401
@@ -279,7 +266,6 @@ async def test_refresh_tokens_user_not_found(
     """
     Test token refresh when the associated user is not found.
     """
-    # Create a token for a user, then delete the user
     user = await session.scalar(
         select(TableUser).where(TableUser.email == "test_user@example.com")
     )
@@ -287,11 +273,9 @@ async def test_refresh_tokens_user_not_found(
     refresh_token = create_refresh_token(user, device_id, None)
     token_payload = utils.decode_jwt(refresh_token)
 
-    # Delete the user from the database
     await session.execute(delete(TableUser).where(TableUser.id == user.id))
     await session.commit()
 
-    # Save the token in the database
     token_in_db = TableToken(
         jti=token_payload["jti"],
         subject_id=user.id,
@@ -330,7 +314,6 @@ async def test_access_protected_route_without_token(authorized_client: AsyncClie
         transport=authorized_client._transport,
         base_url=authorized_client.base_url,
     )
-
     response = await new_client.get("/auth/me/")
     assert response.status_code == 401
     assert response.json()["detail"] == "Token not found"
@@ -356,18 +339,13 @@ async def test_access_protected_route_with_revoked_access_token(
     """
     Test access to /me/ route with a revoked access token.
     """
-    # First verify we can access with a valid token
     valid_response = await authorized_client.get("/auth/me/")
     assert valid_response.status_code == 200
 
-    # Logout to revoke tokens
     logout_response = await authorized_client.post("/auth/logout/")
     assert logout_response.status_code == 200
 
-    # Clear cookies but keep Authorization header to test revocation
     authorized_client.cookies.clear()
-
-    # This should fail because token is revoked
     response = await authorized_client.get("/auth/me/")
     assert response.status_code == 401
     assert response.json()["detail"] == "Token not found"
@@ -380,7 +358,6 @@ async def test_access_protected_route_expired_token(
     """
     Test access to /me/ route with an expired access token.
     """
-    # Create an access token
     user = await session.scalar(
         select(TableUser).where(TableUser.email == "test_user@example.com")
     )
@@ -388,7 +365,6 @@ async def test_access_protected_route_expired_token(
     access_token = create_access_token(user, device_id)
     token_payload = utils.decode_jwt(access_token)
 
-    # Save the token with an expired timestamp
     token_in_db = TableToken(
         jti=token_payload["jti"],
         subject_id=user.id,
@@ -419,12 +395,8 @@ async def test_change_user_role_success(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": user_email,
-            "new_role": "admin",
-        },
+        json={"user_email": user_email, "new_role": "admin"},
     )
-
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"detail": "User role changed to admin"}
 
@@ -445,12 +417,8 @@ async def test_change_role_invalid_role(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": user_email,
-            "new_role": "super_admin",
-        },
+        json={"user_email": user_email, "new_role": "super_admin"},
     )
-
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "Invalid role" in response.json()["detail"]
 
@@ -464,10 +432,7 @@ async def test_change_role_invalid_role_format(
     """
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": "test_user@example.com",
-            "new_role": "",  # Empty string
-        },
+        json={"user_email": "test_user@example.com", "new_role": ""},
     )
     assert response.status_code == 400
     assert "Invalid role" in response.json()["detail"]
@@ -486,12 +451,8 @@ async def test_change_own_role_fails(
 
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": user_email,
-            "new_role": "admin",
-        },
+        json={"user_email": user_email, "new_role": "admin"},
     )
-
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "Cannot change your own role" in response.json()["detail"]
 
@@ -509,12 +470,8 @@ async def test_non_super_admin_cannot_change_roles(
 
     response = await authorized_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": user_email,
-            "new_role": "admin",
-        },
+        json={"user_email": user_email, "new_role": "admin"},
     )
-
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -527,11 +484,176 @@ async def test_change_nonexistent_user(
     """
     response = await authorized_super_admin_client.patch(
         "/auth/change_user_role/",
-        json={
-            "user_email": "nonexistent@example.com",
-            "new_role": "admin",
-        },
+        json={"user_email": "nonexistent@example.com", "new_role": "admin"},
     )
-
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["detail"] == "User not found"
+
+
+@pytest.mark.asyncio
+async def test_change_password_invalid_current_password(
+    authorized_client: AsyncClient,
+    user_data: dict,
+):
+    """
+    Test password change with an incorrect current password.
+    """
+    response = await authorized_client.patch(
+        "/auth/change_password/",
+        json={"current_password": "wrongpass", "new_password": "newpass456"},
+    )
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Incorrect current password"
+
+
+@pytest.mark.asyncio
+async def test_change_password_invalid_new_password_length(
+    authorized_client: AsyncClient,
+    user_data: dict,
+):
+    """
+    Test password change with a new password that is too short.
+    """
+    response = await authorized_client.patch(
+        "/auth/change_password/",
+        json={"current_password": user_data["password"], "new_password": "123"},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_change_password_without_token(client: AsyncClient, user_data: dict):
+    """
+    Test password change attempt without an access token.
+    """
+    response = await client.patch(
+        "/auth/change_password/",
+        json={"current_password": user_data["password"], "new_password": "newpass456"},
+    )
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Token not found"
+
+
+@pytest.mark.asyncio
+async def test_admin_change_user_password_nonexistent_user(
+    authorized_super_admin_client: AsyncClient,
+):
+    """
+    Test super admin attempt to change password of a non-existent user.
+    """
+    response = await authorized_super_admin_client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": "nonexistent@example.com", "new_password": "newpass456"},
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
+
+
+@pytest.mark.asyncio
+async def test_admin_change_own_password_fails(
+    authorized_super_admin_client: AsyncClient,
+    super_admin_data: dict,
+):
+    """
+    Test super admin attempt to change their own password.
+    """
+    response = await authorized_super_admin_client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": super_admin_data["email"], "new_password": "newpass456"},
+    )
+    assert response.status_code == 400
+    assert (
+        response.json()["detail"]
+        == "Super admin cannot change their own password using this endpoint"
+    )
+
+
+@pytest.mark.asyncio
+async def test_admin_change_user_password_invalid_new_password_length(
+    authorized_super_admin_client: AsyncClient,
+    authorized_client: AsyncClient,
+):
+    """
+    Test super admin attempt to set a new password that is too short.
+    """
+    user_info = await authorized_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_super_admin_client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": user_email, "new_password": "123"},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_non_super_admin_cannot_change_password(
+    authorized_admin_client: AsyncClient,
+    authorized_client: AsyncClient,
+):
+    """
+    Test attempt to change a user's password by a non-super admin.
+    """
+    user_info = await authorized_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_admin_client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": user_email, "new_password": "newpass456"},
+    )
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Insufficient permissions!"
+
+
+@pytest.mark.asyncio
+async def test_admin_change_password_without_token(
+    client: AsyncClient, user_data: dict
+):
+    """
+    Test super admin password change attempt without an access token.
+    """
+    response = await client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": user_data["email"], "new_password": "newpass456"},
+    )
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Token not found"
+
+
+@pytest.mark.asyncio
+async def test_change_password_success(
+    authorized_client: AsyncClient,
+    user_data: dict,
+    session: AsyncSession,
+):
+    """
+    Test successful password change by the user.
+    """
+    response = await authorized_client.patch(
+        "/auth/change_password/",
+        json={"current_password": user_data["password"], "new_password": "newpass456"},
+    )
+    assert response.status_code == 200
+    assert response.json() == {"message": "Password successfully changed"}
+
+
+@pytest.mark.asyncio
+async def test_admin_change_user_password_success(
+    authorized_super_admin_client: AsyncClient,
+    authorized_admin_client: AsyncClient,
+    session: AsyncSession,
+):
+    """
+    Test successful password change for a user by a super admin.
+    """
+    user_info = await authorized_admin_client.get("/auth/me/")
+    user_email = user_info.json()["email"]
+
+    response = await authorized_super_admin_client.patch(
+        "/auth/admin/change_user_password/",
+        json={"user_email": user_email, "new_password": "adminsetpass789"},
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "message": f"Password for user {user_email} successfully changed by super admin"
+    }
