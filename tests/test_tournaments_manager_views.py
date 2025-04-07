@@ -2,27 +2,17 @@ import pytest
 from httpx import AsyncClient
 
 from ravenspedia.core.config import data_for_tests
-from tests.conftest import client
 
 
 @pytest.mark.asyncio
 async def test_init_teams(authorized_admin_client: AsyncClient):
-    team1 = {
-        "max_number_of_players": 2,
-        "name": "BlackRavens",
-    }
-    team2 = {
-        "max_number_of_players": 2,
-        "name": "wingman_team",
-    }
-    team3 = {
-        "max_number_of_players": 2,
-        "name": "RedRavens",
-    }
-    team4 = {
-        "max_number_of_players": 2,
-        "name": "WhiteRavens",
-    }
+    """
+    Test initializing teams in the database.
+    """
+    team1 = {"max_number_of_players": 2, "name": "BlackRavens"}
+    team2 = {"max_number_of_players": 2, "name": "wingman_team"}
+    team3 = {"max_number_of_players": 2, "name": "RedRavens"}
+    team4 = {"max_number_of_players": 2, "name": "WhiteRavens"}
 
     team1_response = await authorized_admin_client.post("/teams/", json=team1)
     team2_response = await authorized_admin_client.post("/teams/", json=team2)
@@ -37,6 +27,9 @@ async def test_init_teams(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_init_tournaments(authorized_admin_client: AsyncClient):
+    """
+    Test initializing tournaments in the database.
+    """
     tournament1 = {
         "max_count_of_teams": 2,
         "name": "MSCL",
@@ -57,13 +50,16 @@ async def test_init_tournaments(authorized_admin_client: AsyncClient):
     }
 
     tournament1_response = await authorized_admin_client.post(
-        "/tournaments/", json=tournament1
+        "/tournaments/",
+        json=tournament1,
     )
     tournament2_response = await authorized_admin_client.post(
-        "/tournaments/", json=tournament2
+        "/tournaments/",
+        json=tournament2,
     )
     tournament3_response = await authorized_admin_client.post(
-        "/tournaments/", json=tournament3
+        "/tournaments/",
+        json=tournament3,
     )
 
     assert tournament1_response.status_code == 201
@@ -73,22 +69,13 @@ async def test_init_tournaments(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_init_players(authorized_admin_client: AsyncClient):
-    player1 = {
-        "nickname": "Zattox",
-        "steam_id": data_for_tests.player1_steam_id,
-    }
-    player2 = {
-        "nickname": "g666",
-        "steam_id": data_for_tests.player2_steam_id,
-    }
-    player3 = {
-        "nickname": "w1lroom-",
-        "steam_id": data_for_tests.player3_steam_id,
-    }
-    player4 = {
-        "nickname": "Excelleence",
-        "steam_id": data_for_tests.player4_steam_id,
-    }
+    """
+    Test initializing players and adding them to teams.
+    """
+    player1 = {"nickname": "Zattox", "steam_id": data_for_tests.player1_steam_id}
+    player2 = {"nickname": "g666", "steam_id": data_for_tests.player2_steam_id}
+    player3 = {"nickname": "w1lroom-", "steam_id": data_for_tests.player3_steam_id}
+    player4 = {"nickname": "Excelleence", "steam_id": data_for_tests.player4_steam_id}
 
     player1_response = await authorized_admin_client.post("/players/", json=player1)
     player2_response = await authorized_admin_client.post("/players/", json=player2)
@@ -101,37 +88,40 @@ async def test_init_players(authorized_admin_client: AsyncClient):
     assert player4_response.status_code == 201
 
     response = await authorized_admin_client.patch(
-        f"/teams/BlackRavens/add_player/Zattox/",
+        f"/teams/BlackRavens/add_player/Zattox/"
     )
     assert response.status_code == 200
 
     response = await authorized_admin_client.patch(
-        f"/teams/BlackRavens/add_player/g666/",
+        f"/teams/BlackRavens/add_player/g666/"
     )
     assert response.status_code == 200
 
     response = await authorized_admin_client.patch(
-        f"/teams/RedRavens/add_player/Excelleence/",
+        f"/teams/RedRavens/add_player/Excelleence/"
     )
     assert response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_add_teams_in_tournament(authorized_admin_client: AsyncClient):
+    """
+    Test adding teams to a tournament.
+    """
     response = await authorized_admin_client.patch(
-        f"/tournaments/MSCL/add_team/BlackRavens/",
+        f"/tournaments/MSCL/add_team/BlackRavens/"
     )
     assert response.status_code == 200
     assert response.json()["teams"] == ["BlackRavens"]
 
     response = await authorized_admin_client.patch(
-        f"/tournaments/MSCL/add_team/RedRavens/",
+        f"/tournaments/MSCL/add_team/RedRavens/"
     )
     assert response.status_code == 200
     assert sorted(response.json()["teams"]) == sorted(["BlackRavens", "RedRavens"])
 
     response = await authorized_admin_client.patch(
-        f"/tournaments/ESEA_S52/add_team/wingman_team/",
+        f"/tournaments/ESEA_S52/add_team/wingman_team/"
     )
     assert response.status_code == 200
     assert response.json()["teams"] == ["wingman_team"]
@@ -139,76 +129,65 @@ async def test_add_teams_in_tournament(authorized_admin_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_tournament_team_connection(client: AsyncClient):
-    response = await client.get(
-        "/teams/BlackRavens/",
-    )
+    """
+    Test the connection between teams and tournaments.
+    """
+    response = await client.get("/teams/BlackRavens/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await client.get(
-        "/teams/wingman_team/",
-    )
+    response = await client.get("/teams/wingman_team/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["ESEA_S52"]
 
-    response = await client.get(
-        "/teams/RedRavens/",
-    )
+    response = await client.get("/teams/RedRavens/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await client.get(
-        "/teams/WhiteRavens/",
-    )
+    response = await client.get("/teams/WhiteRavens/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == []
 
 
 @pytest.mark.asyncio
 async def test_tournament_player_connection(client: AsyncClient):
-    response = await client.get(
-        "/players/Zattox/",
-    )
+    """
+    Test the connection between players and tournaments.
+    """
+    response = await client.get("/players/Zattox/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await client.get(
-        "/players/g666/",
-    )
+    response = await client.get("/players/g666/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await client.get(
-        "/players/w1lroom-/",
-    )
+    response = await client.get("/players/w1lroom-/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == []
 
-    response = await client.get(
-        "/players/Excelleence/",
-    )
+    response = await client.get("/players/Excelleence/")
     assert response.status_code == 200
     assert response.json()["tournaments"] == ["MSCL"]
 
-    response = await client.get(
-        "/tournaments/MSCL/",
-    )
+    response = await client.get("/tournaments/MSCL/")
     assert response.status_code == 200
     assert sorted(response.json()["players"]) == sorted(
         ["g666", "Zattox", "Excelleence"]
     )
 
-    response = await client.get(
-        "/tournaments/Final_MSCL/",
-    )
+    response = await client.get("/tournaments/Final_MSCL/")
     assert response.status_code == 200
     assert response.json()["players"] == []
 
 
 @pytest.mark.asyncio
 async def test_add_team_in_full_tournament(authorized_admin_client: AsyncClient):
+    """
+    Test adding a team to a tournament that is already full.
+    """
     response = await authorized_admin_client.patch(
-        f"/tournaments/MSCL/add_team/wingman_team/",
+        f"/tournaments/MSCL/add_team/wingman_team/"
     )
     assert response.status_code == 400
     assert response.json() == {
@@ -218,23 +197,26 @@ async def test_add_team_in_full_tournament(authorized_admin_client: AsyncClient)
 
 @pytest.mark.asyncio
 async def test_add_exists_team_in_tournament(authorized_admin_client: AsyncClient):
+    """
+    Test adding a team that already exists in the tournament.
+    """
     response = await authorized_admin_client.patch(
-        f"/tournaments/MSCL/add_team/BlackRavens/",
+        f"/tournaments/MSCL/add_team/BlackRavens/"
     )
     assert response.status_code == 400
-    assert response.json() == {
-        "detail": "Team BlackRavens already exists",
-    }
+    assert response.json() == {"detail": "Team BlackRavens already exists"}
 
 
 @pytest.mark.asyncio
 async def test_delete_not_exists_team_from_tournament(
     authorized_admin_client: AsyncClient,
 ):
+    """
+    Test removing a team that does not exist in the tournament.
+    """
     response = await authorized_admin_client.delete(
-        f"/tournaments/MSCL/delete_team/wingman_team/",
+        f"/tournaments/MSCL/delete_team/wingman_team/"
     )
-
     assert response.status_code == 400
     assert response.json() == {
         "detail": "The team is no longer participate in the tournament MSCL",
@@ -243,8 +225,11 @@ async def test_delete_not_exists_team_from_tournament(
 
 @pytest.mark.asyncio
 async def test_add_team_in_another_tournament(authorized_admin_client: AsyncClient):
+    """
+    Test adding a team to another tournament.
+    """
     response = await authorized_admin_client.patch(
-        f"/tournaments/ESEA_S52/add_team/BlackRavens/",
+        f"/tournaments/ESEA_S52/add_team/BlackRavens/"
     )
     assert response.status_code == 200
 
@@ -259,6 +244,9 @@ async def test_add_team_in_another_tournament(authorized_admin_client: AsyncClie
 
 @pytest.mark.asyncio
 async def test_delete_tournament_with_team(authorized_admin_client: AsyncClient):
+    """
+    Test deleting a tournament that has teams.
+    """
     response = await authorized_admin_client.delete("/tournaments/ESEA_S52/")
     assert response.status_code == 204
 
@@ -281,6 +269,9 @@ async def test_delete_tournament_with_team(authorized_admin_client: AsyncClient)
 
 @pytest.mark.asyncio
 async def test_delete_team_with_tournament(authorized_admin_client: AsyncClient):
+    """
+    Test deleting a team that participated in the tournament.
+    """
     response = await authorized_admin_client.delete("/teams/BlackRavens/")
     assert response.status_code == 204
 
