@@ -1,3 +1,5 @@
+from importlib.util import source_hash
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -78,6 +80,7 @@ async def create_match(
         tournament=tournament_of_match,
         date=match_in.date,
         description=match_in.description,
+        original_source=match_in.original_source,
         max_number_of_teams=match_in.max_number_of_teams,
         max_number_of_players=match_in.max_number_of_players,
     )

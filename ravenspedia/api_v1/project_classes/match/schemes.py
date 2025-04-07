@@ -15,6 +15,7 @@ class MatchBase(BaseModel):
     teams: List[str] = []
     players: List[str] = []
     description: Union[str | None] = None
+    original_source: Union[str | None] = None
     tournament: str
     date: datetime
     stats: List[PlayerStats] = []
@@ -30,6 +31,7 @@ class MatchCreate(BaseModel):
     tournament: str
     date: datetime
     description: Union[str | None] = None
+    original_source: Union[str | None] = None
 
 
 # Pydantic model for updating general match information.
@@ -37,6 +39,7 @@ class MatchGeneralInfoUpdate(BaseModel):
     tournament: Union[str | None] = None
     date: Union[datetime | None] = None
     description: Union[str | None] = None
+    original_source: Union[str | None] = None
 
 
 # Pydantic model for match response data.

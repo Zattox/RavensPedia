@@ -80,3 +80,10 @@ class TableMatch(Base):
         back_populates="match",  # Reverse relationship in TableMapResultInfo
         cascade="all, delete-orphan",  # Deletes result info if match is deleted
     )
+
+    # Link to the website where the statistics were taken from
+    original_source: Mapped[str | None] = mapped_column(
+        String,
+        default=None,
+        server_default="null",
+    )

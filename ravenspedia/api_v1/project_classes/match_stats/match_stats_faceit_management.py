@@ -68,6 +68,8 @@ async def add_match_stats_from_faceit(
             detail=f"Statistics have already been added to the match {match.id}",
         )
 
+    setattr(match, "original_source", faceit_url)
+
     # Extract the Faceit match ID from the URL
     start = faceit_url.find("/room/") + len("/room/")
     if start == -1:
