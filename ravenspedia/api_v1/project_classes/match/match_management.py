@@ -87,6 +87,9 @@ async def delete_match_stats(
     await session.execute(
         delete(TableMatchStats).where(TableMatchStats.match_id == match.id)
     )
+
+    setattr(match, "original_source", None)
+
     await session.commit()
     await session.refresh(match)
     return match
